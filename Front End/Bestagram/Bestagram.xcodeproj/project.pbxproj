@@ -1,0 +1,585 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5BA7A0EE2571BE5300993718 /* BestagramApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A0ED2571BE5300993718 /* BestagramApp.swift */; };
+		5BA7A0F02571BE5300993718 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A0EF2571BE5300993718 /* ContentView.swift */; };
+		5BA7A0F22571BE5500993718 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BA7A0F12571BE5500993718 /* Assets.xcassets */; };
+		5BA7A0F52571BE5500993718 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BA7A0F42571BE5500993718 /* Preview Assets.xcassets */; };
+		5BA7A1002571BE5500993718 /* BestagramTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A0FF2571BE5500993718 /* BestagramTests.swift */; };
+		5BA7A10B2571BE5500993718 /* BestagramUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A10A2571BE5500993718 /* BestagramUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5BA7A0FC2571BE5500993718 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5BA7A0E22571BE5200993718 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BA7A0E92571BE5200993718;
+			remoteInfo = Bestagram;
+		};
+		5BA7A1072571BE5500993718 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5BA7A0E22571BE5200993718 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BA7A0E92571BE5200993718;
+			remoteInfo = Bestagram;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5BA7A0EA2571BE5300993718 /* Bestagram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bestagram.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BA7A0ED2571BE5300993718 /* BestagramApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramApp.swift; sourceTree = "<group>"; };
+		5BA7A0EF2571BE5300993718 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		5BA7A0F12571BE5500993718 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5BA7A0F42571BE5500993718 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		5BA7A0F62571BE5500993718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5BA7A0FB2571BE5500993718 /* BestagramTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BestagramTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BA7A0FF2571BE5500993718 /* BestagramTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramTests.swift; sourceTree = "<group>"; };
+		5BA7A1012571BE5500993718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5BA7A1062571BE5500993718 /* BestagramUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BestagramUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BA7A10A2571BE5500993718 /* BestagramUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramUITests.swift; sourceTree = "<group>"; };
+		5BA7A10C2571BE5500993718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5BA7A0E72571BE5200993718 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BA7A0F82571BE5500993718 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BA7A1032571BE5500993718 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5BA7A0E12571BE5200993718 = {
+			isa = PBXGroup;
+			children = (
+				5BA7A0EC2571BE5300993718 /* Bestagram */,
+				5BA7A0FE2571BE5500993718 /* BestagramTests */,
+				5BA7A1092571BE5500993718 /* BestagramUITests */,
+				5BA7A0EB2571BE5300993718 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5BA7A0EB2571BE5300993718 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5BA7A0EA2571BE5300993718 /* Bestagram.app */,
+				5BA7A0FB2571BE5500993718 /* BestagramTests.xctest */,
+				5BA7A1062571BE5500993718 /* BestagramUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5BA7A0EC2571BE5300993718 /* Bestagram */ = {
+			isa = PBXGroup;
+			children = (
+				5BA7A0ED2571BE5300993718 /* BestagramApp.swift */,
+				5BA7A0EF2571BE5300993718 /* ContentView.swift */,
+				5BA7A0F12571BE5500993718 /* Assets.xcassets */,
+				5BA7A0F62571BE5500993718 /* Info.plist */,
+				5BA7A0F32571BE5500993718 /* Preview Content */,
+			);
+			path = Bestagram;
+			sourceTree = "<group>";
+		};
+		5BA7A0F32571BE5500993718 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				5BA7A0F42571BE5500993718 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		5BA7A0FE2571BE5500993718 /* BestagramTests */ = {
+			isa = PBXGroup;
+			children = (
+				5BA7A0FF2571BE5500993718 /* BestagramTests.swift */,
+				5BA7A1012571BE5500993718 /* Info.plist */,
+			);
+			path = BestagramTests;
+			sourceTree = "<group>";
+		};
+		5BA7A1092571BE5500993718 /* BestagramUITests */ = {
+			isa = PBXGroup;
+			children = (
+				5BA7A10A2571BE5500993718 /* BestagramUITests.swift */,
+				5BA7A10C2571BE5500993718 /* Info.plist */,
+			);
+			path = BestagramUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5BA7A0E92571BE5200993718 /* Bestagram */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BA7A10F2571BE5500993718 /* Build configuration list for PBXNativeTarget "Bestagram" */;
+			buildPhases = (
+				5BA7A0E62571BE5200993718 /* Sources */,
+				5BA7A0E72571BE5200993718 /* Frameworks */,
+				5BA7A0E82571BE5200993718 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Bestagram;
+			productName = Bestagram;
+			productReference = 5BA7A0EA2571BE5300993718 /* Bestagram.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5BA7A0FA2571BE5500993718 /* BestagramTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BA7A1122571BE5500993718 /* Build configuration list for PBXNativeTarget "BestagramTests" */;
+			buildPhases = (
+				5BA7A0F72571BE5500993718 /* Sources */,
+				5BA7A0F82571BE5500993718 /* Frameworks */,
+				5BA7A0F92571BE5500993718 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5BA7A0FD2571BE5500993718 /* PBXTargetDependency */,
+			);
+			name = BestagramTests;
+			productName = BestagramTests;
+			productReference = 5BA7A0FB2571BE5500993718 /* BestagramTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5BA7A1052571BE5500993718 /* BestagramUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BA7A1152571BE5500993718 /* Build configuration list for PBXNativeTarget "BestagramUITests" */;
+			buildPhases = (
+				5BA7A1022571BE5500993718 /* Sources */,
+				5BA7A1032571BE5500993718 /* Frameworks */,
+				5BA7A1042571BE5500993718 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5BA7A1082571BE5500993718 /* PBXTargetDependency */,
+			);
+			name = BestagramUITests;
+			productName = BestagramUITests;
+			productReference = 5BA7A1062571BE5500993718 /* BestagramUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5BA7A0E22571BE5200993718 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1220;
+				LastUpgradeCheck = 1220;
+				TargetAttributes = {
+					5BA7A0E92571BE5200993718 = {
+						CreatedOnToolsVersion = 12.2;
+					};
+					5BA7A0FA2571BE5500993718 = {
+						CreatedOnToolsVersion = 12.2;
+						TestTargetID = 5BA7A0E92571BE5200993718;
+					};
+					5BA7A1052571BE5500993718 = {
+						CreatedOnToolsVersion = 12.2;
+						TestTargetID = 5BA7A0E92571BE5200993718;
+					};
+				};
+			};
+			buildConfigurationList = 5BA7A0E52571BE5200993718 /* Build configuration list for PBXProject "Bestagram" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5BA7A0E12571BE5200993718;
+			productRefGroup = 5BA7A0EB2571BE5300993718 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5BA7A0E92571BE5200993718 /* Bestagram */,
+				5BA7A0FA2571BE5500993718 /* BestagramTests */,
+				5BA7A1052571BE5500993718 /* BestagramUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5BA7A0E82571BE5200993718 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BA7A0F52571BE5500993718 /* Preview Assets.xcassets in Resources */,
+				5BA7A0F22571BE5500993718 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BA7A0F92571BE5500993718 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BA7A1042571BE5500993718 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5BA7A0E62571BE5200993718 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BA7A0F02571BE5300993718 /* ContentView.swift in Sources */,
+				5BA7A0EE2571BE5300993718 /* BestagramApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BA7A0F72571BE5500993718 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BA7A1002571BE5500993718 /* BestagramTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BA7A1022571BE5500993718 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BA7A10B2571BE5500993718 /* BestagramUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5BA7A0FD2571BE5500993718 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BA7A0E92571BE5200993718 /* Bestagram */;
+			targetProxy = 5BA7A0FC2571BE5500993718 /* PBXContainerItemProxy */;
+		};
+		5BA7A1082571BE5500993718 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BA7A0E92571BE5200993718 /* Bestagram */;
+			targetProxy = 5BA7A1072571BE5500993718 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5BA7A10D2571BE5500993718 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		5BA7A10E2571BE5500993718 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5BA7A1102571BE5500993718 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"Bestagram/Preview Content\"";
+				DEVELOPMENT_TEAM = 3M2A92WN59;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Bestagram/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.Titouan.Bestagram;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5BA7A1112571BE5500993718 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"Bestagram/Preview Content\"";
+				DEVELOPMENT_TEAM = 3M2A92WN59;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Bestagram/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.Titouan.Bestagram;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5BA7A1132571BE5500993718 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3M2A92WN59;
+				INFOPLIST_FILE = BestagramTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.Titouan.BestagramTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bestagram.app/Bestagram";
+			};
+			name = Debug;
+		};
+		5BA7A1142571BE5500993718 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3M2A92WN59;
+				INFOPLIST_FILE = BestagramTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.Titouan.BestagramTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bestagram.app/Bestagram";
+			};
+			name = Release;
+		};
+		5BA7A1162571BE5500993718 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3M2A92WN59;
+				INFOPLIST_FILE = BestagramUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.Titouan.BestagramUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Bestagram;
+			};
+			name = Debug;
+		};
+		5BA7A1172571BE5500993718 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3M2A92WN59;
+				INFOPLIST_FILE = BestagramUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.Titouan.BestagramUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Bestagram;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5BA7A0E52571BE5200993718 /* Build configuration list for PBXProject "Bestagram" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BA7A10D2571BE5500993718 /* Debug */,
+				5BA7A10E2571BE5500993718 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BA7A10F2571BE5500993718 /* Build configuration list for PBXNativeTarget "Bestagram" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BA7A1102571BE5500993718 /* Debug */,
+				5BA7A1112571BE5500993718 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BA7A1122571BE5500993718 /* Build configuration list for PBXNativeTarget "BestagramTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BA7A1132571BE5500993718 /* Debug */,
+				5BA7A1142571BE5500993718 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BA7A1152571BE5500993718 /* Build configuration list for PBXNativeTarget "BestagramUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BA7A1162571BE5500993718 /* Debug */,
+				5BA7A1172571BE5500993718 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5BA7A0E22571BE5200993718 /* Project object */;
+}
