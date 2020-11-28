@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B1D1FBC25725AB8006B5073 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5B1D1FBB25725AB8006B5073 /* ProximaNova-Regular.otf */; };
+		5B1D1FCD257260E0006B5073 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FCC257260E0006B5073 /* Post.swift */; };
 		5BA7A0EE2571BE5300993718 /* BestagramApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A0ED2571BE5300993718 /* BestagramApp.swift */; };
-		5BA7A0F02571BE5300993718 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A0EF2571BE5300993718 /* ContentView.swift */; };
+		5BA7A0F02571BE5300993718 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A0EF2571BE5300993718 /* PostView.swift */; };
 		5BA7A0F22571BE5500993718 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BA7A0F12571BE5500993718 /* Assets.xcassets */; };
 		5BA7A0F52571BE5500993718 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BA7A0F42571BE5500993718 /* Preview Assets.xcassets */; };
 		5BA7A1002571BE5500993718 /* BestagramTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A0FF2571BE5500993718 /* BestagramTests.swift */; };
 		5BA7A10B2571BE5500993718 /* BestagramUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A10A2571BE5500993718 /* BestagramUITests.swift */; };
+		5BE70E042571C43300187FF1 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE70E032571C43300187FF1 /* User.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,9 +36,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5B1D1FBB25725AB8006B5073 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
+		5B1D1FCC257260E0006B5073 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		5BA7A0EA2571BE5300993718 /* Bestagram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bestagram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BA7A0ED2571BE5300993718 /* BestagramApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramApp.swift; sourceTree = "<group>"; };
-		5BA7A0EF2571BE5300993718 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		5BA7A0EF2571BE5300993718 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		5BA7A0F12571BE5500993718 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5BA7A0F42571BE5500993718 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5BA7A0F62571BE5500993718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -45,6 +50,7 @@
 		5BA7A1062571BE5500993718 /* BestagramUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BestagramUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BA7A10A2571BE5500993718 /* BestagramUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramUITests.swift; sourceTree = "<group>"; };
 		5BA7A10C2571BE5500993718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5BE70E032571C43300187FF1 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +78,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5B1D1FB92572584D006B5073 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B1D1FBA25725AAA006B5073 /* Fonts */,
+				5BA7A0F62571BE5500993718 /* Info.plist */,
+				5BA7A0F12571BE5500993718 /* Assets.xcassets */,
+				5BA7A0F32571BE5500993718 /* Preview Content */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5B1D1FBA25725AAA006B5073 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				5B1D1FBB25725AB8006B5073 /* ProximaNova-Regular.otf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		5BA7A0E12571BE5200993718 = {
 			isa = PBXGroup;
 			children = (
@@ -95,11 +120,10 @@
 		5BA7A0EC2571BE5300993718 /* Bestagram */ = {
 			isa = PBXGroup;
 			children = (
-				5BA7A0ED2571BE5300993718 /* BestagramApp.swift */,
-				5BA7A0EF2571BE5300993718 /* ContentView.swift */,
-				5BA7A0F12571BE5500993718 /* Assets.xcassets */,
-				5BA7A0F62571BE5500993718 /* Info.plist */,
-				5BA7A0F32571BE5500993718 /* Preview Content */,
+				5B1D1FB92572584D006B5073 /* Supporting Files */,
+				5BA7A11D2571BF6C00993718 /* Controller */,
+				5BA7A11C2571BF6400993718 /* View */,
+				5BA7A11B2571BF5E00993718 /* Model */,
 			);
 			path = Bestagram;
 			sourceTree = "<group>";
@@ -128,6 +152,31 @@
 				5BA7A10C2571BE5500993718 /* Info.plist */,
 			);
 			path = BestagramUITests;
+			sourceTree = "<group>";
+		};
+		5BA7A11B2571BF5E00993718 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5BE70E032571C43300187FF1 /* User.swift */,
+				5B1D1FCC257260E0006B5073 /* Post.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		5BA7A11C2571BF6400993718 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				5BA7A0ED2571BE5300993718 /* BestagramApp.swift */,
+				5BA7A0EF2571BE5300993718 /* PostView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		5BA7A11D2571BF6C00993718 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,6 +284,7 @@
 			files = (
 				5BA7A0F52571BE5500993718 /* Preview Assets.xcassets in Resources */,
 				5BA7A0F22571BE5500993718 /* Assets.xcassets in Resources */,
+				5B1D1FBC25725AB8006B5073 /* ProximaNova-Regular.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,8 +309,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BA7A0F02571BE5300993718 /* ContentView.swift in Sources */,
+				5BA7A0F02571BE5300993718 /* PostView.swift in Sources */,
 				5BA7A0EE2571BE5300993718 /* BestagramApp.swift in Sources */,
+				5BE70E042571C43300187FF1 /* User.swift in Sources */,
+				5B1D1FCD257260E0006B5073 /* Post.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -418,10 +470,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Bestagram/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Bestagram/Supporting Files/Preview Content\"";
 				DEVELOPMENT_TEAM = 3M2A92WN59;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Bestagram/Info.plist;
+				INFOPLIST_FILE = "Bestagram/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -440,10 +492,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Bestagram/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Bestagram/Supporting Files/Preview Content\"";
 				DEVELOPMENT_TEAM = 3M2A92WN59;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Bestagram/Info.plist;
+				INFOPLIST_FILE = "Bestagram/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -463,7 +515,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3M2A92WN59;
-				INFOPLIST_FILE = BestagramTests/Info.plist;
+				INFOPLIST_FILE = "BestagramTests/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -485,7 +537,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3M2A92WN59;
-				INFOPLIST_FILE = BestagramTests/Info.plist;
+				INFOPLIST_FILE = "BestagramTests/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -506,7 +558,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3M2A92WN59;
-				INFOPLIST_FILE = BestagramUITests/Info.plist;
+				INFOPLIST_FILE = "BestagramUITests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -526,7 +578,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3M2A92WN59;
-				INFOPLIST_FILE = BestagramUITests/Info.plist;
+				INFOPLIST_FILE = "BestagramUITests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

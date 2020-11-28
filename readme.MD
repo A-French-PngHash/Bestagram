@@ -13,3 +13,7 @@ You can find the API documentation in "Back End/Api Documentation.MD"
 There is a few differences from the original Instagram app that I will explain here.
 
 There will be **no Explore tab**, as I want to make this copy more friends for friends. Moreover, to give an Explore tab, Facebook uses very complex machine learning which would take years to implement.
+
+## Notes
+ 
+While creating the app I'm trying to use as much SF Symbol as possible in order to limit the number of assets to import.

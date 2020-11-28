@@ -11,7 +11,7 @@ import SwiftUI
 struct BestagramApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PostView(postImage: defaultPost)
         }
     }
 }
