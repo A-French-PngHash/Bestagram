@@ -20,30 +20,24 @@ class Post {
     /// For the moment posts only consist of one image.
     let image : UIImage
     let numberOfLikes : Int
-    /// The full description is all the text entered by the user when they added it.
-    let fullDescription : String
-    /// The reduced description is what is shown to the user when they scroll through. They can decide to click on it to show the full description.
-    var reducedDescription : String! = nil
+    let description : Description
+    /// The date when the post was finished being uploaded to the server.
+    let postTime : Date
     
     //MARK: - Initialization
-    init(user : User, image : UIImage, numberOfLikes : Int, description : String) {
+    init(user : User, image : UIImage, numberOfLikes : Int, description : String, postTime : Date) {
         self.user = user
         self.image = image
         self.numberOfLikes = numberOfLikes
-        self.fullDescription = description
-        self.reducedDescription = getReducedDescriptionFrom(description: description)
+        self.description = Description(text : description)
+        self.postTime = postTime
     }
     
     //MARK: - Functions
-    /// Calculate and return the reduced description using certain rules.
-    ///
-    /// The reduced description can't cut a word in half (except if its a really big word) and has a minimum of characters.
-    private func getReducedDescriptionFrom(description : String) -> String{
-        var index = Post.minimumCharacterReducedDescription
-        while description[index] != " " || Post.minimumCharacterReducedDescription - index >= 10 {
-            index += 1
-        }
-        return String(description.prefix(index))
+    func getDisplayPostDateInformation() {
+        /// Return a string like "32 minutes ago" that is shown to the user to inform him of when this was posted.
+        ///
+        /// Always floor the result, for example if it's been 1 month and a half or even 1 month and three quarters it will return "1 month ago".
+        print(postTime)
     }
-    
 }

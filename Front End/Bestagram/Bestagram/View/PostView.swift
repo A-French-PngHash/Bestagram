@@ -63,19 +63,12 @@ struct PostView: View {
                 Text("Liked by \(post.numberOfLikes) persons")
                 Spacer()
             }
-            HStack {
-                
-                Spacer()
-                    .frame(width: minSpaceFromEdge - 2)
-                
-                Text(post.user.username)
-                    .font(ProximaNova.bodyBold)
-                + Text(" " + post.fullDescription)
-                    .font(ProximaNova.body)
-                
-                
+            HStack{
                 Spacer()
                     .frame(width: minSpaceFromEdge)
+                DescriptionView(post: post)
+                
+                Spacer()
                 
             }
             Spacer()
@@ -92,12 +85,15 @@ I had fun making some predictions about breakthroughs in computing, and especial
 """
 
 let defaultUser = User(username: "thisisbillgates", followers: 329, numberOfPosts: 156, profilePicture: UIImage(named: "DefaultProfilePicture")!)
-let defaultPost = Post(user: defaultUser, image: UIImage(named: "DefaultPostPicture")!, numberOfLikes: 326, description: defaultDescription)
+let defaultPost = Post(user: defaultUser, image: UIImage(named: "DefaultPostPicture")!, numberOfLikes: 326, description: defaultDescription, postTime: Date(timeIntervalSinceNow: TimeInterval(-27653)))
 
 struct PostView_Previews: PreviewProvider {
     
     
     static var previews: some View {
         PostView(post: defaultPost)
+            .previewDevice("iPhone 12 mini")
+            
+            
     }
 }

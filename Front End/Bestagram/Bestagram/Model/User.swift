@@ -8,7 +8,7 @@
 import UIKit
 
 /// Represent a user of the app.
-class User {
+struct User {
     var username : String
     /// Number of followers of this users.
     var followers : Int
