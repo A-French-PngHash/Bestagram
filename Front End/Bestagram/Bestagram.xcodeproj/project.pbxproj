@@ -46,7 +46,7 @@
 		5B1D1FD125726629006B5073 /* ProximaNova.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximaNova.swift; sourceTree = "<group>"; };
 		5B1D1FEC25726BA0006B5073 /* ProximaNova-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Bold.otf"; sourceTree = "<group>"; };
 		5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringProtocolExtension.swift; sourceTree = "<group>"; };
-		5B1D1FF525727420006B5073 /* BestagramPostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramPostTests.swift; sourceTree = "<group>"; };
+		5B1D1FF525727420006B5073 /* BestagramPostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramPostTests.swift; sourceTree = "<group>"; wrapsLines = 1; };
 		5B1D200E2572DF2A006B5073 /* DescriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionView.swift; sourceTree = "<group>"; };
 		5B1D20132572DF81006B5073 /* Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Description.swift; sourceTree = "<group>"; };
 		5BA7A0EA2571BE5300993718 /* Bestagram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bestagram.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -206,6 +206,7 @@
 				5BA7A0E62571BE5200993718 /* Sources */,
 				5BA7A0E72571BE5200993718 /* Frameworks */,
 				5BA7A0E82571BE5200993718 /* Resources */,
+				5B25D6E62573AB290020EA99 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -320,6 +321,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5B25D6E62573AB290020EA99 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint autocorrect && swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5BA7A0E62571BE5200993718 /* Sources */ = {

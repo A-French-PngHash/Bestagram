@@ -10,4 +10,7 @@ import SwiftUI
 struct ProximaNova {
     static let body = Font.custom("ProximaNova-Regular", size: 15)
     static let bodyBold = Font.custom("ProximaNova-Bold", size: 15)
+
+    // Preventing instantiation.
+    private init() {}
 }

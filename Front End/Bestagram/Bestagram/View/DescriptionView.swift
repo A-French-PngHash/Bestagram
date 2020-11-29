@@ -11,9 +11,9 @@ struct DescriptionView: View {
     /// Define if the application should show the full description for this post or the reduced.
     ///
     /// This variable is modified when the reduced description is taped.
-    @State var showFullDescription : Bool = false
-    let post : Post
-    
+    @State var showFullDescription: Bool = false
+    let post: Post
+
     var body: some View {
         if showFullDescription {
             Text(post.user.username)
