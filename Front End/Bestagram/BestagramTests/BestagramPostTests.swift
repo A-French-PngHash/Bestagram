@@ -104,9 +104,34 @@ class BestagramPostTests: XCTestCase {
         let post = makePost(postTime: date)
 
         // When getting displayed date information.
-        let displayedDateInformation: String
+        let displayedDateInformation: String = post.getDisplayPostDateInformation()
 
         // Then is 37 seconds ago.
+        XCTAssertEqual(displayedDateInformation, "37 seconds ago")
+    }
+
+    func testGivenPostWasMade5Point9MinutesAgoWhenGettingDisplayedDateThenIs5MinutesAgo() {
+        // Given post was made 5.9 minutes ago.
+        let date = Date(timeIntervalSinceNow: -TimeInterval(5.9 * 60))
+        let post = makePost(postTime: date)
+
+        // When getting displayed date.
+        let displayedDateInformation: String = post.getDisplayPostDateInformation()
+
+        // Then is 5 minutes ago.
+        XCTAssertEqual(displayedDateInformation, "5 minutes ago")
+    }
+
+    func testGivenPostWasMade1Point9SecondAgoWhenGettingDisplayedDateThenIs1SecondAgo() {
+        // Given post was made 1.9 second ago.
+        let date = Date(timeIntervalSinceNow: -TimeInterval(1.9))
+        let post = makePost(postTime: date)
+
+        // When getting displayed date.
+        let displayedDateInformation: String = post.getDisplayPostDateInformation()
+
+        // Then is 5 minutes ago.
+        XCTAssertEqual(displayedDateInformation, "1 second ago")
     }
 
     func makePost(
@@ -119,7 +144,7 @@ class BestagramPostTests: XCTestCase {
         ///
         /// All the fields are filled by default so the developper can focus on modifying what's important.
 
-        // User can't be automatically filled with default user so we fill it here
+        // User can't be automatically filled with default user so we fill it here (Cannot use instance member 'defaultUser' as a default parameter)
         if let givenUser = user {
             return Post(
                 user: givenUser,

@@ -68,7 +68,14 @@ struct PostView: View {
                 Spacer()
                     .frame(width: minSpaceFromEdge)
                 DescriptionView(post: post)
-
+                    .animation(.default)
+                Spacer()
+            }
+            HStack {
+                Spacer()
+                    .frame(width: minSpaceFromEdge)
+                Text(post.getDisplayPostDateInformation())
+                    .foregroundColor(.gray)
                 Spacer()
             }
             Spacer()
@@ -77,18 +84,11 @@ struct PostView: View {
     }
 }
 
+// swiftlint:disable line_length
 let defaultDescription = """
-Twenty-five years ago, I published my first book,
-The Road Ahead. At the time, people were wondering
-where digital technology was headed and how it would
-affect our lives, and I wanted to share my thoughts—and
-my enthusiasm.
-
-I had fun making some predictions about breakthroughs
-in computing, and especially the Internet, that were
-coming in the next couple of decades. You can find out
-what I got right and what I got wrong at the link in my bio.
+Twenty-five years ago, I published my first book, The Road Ahead. At the time, people were wondering where digital technology was headed and how it would affect our lives, and I wanted to share my thoughts—and my enthusiasm.
 """
+// swiftlint:enable line_length
 
 let defaultUser = User(
     username: "thisisbillgates",

@@ -16,13 +16,16 @@ struct DescriptionView: View {
 
     var body: some View {
         if showFullDescription {
-            Text(post.user.username)
+            (Text(post.user.username)
                 .font(ProximaNova.bodyBold)
             + Text(" " + post.description.fullDescription)
-                .font(ProximaNova.body)
+                .font(ProximaNova.body))
+                .transition(.opacity)
         } else {
             Button(action: {
-                showFullDescription = true
+                withAnimation(.linear(duration: 0.25), {
+                    showFullDescription = true
+                })
             }, label: {
                 Text(post.user.username)
                     .font(ProximaNova.bodyBold)
@@ -33,6 +36,7 @@ struct DescriptionView: View {
             })
             .foregroundColor(.black)
             .font(ProximaNova.body)
+            .transition(.opacity)
         }
     }
 }
