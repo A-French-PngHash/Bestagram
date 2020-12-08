@@ -1,13 +1,13 @@
-DROP DATABASE Bestagram;
-CREATE DATABASE Bestagram;
-USE Bestagram;
+DROP DATABASE IF EXISTS BestagramTest;
+CREATE DATABASE BestagramTest;
+USE BestagramTest;
 
 CREATE TABLE UserTable(
-    id BIGINT NOT NULL,
-    name VARCHAR(30) NOT NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(30) NOT NULL,
     hash VARCHAR(100) NOT NULL,
     token VARCHAR(30),
-    token_registration_date DATE,
+    token_registration_date DATETIME,
     description VARCHAR(1000),
     profile_image_path VARCHAR(30),
     PRIMARY KEY (id)
@@ -38,7 +38,7 @@ ENGINE=INNODB;
 
 -- Indexes
 ALTER TABLE UserTable
-ADD UNIQUE ind_name (name);
+ADD UNIQUE ind_name (username);
 
 ALTER TABLE LikeTable
 ADD INDEX ind_user_id (user_id);
@@ -50,7 +50,7 @@ ALTER TABLE Follow
 ADD INDEX ind_user_id (user_id);
 
 ALTER TABLE Follow
-ADD INDEX ind_user_id_following (user_id_following);
+ADD INDEX ind_user_id_followed (user_id_followed);
 
 ALTER TABLE Post
 ADD INDEX ind_user_id (user_id);
@@ -65,7 +65,7 @@ ALTER TABLE Follow
 ADD CONSTRAINT fk_Follow_user_id_id FOREIGN KEY (user_id) REFERENCES UserTable(id);
 
 ALTER TABLE Follow
-ADD CONSTRAINT fk_Follow_user_id_following_id FOREIGN KEY (user_id_following) REFERENCES UserTable(id);
+ADD CONSTRAINT fk_Follow_user_id_followed_id FOREIGN KEY (user_id_followed) REFERENCES UserTable(id);
 
 ALTER TABLE Post
 ADD CONSTRAINT fk_Post_user_id_id FOREIGN KEY (user_id) REFERENCES UserTable(id);

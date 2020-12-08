@@ -11,13 +11,4 @@ cnx = mysql.connector.connect(
     database=config.databaseName,
     use_pure=True)
 cnx.autocommit = True
-cnx.cursor()
-
-
-def make_cursor() -> mysql.connector.connection_cext.CMySQLCursor:
-    """
-    Returns a mysql cursor. Put the desire parameter automatically so no need to add them in the programm,
-    just call the method.
-    :return:
-    """
-    return cnx.cursor(dictionary=True)
+cursor = cnx.cursor(dictionary=True)

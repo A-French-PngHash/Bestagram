@@ -7,7 +7,7 @@ CREATE TABLE UserTable(
     username VARCHAR(30) NOT NULL,
     hash VARCHAR(100) NOT NULL,
     token VARCHAR(30),
-    token_registration_date DATE,
+    token_registration_date DATETIME,
     description VARCHAR(1000),
     profile_image_path VARCHAR(30),
     PRIMARY KEY (id)
@@ -38,7 +38,7 @@ ENGINE=INNODB;
 
 -- Indexes
 ALTER TABLE UserTable
-ADD UNIQUE ind_name (name);
+ADD UNIQUE ind_name (username);
 
 ALTER TABLE LikeTable
 ADD INDEX ind_user_id (user_id);
