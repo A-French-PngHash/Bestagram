@@ -47,6 +47,6 @@ class Login(Resource):
         try:
             user = User.create(params["username"], params["hash"], cursor=database.mysql_connection.cursor)
         except UsernameTaken as e:
-            return {"error": "Username is already taken"}, 409
+            return {"error": "Username already taken"}, 409
 
         return {"token": user.token}, 201
