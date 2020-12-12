@@ -144,7 +144,8 @@ class BestagramPostTests: XCTestCase {
         ///
         /// All the fields are filled by default so the developper can focus on modifying what's important.
 
-        // User can't be automatically filled with default user so we fill it here (Cannot use instance member 'defaultUser' as a default parameter)
+        // User can't be automatically filled with default user so we fill it here (Cannot use
+        // instance member 'defaultUser' as a default parameter)
         if let givenUser = user {
             return Post(
                 user: givenUser,

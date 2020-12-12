@@ -7,6 +7,10 @@
 
 import Foundation
 
+/// Extension used to acces a string character from a int index.
+///     myString = "test"
+///     print(myString[2])
+/// Prints "s"
 extension StringProtocol {
     subscript(offset: Int) -> Character {
         self[index(startIndex, offsetBy: offset)]

@@ -41,7 +41,10 @@ class Post {
         /// and three quarters it will return "1 month ago".
 
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: postTime, to: Date())
+        let components = calendar.dateComponents(
+            [.year, .month, .day, .hour, .minute, .second],
+            from: postTime,
+            to: Date())
         print(components)
 
         if components.year != 0 {
