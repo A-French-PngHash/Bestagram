@@ -157,7 +157,6 @@
 			isa = PBXGroup;
 			children = (
 				5B1D1FB92572584D006B5073 /* Supporting Files */,
-				5BA7A11D2571BF6C00993718 /* Controller */,
 				5BA7A11C2571BF6400993718 /* View */,
 				5BA7A11B2571BF5E00993718 /* Model */,
 			);
@@ -216,16 +215,10 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		5BA7A11D2571BF6C00993718 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Controller;
-			sourceTree = "<group>";
-		};
 		5BB7D82C2581532B001AE07C /* Sign In - Up */ = {
 			isa = PBXGroup;
 			children = (
+				5BF0BAA22585411700C3B9FB /* Sign In */,
 				5BB7D83525815495001AE07C /* Sign Up */,
 				5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */,
 			);
@@ -239,6 +232,13 @@
 				5B4A618F25852E9C008FDED5 /* EnterConfirmationCodeView.swift */,
 			);
 			path = "Sign Up";
+			sourceTree = "<group>";
+		};
+		5BF0BAA22585411700C3B9FB /* Sign In */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Sign In";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
