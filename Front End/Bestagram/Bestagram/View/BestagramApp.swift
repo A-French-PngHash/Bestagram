@@ -11,7 +11,8 @@ import SwiftUI
 struct BestagramApp: App {
     var body: some Scene {
         WindowGroup {
-            PostView(postImage: defaultPost)
+            SignInOrUpChoiceView()
+                .font(ProximaNova.body)
         }
     }
 }
