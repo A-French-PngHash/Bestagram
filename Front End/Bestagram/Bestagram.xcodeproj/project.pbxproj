@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32AE4886A67643FB58573CE8 /* Pods_Bestagram_BestagramUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0016E4F11A81D956860251 /* Pods_Bestagram_BestagramUITests.framework */; };
+		3F8630B7C660C8227525AB16 /* Pods_BestagramTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3683A6984771AA6851D85B80 /* Pods_BestagramTests.framework */; };
 		5B1D1FBC25725AB8006B5073 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5B1D1FBB25725AB8006B5073 /* ProximaNova-Regular.otf */; };
 		5B1D1FCD257260E0006B5073 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FCC257260E0006B5073 /* Post.swift */; };
 		5B1D1FD225726629006B5073 /* ProximaNova.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FD125726629006B5073 /* ProximaNova.swift */; };
@@ -28,6 +30,7 @@
 		5BB7D82E25815399001AE07C /* SignInOrUpChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */; };
 		5BB7D837258154D9001AE07C /* EnterPhoneOrEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */; };
 		5BE70E042571C43300187FF1 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE70E032571C43300187FF1 /* User.swift */; };
+		E8C1AF7FB85A9D82857B218B /* Pods_Bestagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2FE10F21ADC5EB9CA01ADBC /* Pods_Bestagram.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +51,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3586BAC067A5F381D8FF1D8A /* Pods-BestagramTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BestagramTests.release.xcconfig"; path = "Target Support Files/Pods-BestagramTests/Pods-BestagramTests.release.xcconfig"; sourceTree = "<group>"; };
+		3683A6984771AA6851D85B80 /* Pods_BestagramTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BestagramTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B1D1FBB25725AB8006B5073 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
 		5B1D1FCC257260E0006B5073 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		5B1D1FD125726629006B5073 /* ProximaNova.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximaNova.swift; sourceTree = "<group>"; };
@@ -76,6 +81,13 @@
 		5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInOrUpChoiceView.swift; sourceTree = "<group>"; };
 		5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPhoneOrEmailView.swift; sourceTree = "<group>"; };
 		5BE70E032571C43300187FF1 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		6708ED6011F9118EB53F4B60 /* Pods-Bestagram-BestagramUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram-BestagramUITests.release.xcconfig"; path = "Target Support Files/Pods-Bestagram-BestagramUITests/Pods-Bestagram-BestagramUITests.release.xcconfig"; sourceTree = "<group>"; };
+		6CBAF8711BA4DEC12E4FE49A /* Pods-BestagramTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BestagramTests.debug.xcconfig"; path = "Target Support Files/Pods-BestagramTests/Pods-BestagramTests.debug.xcconfig"; sourceTree = "<group>"; };
+		A9FA6428F46D234D921F1DA8 /* Pods-Bestagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram.release.xcconfig"; path = "Target Support Files/Pods-Bestagram/Pods-Bestagram.release.xcconfig"; sourceTree = "<group>"; };
+		B2FE10F21ADC5EB9CA01ADBC /* Pods_Bestagram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Bestagram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF0016E4F11A81D956860251 /* Pods_Bestagram_BestagramUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Bestagram_BestagramUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF5258568DE653B4524FD87F /* Pods-Bestagram-BestagramUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram-BestagramUITests.debug.xcconfig"; path = "Target Support Files/Pods-Bestagram-BestagramUITests/Pods-Bestagram-BestagramUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		E641F518EC26313319DD8C71 /* Pods-Bestagram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram.debug.xcconfig"; path = "Target Support Files/Pods-Bestagram/Pods-Bestagram.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8C1AF7FB85A9D82857B218B /* Pods_Bestagram.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F8630B7C660C8227525AB16 /* Pods_BestagramTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +111,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32AE4886A67643FB58573CE8 /* Pods_Bestagram_BestagramUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +155,8 @@
 				5BA7A0FE2571BE5500993718 /* BestagramTests */,
 				5BA7A1092571BE5500993718 /* BestagramUITests */,
 				5BA7A0EB2571BE5300993718 /* Products */,
+				9C250456E75C30FA97A9F50F /* Pods */,
+				AF31EED1C130B0C7A90CDD0A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -241,6 +258,29 @@
 			path = "Sign In";
 			sourceTree = "<group>";
 		};
+		9C250456E75C30FA97A9F50F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E641F518EC26313319DD8C71 /* Pods-Bestagram.debug.xcconfig */,
+				A9FA6428F46D234D921F1DA8 /* Pods-Bestagram.release.xcconfig */,
+				CF5258568DE653B4524FD87F /* Pods-Bestagram-BestagramUITests.debug.xcconfig */,
+				6708ED6011F9118EB53F4B60 /* Pods-Bestagram-BestagramUITests.release.xcconfig */,
+				6CBAF8711BA4DEC12E4FE49A /* Pods-BestagramTests.debug.xcconfig */,
+				3586BAC067A5F381D8FF1D8A /* Pods-BestagramTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		AF31EED1C130B0C7A90CDD0A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B2FE10F21ADC5EB9CA01ADBC /* Pods_Bestagram.framework */,
+				BF0016E4F11A81D956860251 /* Pods_Bestagram_BestagramUITests.framework */,
+				3683A6984771AA6851D85B80 /* Pods_BestagramTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -248,16 +288,20 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BA7A10F2571BE5500993718 /* Build configuration list for PBXNativeTarget "Bestagram" */;
 			buildPhases = (
+				B0DE206CAFD09FCF076D611C /* [CP] Check Pods Manifest.lock */,
 				5BA7A0E62571BE5200993718 /* Sources */,
 				5BA7A0E72571BE5200993718 /* Frameworks */,
 				5BA7A0E82571BE5200993718 /* Resources */,
 				5B25D6E62573AB290020EA99 /* ShellScript */,
+				3F5D878077EF74FDA88299A3 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = Bestagram;
+			packageProductDependencies = (
+			);
 			productName = Bestagram;
 			productReference = 5BA7A0EA2571BE5300993718 /* Bestagram.app */;
 			productType = "com.apple.product-type.application";
@@ -266,6 +310,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BA7A1122571BE5500993718 /* Build configuration list for PBXNativeTarget "BestagramTests" */;
 			buildPhases = (
+				FDB72654691B806D4B7D828C /* [CP] Check Pods Manifest.lock */,
 				5BA7A0F72571BE5500993718 /* Sources */,
 				5BA7A0F82571BE5500993718 /* Frameworks */,
 				5BA7A0F92571BE5500993718 /* Resources */,
@@ -284,9 +329,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BA7A1152571BE5500993718 /* Build configuration list for PBXNativeTarget "BestagramUITests" */;
 			buildPhases = (
+				3DF10B4511B9EA8CD1EFCD4C /* [CP] Check Pods Manifest.lock */,
 				5BA7A1022571BE5500993718 /* Sources */,
 				5BA7A1032571BE5500993718 /* Frameworks */,
 				5BA7A1042571BE5500993718 /* Resources */,
+				4A78F662B107D24A778E12A4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -329,6 +376,8 @@
 				Base,
 			);
 			mainGroup = 5BA7A0E12571BE5200993718;
+			packageReferences = (
+			);
 			productRefGroup = 5BA7A0EB2571BE5300993718 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -368,9 +417,65 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5B25D6E62573AB290020EA99 /* ShellScript */ = {
+		3DF10B4511B9EA8CD1EFCD4C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Bestagram-BestagramUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3F5D878077EF74FDA88299A3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Bestagram/Pods-Bestagram-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Bestagram/Pods-Bestagram-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Bestagram/Pods-Bestagram-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4A78F662B107D24A778E12A4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Bestagram-BestagramUITests/Pods-Bestagram-BestagramUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Bestagram-BestagramUITests/Pods-Bestagram-BestagramUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Bestagram-BestagramUITests/Pods-Bestagram-BestagramUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5B25D6E62573AB290020EA99 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
 			files = (
 			);
 			inputFileListPaths = (
@@ -381,9 +486,53 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint autocorrect && swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+		B0DE206CAFD09FCF076D611C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Bestagram-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FDB72654691B806D4B7D828C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BestagramTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -561,6 +710,7 @@
 		};
 		5BA7A1102571BE5500993718 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E641F518EC26313319DD8C71 /* Pods-Bestagram.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -583,6 +733,7 @@
 		};
 		5BA7A1112571BE5500993718 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A9FA6428F46D234D921F1DA8 /* Pods-Bestagram.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -605,6 +756,7 @@
 		};
 		5BA7A1132571BE5500993718 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6CBAF8711BA4DEC12E4FE49A /* Pods-BestagramTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -627,6 +779,7 @@
 		};
 		5BA7A1142571BE5500993718 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3586BAC067A5F381D8FF1D8A /* Pods-BestagramTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -649,6 +802,7 @@
 		};
 		5BA7A1162571BE5500993718 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF5258568DE653B4524FD87F /* Pods-Bestagram-BestagramUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -669,6 +823,7 @@
 		};
 		5BA7A1172571BE5500993718 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6708ED6011F9118EB53F4B60 /* Pods-Bestagram-BestagramUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

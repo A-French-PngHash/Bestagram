@@ -8,6 +8,15 @@ You can find the **Roadmap** on [Trello](https://trello.com/b/oTma0uAS)
 ## API
 You can find the API documentation in "Back End/Api Documentation.MD"
 
+## Dependencies
+### Front End
+The front end has two dependencies : [AlamofireImage](https://github.com/Alamofire/AlamofireImage) and [Cache](https://github.com/hyperoslo/Cache). Both of this dependencies can be easily installed via CocoaPods. After installing CocoaPods, just run :
+
+    pod install
+   
+in the folder where you find the .xcodeproj and you will be all set. Don't forget to open the .xcworkspace from now on to include the dependencies.
+
+
 ## Differences from the original Instagram app
 
 There is a few differences from the original Instagram app that I will explain here.
