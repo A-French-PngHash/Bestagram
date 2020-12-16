@@ -17,27 +17,19 @@ struct BigBlueButton: View {
     var onPress : () -> Void
 
     var body: some View {
-        HStack {
-            Spacer()
-                .frame(width: 25)
-
-            Button(action: {
-                onPress()
-            }, label: {
-                Text(self.text)
-                    .font(ProximaNova.bodyBold)
-            })
-            .padding()
-            .frame(height: 30)
-            .frame(maxWidth: .infinity)
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(4)
-            .opacity(disabled ? 0.6 : 1)
-
-            Spacer()
-                .frame(width: 25)
-        }
+        Button(action: {
+            onPress()
+        }, label: {
+            Text(self.text)
+                .font(ProximaNova.bodyBold)
+        })
+        .padding()
+        .frame(height: 35)
+        .frame(maxWidth: .infinity)
+        .background(Color.blue)
+        .foregroundColor(.white)
+        .cornerRadius(4)
+        .opacity(disabled ? 0.6 : 1)
     }
 }
 

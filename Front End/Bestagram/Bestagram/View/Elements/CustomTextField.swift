@@ -15,11 +15,14 @@ struct CustomTextField: View {
 
     /// Define if the programm should display a
     /// cross at the end of the text field to erase everything.
-    var displayCross: Bool
+    var displayCross: Bool = true
+    /// Define if dot should be displayed when the user enter text to hide what is entered.
+    /// Mainly used for password.
+    var secureEntry : Bool = false
     /// Placeholder to display in the text field.
     var placeholder: String
     /// The distance that should be from the length of the screen on each side of the text field.
-    var distanceEdge: CGFloat
+    var distanceEdge: CGFloat = 0
 
     /// Input entered by user in the field.
     @Binding var input: String
@@ -36,12 +39,21 @@ struct CustomTextField: View {
             Spacer()
                 .frame(width: distanceEdge)
             HStack {
-                TextField(self.placeholder, text: $input)
-                    .onChange(of: input, perform: { value in
-                        if let edit = onEdit {
-                            edit(value)
-                        }
-                    })
+                if secureEntry {
+                    SecureField(self.placeholder, text: $input)
+                        .onChange(of: input, perform: { value in
+                            if let edit = onEdit {
+                                edit(value)
+                            }
+                        })
+                } else {
+                    TextField(self.placeholder, text: $input)
+                        .onChange(of: input, perform: { value in
+                            if let edit = onEdit {
+                                edit(value)
+                            }
+                        })
+                }
                 // Shows the cross or not.
                 if displayCross && input != ""{
                     Button(action: {

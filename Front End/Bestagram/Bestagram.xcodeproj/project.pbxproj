@@ -29,7 +29,13 @@
 		5BA7A10B2571BE5500993718 /* BestagramUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A10A2571BE5500993718 /* BestagramUITests.swift */; };
 		5BB7D82E25815399001AE07C /* SignInOrUpChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */; };
 		5BB7D837258154D9001AE07C /* EnterPhoneOrEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */; };
+		5BDCB8F42586B34C00056B2B /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDCB8F32586B34C00056B2B /* LoginService.swift */; };
+		5BDCB8FC2586B77F00056B2B /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDCB8FB2586B77F00056B2B /* Api.swift */; };
 		5BE70E042571C43300187FF1 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE70E032571C43300187FF1 /* User.swift */; };
+		5BF0BAE725865DAB00C3B9FB /* EnterLoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */; };
+		5BF0BAEC25865E6D00C3B9FB /* Billabong.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BF0BAEB25865E6D00C3B9FB /* Billabong.ttf */; };
+		5BF0BAF225865E9A00C3B9FB /* Billabong.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF0BAF125865E9A00C3B9FB /* Billabong.swift */; };
+		5BF0BAF725866C5400C3B9FB /* ProximaNova-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5BF0BAF625866C5400C3B9FB /* ProximaNova-Thin.otf */; };
 		E8C1AF7FB85A9D82857B218B /* Pods_Bestagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2FE10F21ADC5EB9CA01ADBC /* Pods_Bestagram.framework */; };
 /* End PBXBuildFile section */
 
@@ -80,7 +86,13 @@
 		5BA7A10C2571BE5500993718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInOrUpChoiceView.swift; sourceTree = "<group>"; };
 		5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPhoneOrEmailView.swift; sourceTree = "<group>"; };
+		5BDCB8F32586B34C00056B2B /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
+		5BDCB8FB2586B77F00056B2B /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		5BE70E032571C43300187FF1 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterLoginInfoView.swift; sourceTree = "<group>"; };
+		5BF0BAEB25865E6D00C3B9FB /* Billabong.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Billabong.ttf; sourceTree = "<group>"; };
+		5BF0BAF125865E9A00C3B9FB /* Billabong.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Billabong.swift; sourceTree = "<group>"; };
+		5BF0BAF625866C5400C3B9FB /* ProximaNova-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Thin.otf"; sourceTree = "<group>"; };
 		6708ED6011F9118EB53F4B60 /* Pods-Bestagram-BestagramUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram-BestagramUITests.release.xcconfig"; path = "Target Support Files/Pods-Bestagram-BestagramUITests/Pods-Bestagram-BestagramUITests.release.xcconfig"; sourceTree = "<group>"; };
 		6CBAF8711BA4DEC12E4FE49A /* Pods-BestagramTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BestagramTests.debug.xcconfig"; path = "Target Support Files/Pods-BestagramTests/Pods-BestagramTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A9FA6428F46D234D921F1DA8 /* Pods-Bestagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram.release.xcconfig"; path = "Target Support Files/Pods-Bestagram/Pods-Bestagram.release.xcconfig"; sourceTree = "<group>"; };
@@ -132,8 +144,10 @@
 		5B1D1FBA25725AAA006B5073 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				5BF0BAEB25865E6D00C3B9FB /* Billabong.ttf */,
 				5B1D1FEC25726BA0006B5073 /* ProximaNova-Bold.otf */,
 				5B1D1FBB25725AB8006B5073 /* ProximaNova-Regular.otf */,
+				5BF0BAF625866C5400C3B9FB /* ProximaNova-Thin.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -210,10 +224,11 @@
 		5BA7A11B2571BF5E00993718 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				5BDCB8F22586B32100056B2B /* Requests */,
+				5BF0BAF025865E8700C3B9FB /* Fonts */,
 				5BE70E032571C43300187FF1 /* User.swift */,
 				5B1D20132572DF81006B5073 /* Description.swift */,
 				5B1D1FCC257260E0006B5073 /* Post.swift */,
-				5B1D1FD125726629006B5073 /* ProximaNova.swift */,
 				5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */,
 				5B70B670258412F1004221D5 /* Checks.swift */,
 			);
@@ -251,11 +266,30 @@
 			path = "Sign Up";
 			sourceTree = "<group>";
 		};
+		5BDCB8F22586B32100056B2B /* Requests */ = {
+			isa = PBXGroup;
+			children = (
+				5BDCB8F32586B34C00056B2B /* LoginService.swift */,
+				5BDCB8FB2586B77F00056B2B /* Api.swift */,
+			);
+			path = Requests;
+			sourceTree = "<group>";
+		};
 		5BF0BAA22585411700C3B9FB /* Sign In */ = {
 			isa = PBXGroup;
 			children = (
+				5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */,
 			);
 			path = "Sign In";
+			sourceTree = "<group>";
+		};
+		5BF0BAF025865E8700C3B9FB /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				5B1D1FD125726629006B5073 /* ProximaNova.swift */,
+				5BF0BAF125865E9A00C3B9FB /* Billabong.swift */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		9C250456E75C30FA97A9F50F /* Pods */ = {
@@ -396,7 +430,9 @@
 			files = (
 				5BA7A0F52571BE5500993718 /* Preview Assets.xcassets in Resources */,
 				5BA7A0F22571BE5500993718 /* Assets.xcassets in Resources */,
+				5BF0BAF725866C5400C3B9FB /* ProximaNova-Thin.otf in Resources */,
 				5B1D1FBC25725AB8006B5073 /* ProximaNova-Regular.otf in Resources */,
+				5BF0BAEC25865E6D00C3B9FB /* Billabong.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,12 +578,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B1D20142572DF81006B5073 /* Description.swift in Sources */,
+				5BF0BAE725865DAB00C3B9FB /* EnterLoginInfoView.swift in Sources */,
 				5B70B66625840FE3004221D5 /* BackButton.swift in Sources */,
 				5BB7D82E25815399001AE07C /* SignInOrUpChoiceView.swift in Sources */,
 				5BA7A0F02571BE5300993718 /* PostView.swift in Sources */,
 				5B4A619025852E9C008FDED5 /* EnterConfirmationCodeView.swift in Sources */,
 				5B1D200F2572DF2A006B5073 /* DescriptionView.swift in Sources */,
 				5B5DF1ED2581887400A756D9 /* BigBlueButton.swift in Sources */,
+				5BDCB8FC2586B77F00056B2B /* Api.swift in Sources */,
 				5B5DF1F225818AD700A756D9 /* CustomTextField.swift in Sources */,
 				5BA7A0EE2571BE5300993718 /* BestagramApp.swift in Sources */,
 				5B70B671258412F1004221D5 /* Checks.swift in Sources */,
@@ -555,7 +593,9 @@
 				5BB7D837258154D9001AE07C /* EnterPhoneOrEmailView.swift in Sources */,
 				5B1D1FD225726629006B5073 /* ProximaNova.swift in Sources */,
 				5B1D1FF125727291006B5073 /* StringProtocolExtension.swift in Sources */,
+				5BDCB8F42586B34C00056B2B /* LoginService.swift in Sources */,
 				5B1D1FCD257260E0006B5073 /* Post.swift in Sources */,
+				5BF0BAF225865E9A00C3B9FB /* Billabong.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

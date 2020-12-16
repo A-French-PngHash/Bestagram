@@ -18,7 +18,9 @@ struct BackButton: View {
             presentationMode.wrappedValue.dismiss()
         }, label: {
             Image(systemName: "chevron.backward")
+                .resizable()
                 .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                .frame(width: 11, height: 19)
         })
     }
 }

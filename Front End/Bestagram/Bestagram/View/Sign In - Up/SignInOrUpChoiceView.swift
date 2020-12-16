@@ -16,6 +16,7 @@ struct SignInOrUpChoiceView: View {
         NavigationView {
             VStack {
                 Text("Bestagram")
+                    .font(Billabong(size: 55).font)
                 Spacer()
                     .frame(height: 40)
 
@@ -39,13 +40,12 @@ struct SignInOrUpChoiceView: View {
 
                 Spacer()
                     .frame(height: 15)
-                NavigationLink(destination: EnterPhoneOrEmailView()) {
+                NavigationLink(destination: EnterLoginInfoView()) {
                     Text("Log In")
                         .font(ProximaNova.bodyBold)
                 }
             }
             .navigationBarBackButtonHidden(false)
-            //.background(Color.black)
         }
     }
 }

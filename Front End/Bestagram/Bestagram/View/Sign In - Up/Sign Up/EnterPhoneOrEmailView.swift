@@ -16,30 +16,21 @@ struct EnterPhoneOrEmailView: View {
     @State var emailEntered: String = ""
     @State var buttonDisabled: Bool = true
 
-    var body: some View {
-        VStack {
-            Text("Enter phone number or email adress")
-            Spacer()
-                .frame(height: 30)
-            HStack {
-                Spacer()
-                    .frame(width: 20)
-                Picker(selection: self.$pickerSelection, label: Text("test"), content: {
-                    Text("Phone").tag(1)
-                    Text("Email").tag(2)
-                })
-                .pickerStyle(SegmentedPickerStyle())
-                Spacer()
-                    .frame(width: 20)
-            }
-            Spacer()
-                .frame(height: 10)
+    // Contain the form that is displayed to the user. The body variable really contain adjustments to make the form look good in the app.
+    var form : some View {
+        VStack(spacing: 20){
+            Text("Enter phone number or email address")
+            Picker(selection: self.$pickerSelection, label: Text("test"), content: {
+                Text("Phone").tag(1)
+                Text("Email").tag(2)
+            })
+            .pickerStyle(SegmentedPickerStyle())
+
             if pickerSelection == 1 {
                 // Selection is phone.
                 CustomTextField(
                     displayCross: true,
                     placeholder: "Email address",
-                    distanceEdge: 20,
                     input: $emailEntered) { (value) in
                     // Set the variable to disable or not the button style.
                     buttonDisabled = !Checks.isEmailValid(email: value)
@@ -49,24 +40,53 @@ struct EnterPhoneOrEmailView: View {
                 CustomTextField(
                     displayCross: true,
                     placeholder: "Email address",
-                    distanceEdge: 20,
                     input: $emailEntered) { (value) in
                     // Set the variable to disable or not the button style.
                     buttonDisabled = !Checks.isEmailValid(email: value)
                 }
             }
-            Spacer()
-                .frame(height: 10)
-            BigBlueButton(
-                text: "Next",
-                disabled: $buttonDisabled) {
+            BigBlueButton(text: "Next", disabled: $buttonDisabled) {
                 print(emailEntered)
             }
-            Spacer()
         }
-        .navigationBarItems(leading: BackButton(presentationMode: presentationMode))
-        .navigationBarBackButtonHidden(true)
+    }
 
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                    .frame(width: 10)
+                BackButton(presentationMode: presentationMode)
+                Spacer()
+            }
+            HStack {
+                Spacer()
+                    .frame(width: 40)
+                VStack{
+                    form
+                    Spacer()
+                }
+                Spacer()
+                    .frame(width: 40)
+            }
+
+            Divider()
+            Spacer()
+                .frame(height: 20)
+            HStack {
+                Text("Already have an account?")
+                    .font(ProximaNova.bodyBold)
+                NavigationLink(
+                    destination: EnterLoginInfoView(),
+                    label: {
+                        Text("Sign In")
+                    })
+                    .foregroundColor(.blue)
+            }
+            Spacer()
+                .frame(height: 20)
+        }
+        .navigationBarHidden(true)
     }
 }
 
