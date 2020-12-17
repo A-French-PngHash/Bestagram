@@ -24,7 +24,7 @@ class Login(Resource):
         try:
             user = User(params["username"], params["hash"], cursor=database.mysql_connection.cursor)
         except InvalidCredentials as e:
-            return {"error": "Invalid Credentials", "code": 3}, 401
+            return {"error": "Invalid Credentials"}, 401
 
         return {"token": user.token}, 200
 

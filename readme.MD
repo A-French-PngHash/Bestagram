@@ -6,7 +6,9 @@ It is an educationnal purpose project which mean it is not to be used in any oth
 You can find the **Roadmap** on [Trello](https://trello.com/b/oTma0uAS)
 
 ## API
-You can find the API documentation in "Back End/Api Documentation.MD"
+You can find the API documentation in "Back End/api/Api Documentation.MD".
+The API uses a self signed root certificate and a certificate issued by the root certificate. To allow everything to work as intended, you will need to install the root certificate on your machine. You can find it in "Back End/ApiCertificate/rootCA.crt". Doubleclick on it to install it. Then search for it in the keychain, double click on it, open the trust section and allow full trust by changing "When using this certificate" from "Use sytem defaults" to "Always trust".
+Note that this step is really required if you want to work on the front end. As I found no way to allow the use of self signed certificate in the IOS app, I was forced to use a root certificate. If you are developping the back end, you shouldn't need it as api testing have options to allow self signed certificates.
 
 ## Differences from the original Instagram app
 
