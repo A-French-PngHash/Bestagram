@@ -26,11 +26,9 @@ class LoginService {
     /// - parameter password: **Encrypted** password. Encrypted as indicated in the API Documentation.
     /// - parameter callback: Function called when the Api sent back the response. The Bool argument is wether the request succeeded or not. If it succeeded then the String is the token otherwise it is the error message sent back. In case of a failure, the optional Int is
     func fetchToken(username: String, password : String, callback : @escaping (Bool, String, Int?) -> Void) {
-        Alamofire.AF.request(path + loginUrl, method: .get).response { (data) in
-            DispatchQueue.main.async {
-                //TODO: - Because of the API which uses self signed certificates, this section poses problems.
-                print(data)
-            }
+        Api.session.request(path + loginUrl, method: .get).responseJSON { (data) in
+            print(data.response?.statusCode)
+
         }
     }
 }
