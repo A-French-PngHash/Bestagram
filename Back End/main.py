@@ -12,4 +12,4 @@ api = Api(app)
 api.add_resource(login.Login, "/login")
 
 # Running the api.
-app.run(host=HOST, port=PORT, ssl_context=("ApiCertificate/0.0.0.0:5002.crt", "ApiCertificate/0.0.0.0:5002.key"))
+app.run(host=HOST, port=PORT, ssl_context=("ApiCertificate/cert.pem", "ApiCertificate/key.pem"))
