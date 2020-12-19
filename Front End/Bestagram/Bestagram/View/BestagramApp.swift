@@ -15,7 +15,9 @@ struct BestagramApp: App {
                 .font(ProximaNova.body)
                 .onAppear(perform: {
                     LoginService.shared.fetchToken(username: "titouan", password: "thisisahash") { (success, response, code) in
-                        print("done")
+                        print(success)
+                        print(response)
+                        print(code)
                     }
                 })
         }
