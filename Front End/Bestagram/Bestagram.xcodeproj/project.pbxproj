@@ -27,6 +27,8 @@
 		5BA7A0F52571BE5500993718 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5BA7A0F42571BE5500993718 /* Preview Assets.xcassets */; };
 		5BA7A1002571BE5500993718 /* BestagramTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A0FF2571BE5500993718 /* BestagramTests.swift */; };
 		5BA7A10B2571BE5500993718 /* BestagramUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA7A10A2571BE5500993718 /* BestagramUITests.swift */; };
+		5BB3770E258E4F41003559DE /* Hashing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3770D258E4F41003559DE /* Hashing.swift */; };
+		5BB37714258E73D0003559DE /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB37713258E73D0003559DE /* Error.swift */; };
 		5BB7D82E25815399001AE07C /* SignInOrUpChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */; };
 		5BB7D837258154D9001AE07C /* EnterPhoneOrEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */; };
 		5BDCB8F42586B34C00056B2B /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDCB8F32586B34C00056B2B /* LoginService.swift */; };
@@ -84,6 +86,8 @@
 		5BA7A1062571BE5500993718 /* BestagramUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BestagramUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BA7A10A2571BE5500993718 /* BestagramUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramUITests.swift; sourceTree = "<group>"; };
 		5BA7A10C2571BE5500993718 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5BB3770D258E4F41003559DE /* Hashing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hashing.swift; sourceTree = "<group>"; };
+		5BB37713258E73D0003559DE /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInOrUpChoiceView.swift; sourceTree = "<group>"; };
 		5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPhoneOrEmailView.swift; sourceTree = "<group>"; };
 		5BDCB8F32586B34C00056B2B /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
@@ -231,6 +235,8 @@
 				5B1D1FCC257260E0006B5073 /* Post.swift */,
 				5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */,
 				5B70B670258412F1004221D5 /* Checks.swift */,
+				5BB3770D258E4F41003559DE /* Hashing.swift */,
+				5BB37713258E73D0003559DE /* Error.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -583,10 +589,12 @@
 				5BB7D82E25815399001AE07C /* SignInOrUpChoiceView.swift in Sources */,
 				5BA7A0F02571BE5300993718 /* PostView.swift in Sources */,
 				5B4A619025852E9C008FDED5 /* EnterConfirmationCodeView.swift in Sources */,
+				5BB37714258E73D0003559DE /* Error.swift in Sources */,
 				5B1D200F2572DF2A006B5073 /* DescriptionView.swift in Sources */,
 				5B5DF1ED2581887400A756D9 /* BigBlueButton.swift in Sources */,
 				5BDCB8FC2586B77F00056B2B /* Api.swift in Sources */,
 				5B5DF1F225818AD700A756D9 /* CustomTextField.swift in Sources */,
+				5BB3770E258E4F41003559DE /* Hashing.swift in Sources */,
 				5BA7A0EE2571BE5300993718 /* BestagramApp.swift in Sources */,
 				5B70B671258412F1004221D5 /* Checks.swift in Sources */,
 				5BE70E042571C43300187FF1 /* User.swift in Sources */,

@@ -13,10 +13,12 @@ struct EnterConfirmationCodeView: View {
     /// Email entered by the user.
     var email: String
 
-    /// Disable or not the next button.
-    @State var buttonDisabled: Bool = true
+    /// Style the next button should have.
+    @State var buttonStyle: Style = .disabled
     /// Code entered by user in the text field.
     @State var code: String = ""
+    /// Apply error style to text field.
+    @State var textFieldErrorStyle: Bool = false
 
     /// The length of the code sent to the user.
     let codeLength = 6
@@ -39,10 +41,12 @@ struct EnterConfirmationCodeView: View {
                 CustomTextField(
                     displayCross: true,
                     placeholder: "Confirmation Code",
-                    distanceEdge: 0, input: $code) { (value) in
-                    buttonDisabled = value.count != codeLength
+                    distanceEdge: 0, input: $code, error : $textFieldErrorStyle) { (value) in
+                    if value.count != codeLength {
+                        buttonStyle = .disabled
+                    }
                 }
-                BigBlueButton(text: "Next", disabled: $buttonDisabled) {
+                BigBlueButton(text: "Next", style: $buttonStyle) {
                     // Go to next view
                 }
                 Spacer()

@@ -14,7 +14,10 @@ struct EnterPhoneOrEmailView: View {
 
     @State var pickerSelection: Int = 2
     @State var emailEntered: String = ""
-    @State var buttonDisabled: Bool = true
+    /// Style the next button should have.
+    @State var buttonStyle: Style = .disabled
+    /// Apply error style to text field.
+    @State var textFieldErrorStyle: Bool = false
 
     // Contain the form that is displayed to the user. The body variable really contain adjustments to make the form look good in the app.
     var form : some View {
@@ -31,21 +34,25 @@ struct EnterPhoneOrEmailView: View {
                 CustomTextField(
                     displayCross: true,
                     placeholder: "Email address",
-                    input: $emailEntered) { (value) in
-                    // Set the variable to disable or not the button style.
-                    buttonDisabled = !Checks.isEmailValid(email: value)
+                    input: $emailEntered, error: $textFieldErrorStyle) { (value) in
+                    // Set the button style to disable or not.
+                    if !Checks.isEmailValid(email: value) {
+                        buttonStyle = .disabled
+                    }
                 }
             } else if pickerSelection == 2 {
                 // Selection is email.
                 CustomTextField(
                     displayCross: true,
                     placeholder: "Email address",
-                    input: $emailEntered) { (value) in
-                    // Set the variable to disable or not the button style.
-                    buttonDisabled = !Checks.isEmailValid(email: value)
+                    input: $emailEntered, error: $textFieldErrorStyle) { (value) in
+                    // Set the button style to disable or not.
+                    if !Checks.isEmailValid(email: value) {
+                        buttonStyle = .disabled
+                    }
                 }
             }
-            BigBlueButton(text: "Next", disabled: $buttonDisabled) {
+            BigBlueButton(text: "Next", style: $buttonStyle) {
                 print(emailEntered)
             }
         }

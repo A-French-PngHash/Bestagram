@@ -26,6 +26,8 @@ struct CustomTextField: View {
 
     /// Input entered by user in the field.
     @Binding var input: String
+    /// Indicate if the text field should have an error style.
+    @Binding var error : Bool
 
     /// Action to perform when the text field is edited.
     var onEdit: ((String) -> Void)?
@@ -68,7 +70,7 @@ struct CustomTextField: View {
             .background(self.colorScheme == ColorScheme.dark ? backgroundColorDarkMode : backgroundColorLightMode)
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
-                    .stroke(Color.gray, lineWidth: 0.3)
+                    .stroke(error ? Color.red : Color.gray, lineWidth: 0.3)
             )
 
             Spacer()
@@ -81,9 +83,10 @@ struct CustomTextField: View {
 
 struct TextField_Previews: PreviewProvider {
     @State static var input: String = ""
+    @State static var error : Bool = true
 
     static var previews: some View {
-        CustomTextField(displayCross: true, placeholder: "email", distanceEdge: 20, input: $input, onEdit: { (_) in
+        CustomTextField(displayCross: true, placeholder: "email", distanceEdge: 20, input: $input, error: $error, onEdit: { (_) in
 
         })
             .preferredColorScheme(.dark)

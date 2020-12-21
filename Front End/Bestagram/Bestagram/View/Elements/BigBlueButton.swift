@@ -12,7 +12,8 @@ struct BigBlueButton: View {
 
     /// Text to display on the button.
     var text: String
-    @Binding var disabled: Bool
+    /// Sstyle the button should take.
+    @Binding var style: Style
     /// Action to do when button is pressed.
     var onPress : () -> Void
 
@@ -20,8 +21,12 @@ struct BigBlueButton: View {
         Button(action: {
             onPress()
         }, label: {
-            Text(self.text)
-                .font(ProximaNova.bodyBold)
+            if style == .loading {
+                ProgressView()
+            } else {
+                Text(self.text)
+                    .font(ProximaNova.bodyBold)
+            }
         })
         .padding()
         .frame(height: 35)
@@ -29,14 +34,19 @@ struct BigBlueButton: View {
         .background(Color.blue)
         .foregroundColor(.white)
         .cornerRadius(4)
-        .opacity(disabled ? 0.6 : 1)
+        .opacity(style == .disabled || style == .loading ? 0.6 : 1)
+        .disabled(style == .disabled || style == .loading)
     }
 }
 
+enum Style {
+    case disabled, loading, normal
+}
+
 struct BigBlueButton_Previews: PreviewProvider {
-    @State static var disabled: Bool = true
+    @State static var style: Style = .normal
     static var previews: some View {
-        BigBlueButton(text: "Test", disabled: $disabled) {
+        BigBlueButton(text: "Test", style: $style) {
             print("button clicked successfully")
         }
     }
