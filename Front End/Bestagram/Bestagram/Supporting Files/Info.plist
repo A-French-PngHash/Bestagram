@@ -3,10 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
+	<dict/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>ProximaNova-Thin.otf</string>

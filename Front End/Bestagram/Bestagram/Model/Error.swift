@@ -36,3 +36,7 @@ struct InvalidCredentials : BestagramError {
 struct MissingInformations : BestagramError {
     var description: String = "We had problems providing all the informations to the server. Please contact a developper of the app."
 }
+
+struct UsernameAlreadyTaken : BestagramError {
+    var description: String = "Sorry this username is already taken... Try a different one."
+}
