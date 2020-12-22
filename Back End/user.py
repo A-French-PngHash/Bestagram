@@ -24,7 +24,8 @@ class User:
 
     def __init__(self, username: str, hash: str, cursor: mysql.connector.connection_cext.CMySQLCursor):
         """
-        Initialize the user object. Login verification is here.
+        Initialize the user object. This is the login, if a user need to be registered, the static function create must
+        be called.
 
         :param username: Username of the user.
         :param hash: Hash of the user.
@@ -108,7 +109,7 @@ class User:
         self.cursor.execute(query)
 
     @staticmethod
-    def create(username: str, hash: str, cursor: mysql.connector.connection_cext.CMySQLCursor):
+    def create(username: str, hash: str, email: str, cursor: mysql.connector.connection_cext.CMySQLCursor):
         """
         Add a user in the database and return the User object associated. Also check if the username is not already
         taken.
@@ -130,8 +131,8 @@ class User:
             raise UsernameTaken(username=username)
 
         add_user_query = f"""
-        INSERT INTO UserTable (username, hash) VALUES
-        ("{username}", "{hash}");
+        INSERT INTO UserTable (username, hash, email) VALUES
+        ("{username}", "{hash}", "{email}");
         """
         cursor.execute(add_user_query)
         return User(username, hash, cursor)

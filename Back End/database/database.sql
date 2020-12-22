@@ -6,6 +6,7 @@ CREATE TABLE UserTable(
     id BIGINT NOT NULL AUTO_INCREMENT,
     username VARCHAR(30) NOT NULL,
     hash VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL,
     token VARCHAR(30),
     token_registration_date DATETIME,
     description VARCHAR(1000),
@@ -39,6 +40,9 @@ ENGINE=INNODB;
 -- Indexes
 ALTER TABLE UserTable
 ADD UNIQUE ind_name (username);
+
+ALTER TABLE UserTable
+ADD UNIQUE ind_email (email);
 
 ALTER TABLE LikeTable
 ADD INDEX ind_user_id (user_id);

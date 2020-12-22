@@ -4,11 +4,12 @@ from user import *
 import os
 import config
 import datetime
+import database.request_utils
 
 
-class TestUserClass(unittest.TestCase):
+class Tests(unittest.TestCase):
     """
-    Unit testing of user class.
+    Unit testing for functions related to the database.
     """
 
     def create_db(self):
@@ -28,6 +29,11 @@ class TestUserClass(unittest.TestCase):
         self.test_cnx.autocommit = True
         self.cursor = self.test_cnx.cursor(dictionary=True)
 
+    """
+    --------------------------
+    User functions
+    --------------------------
+    """
     def test_GivenNoUserWhenLoginWithUsernameNotExistingThenRaiseInvalidCredentials(self):
         # Given no user.
 
@@ -140,6 +146,33 @@ class TestUserClass(unittest.TestCase):
         self.assertIsNotNone(new_user)
         self.assertEqual(username + "e", new_user.username)
         self.assertEqual(hash, new_user.hash)
+
+    """
+    --------------------------
+    Check if value exist
+    --------------------------
+    """
+    def testGivenEmailInDatabaseWhenCheckingIfExistThenIsTrue(self):
+        # Given email in database.
+        email = "test@bestagram.com"
+        self.add_user({"username" : "t", "hash": "t", "email": email})
+
+        # When checking if exist.
+        exist = database.request_utils.value_in_database("UserTable", "email", email)
+
+        # Then is true.
+        self.assertTrue(exist)
+
+    def testGivenEmailNotInDatabaseWhenCheckingIfExistThenIsFalse(self):
+        # Given email not in database.
+        email = "notexisting@bestagram.com"
+
+        # When checking if exist.
+        exist = database.request_utils.value_in_database("UserTable", "email", email)
+
+        # Then is false.
+        self.assertFalse(exist)
+
 
     def tearDown(self) -> None:
         pass
