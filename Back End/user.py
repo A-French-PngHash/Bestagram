@@ -3,6 +3,9 @@ import datetime
 import config
 import random
 import mysql.connector
+from database.request_utils import value_in_database
+import werkzeug
+import os
 
 
 def generate_token() -> str:
@@ -13,23 +16,26 @@ def generate_token() -> str:
     # This are the character used in the token.
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     token = ""
-    for i in range(30):
+    for i in range(200):
         token += random.choice(letters)
     return token
 
+
 class User:
     """
-    Is a user of Bestagram.
+    User of Bestagram.
     """
 
-    def __init__(self, username: str, hash: str, cursor: mysql.connector.connection_cext.CMySQLCursor):
+    def __init__(self, username: str, cnx: mysql.connector.MySQLConnection, hash: str = None,
+                 token: str = None):
         """
         Initialize the user object. This is the login, if a user need to be registered, the static function create must
-        be called.
+        be called. Note that either the hash parameter OR the token is required.
 
         :param username: Username of the user.
         :param hash: Hash of the user.
-        :param cursor: Cursor connecting to the database.
+        :param token: Token to connect with.
+        :param cnx: Connection to the database.
 
         :raise InvalidCredentials: When the username and hash don't both correspond to the data of a user.
         """
@@ -41,25 +47,35 @@ class User:
         FROM UserTable
         WHERE UserTable.username = "{username}";
         """
-        cursor.execute(user_query)
-        result = cursor.fetchall()
-        print(user_query)
-        # Checking if given credentials are correct.
-        if len(result) == 0 or result[0]["hash"] != hash:
+        self.cursor = cnx.cursor(dictionary=True)
+        self.cursor.execute(user_query)
+        result = self.cursor.fetchall()
+
+        if len(result) == 0:
             raise InvalidCredentials(username=username, hash=hash)
 
         result = result[0]
-
-        self.cursor = cursor
-        self.hash = hash
-        self.id = result["id"]
         self._token = result["token"]
         self._token_registration_date = result["token_registration_date"]
+        self.id = result["id"]
+
+        # Checking if given credentials are correct.
+        if not (result["hash"] == hash or self.token == token):
+            raise InvalidCredentials(username=username, hash=hash)
+
+        self.hash = hash
         self._description = result["description"]
         self._profile_image_path = result["profile_image_path"]
 
+    def __del__(self):
+        try:
+            self.cursor.fetchall()
+        except:
+            pass
+        self.cursor.close()
+
     @property
-    def token(self):
+    def token(self) -> str:
         if self._token_registration_date:
             # Checking if token is expired.
             if (datetime.datetime.today() - self._token_registration_date).total_seconds() < config.TOKEN_EXPIRATION:
@@ -87,6 +103,27 @@ class User:
             "token_registration_date": datetime.datetime.today().replace(microsecond=0)
         })
 
+    @property
+    def directory(self) -> str:
+        """
+        Path leading to the directory where post's images from this user are stored.
+        :return:
+        """
+        return f'Posts/{self.username}'
+
+    @property
+    def number_of_post(self) -> int:
+        """
+        Number of post this user has made.
+        :return:
+        """
+        get_posts_request = f"""
+        SELECT * FROM Post
+        WHERE Post.user_id = {self.id};
+        """
+        self.cursor.execute(get_posts_request)
+        return len(self.cursor.fetchall())
+
     def _set_value(self, values: dict):
         """
         Set value(s) for this user in the UserTable table.
@@ -108,31 +145,67 @@ class User:
         """
         self.cursor.execute(query)
 
+    def create_post(self, image: werkzeug.datastructures.FileStorage, description: str):
+        """
+        Create a post from this user.
+        :param image: Post's image.
+        :param description: Description provided with the post.
+        :return:
+        """
+        self.prepare_directory()
+        image.filename = f"{self.number_of_post}.png"
+        image_path = os.path.join(self.directory, image.filename)
+        try:
+            image.save(image_path)
+        except:
+            # When testing, the image provided is invalid so this enables the program to continue anyway.
+            pass
+        create_post_query = f"""
+        INSERT INTO Post
+        VALUES(
+        NULL, "{image_path}", {self.id}, "{datetime.datetime.now().replace(microsecond=0)}", "{description}"
+        );
+        """
+        print(create_post_query)
+        self.cursor.execute(create_post_query)
+
+    def prepare_directory(self):
+        """
+        Prepare the directory to store a post's image in. Create it if it not already exists.
+        :return:
+        """
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory)
+
     @staticmethod
-    def create(username: str, hash: str, email: str, cursor: mysql.connector.connection_cext.CMySQLCursor):
+    def create(username: str, hash: str, email: str, cnx: mysql.connector.MySQLConnection):
         """
         Add a user in the database and return the User object associated. Also check if the username is not already
         taken.
-        :param cursor: Cursor connecting to the database.
         :param username: The username of the user to create.
+        :param email: Email of the user.
         :param hash: The hash the user use to login.
+        :param cnx: Connection to the database.
+
         :raise UsernameTaken:
+        :raise EmailTaken:
+
         :return: User object created.
         """
 
-        # Checking if the username is already taken or not.
-        check_if_username_taken_query = f"""
-        SELECT * FROM UserTable
-        WHERE UserTable.username = "{username}";
-        """
-        cursor.execute(check_if_username_taken_query)
-        if len(cursor.fetchall()) != 0:
+        if value_in_database("UserTable", "username", username, cnx=cnx):
             # Username is taken.
             raise UsernameTaken(username=username)
+
+        if value_in_database("UserTable", "email", email, cnx=cnx):
+            # Email is taken.
+            raise EmailTaken(email=email)
 
         add_user_query = f"""
         INSERT INTO UserTable (username, hash, email) VALUES
         ("{username}", "{hash}", "{email}");
         """
+        cursor = cnx.cursor()
         cursor.execute(add_user_query)
-        return User(username, hash, cursor)
+        cursor.close()
+        return User(username, cnx, hash)

@@ -31,6 +31,7 @@ Parameters :
 Errors : 
  - "Missing information" code **400**.
  - "Username already taken" code **409**.
+ - "Email already taken" code **409**.
 
 If operation successful, will send back something similar to : 
 

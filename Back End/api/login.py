@@ -22,7 +22,7 @@ class Login(Resource):
             return {"error": "Missing information"}, 400
 
         try:
-            user = User(params["username"], params["hash"], cursor=database.mysql_connection.cursor)
+            user = User(params["username"], cnx=database.mysql_connection.cnx, hash=params["hash"])
         except InvalidCredentials as e:
             return {"error": "Invalid Credentials"}, 401
 
@@ -47,7 +47,7 @@ class Login(Resource):
             return {"error": "Missing information"}, 400
 
         try:
-            user = User.create(params["username"], params["hash"], params["email"], cursor=database.mysql_connection.cursor)
+            user = User.create(params["username"], cnx=database.mysql_connection.cnx, hash=params["hash"], email=params["email"])
         except UsernameTaken as e:
             return {"error": "Username already taken"}, 409
 

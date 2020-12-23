@@ -29,3 +29,18 @@ class UsernameTaken(Exception):
         if self.username:
             msg += f" (username : {self.username})"
         return msg
+
+
+class EmailTaken(Exception):
+    """
+    Email adress already exists in database.
+    """
+
+    def __init__(self, email: str = None):
+        self.email = email
+
+    def __str__(self):
+        msg = "Email Taken"
+        if self.email:
+            msg += f" (email : {self.email})"
+        return msg

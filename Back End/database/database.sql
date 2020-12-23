@@ -7,7 +7,7 @@ CREATE TABLE UserTable(
     username VARCHAR(30) NOT NULL,
     hash VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL,
-    token VARCHAR(30),
+    token VARCHAR(200),
     token_registration_date DATETIME,
     description VARCHAR(1000),
     profile_image_path VARCHAR(30),
@@ -22,10 +22,10 @@ CREATE TABLE LikeTable(
 ENGINE=INNODB;
 
 CREATE TABLE Post(
-    id BIGINT NOT NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     image_path VARCHAR(30) NOT NULL,
     user_id BIGINT NOT NULL,
-    post_time DATE NOT NULL,
+    post_time DATETIME NOT NULL,
     description VARCHAR(1000),
     PRIMARY KEY(id)
 )
