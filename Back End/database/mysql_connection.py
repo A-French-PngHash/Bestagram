@@ -12,3 +12,7 @@ cnx = mysql.connector.connect(
     use_pure=True)
 cnx.autocommit = True
 cursor = cnx.cursor(dictionary=True)
+
+def make_cursor():
+    return cnx.cursor(dictionary=True)
+
