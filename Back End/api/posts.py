@@ -26,7 +26,7 @@ class Post(Resource):
         params = parser.parse_args()
 
         if params["image"] == "" or params["description"] == "":
-            return {"error": "Missing Informations"}, 400
+            return {"error": "Missing Information"}, 400
 
         try:
             user = User(username=params["Username"], token=params["Authorization"], cnx=cnx)

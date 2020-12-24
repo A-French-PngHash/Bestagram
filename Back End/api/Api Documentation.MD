@@ -1,3 +1,4 @@
+
 # Bestagram API Documentation
 This document provide a **full documentation** of the API used in the *Bestagram* project. It is updated as soon as new functionality are added.
 
@@ -9,14 +10,14 @@ When there is an error, the first field of the answer will always be named "erro
 Return the token of a user. 
 
 Parameters : 
- - username - name the user want to have.
- - hash - encrypted password.
+ - username : name the user want to have.
+ - hash : encrypted password.
  
 Errors : 
  - "Missing information" code **400**.
  - "Invalid Credentials" code **401**.
 
-If operation successful, will send back something similar to : 
+Response if operation successful :
 
     {"token" : "x"} - 200
 
@@ -24,25 +25,25 @@ If operation successful, will send back something similar to :
 Register a user into the database and return the token. 
 
 Parameters :
- - username - name the user want to have.
- - hash - encrypted password.
- - email - email associated to the account.
+ - username : name the user want to have.
+ - hash : encrypted password.
+ - email : email associated to the account.
 
 Errors : 
  - "Missing information" code **400**.
  - "Username already taken" code **409**.
  - "Email already taken" code **409**.
 
-If operation successful, will send back something similar to : 
+Response if operation successful :
 
     {"token" : "x"} - 201
 
 # Email
-# Get
+## Get
 Check if an email is already taken by someone. 
 
 Parameters : 
- - email - The email to check for.
+ - email : The email to check for.
 
 Errors :
  - "Missing information" code **400**.
@@ -50,3 +51,22 @@ Errors :
 Response if operation successful :
 
     {"taken" : true} - 200
+
+# Post
+## Post
+Create a post with an image, description...
+Headers :
+ - Authorization : Token of the user.
+ - Username : Username of the user who is making the post.
+
+Parameters :
+ - image : The image of the post.
+ - description : Description of the post.
+
+Errors :
+ - "Missing Information" code **400**.
+ - "Invalid credentials" code **401**
+
+Response if operation successful :
+
+    {"status": "Image Received"}, 201
