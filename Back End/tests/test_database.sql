@@ -5,8 +5,9 @@ USE BestagramTest;
 CREATE TABLE UserTable(
     id BIGINT NOT NULL AUTO_INCREMENT,
     username VARCHAR(30) NOT NULL,
+    email VARCHAR(150),
     hash VARCHAR(100) NOT NULL,
-    token VARCHAR(30),
+    token VARCHAR(200),
     token_registration_date DATETIME,
     description VARCHAR(1000),
     profile_image_path VARCHAR(30),
@@ -21,7 +22,7 @@ CREATE TABLE LikeTable(
 ENGINE=INNODB;
 
 CREATE TABLE Post(
-    id BIGINT NOT NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT,
     image_path VARCHAR(30) NOT NULL,
     user_id BIGINT NOT NULL,
     post_time DATE NOT NULL,
@@ -39,6 +40,9 @@ ENGINE=INNODB;
 -- Indexes
 ALTER TABLE UserTable
 ADD UNIQUE ind_name (username);
+
+ALTER TABLE UserTable
+ADD UNIQUE ind_email (email);
 
 ALTER TABLE LikeTable
 ADD INDEX ind_user_id (user_id);

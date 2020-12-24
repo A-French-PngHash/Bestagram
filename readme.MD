@@ -5,6 +5,11 @@ It is an educationnal purpose project which mean it is not to be used in any oth
 
 You can find the **Roadmap** on [Trello](https://trello.com/b/oTma0uAS)
 
+## Style
+This section will describe the syntaxic style used in the different languages.
+### Swift
+The style to use when coding in swift is the default style of swiftlint. No code should be pushed if it doesn't respect swiftlint style code. Disabling rules may happen in exceptionnal situations only when there is absolutely no way to do differently.
+
 ## API
 You can find the API documentation in "Back End/api/Api Documentation.MD".
 
@@ -16,6 +21,8 @@ The front end has two dependencies : [AlamofireImage](https://github.com/Alamofi
    
 in the folder where you find the .xcodeproj and you will be all set. Don't forget to open the .xcworkspace from now on to include the dependencies.
 
+## Database
+You can find the database documentation in "Back End/database/Database Documentation.md".
 
 ## Differences from the original Instagram app
 

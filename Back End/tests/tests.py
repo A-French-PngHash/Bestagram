@@ -4,11 +4,14 @@ from user import *
 import os
 import config
 import datetime
+import database.request_utils
+import werkzeug
+import shutil
 
 
-class TestUserClass(unittest.TestCase):
+class Tests(unittest.TestCase):
     """
-    Unit testing of user class.
+    Unit testing for functions related to the database.
     """
 
     def create_db(self):
@@ -27,6 +30,16 @@ class TestUserClass(unittest.TestCase):
             use_pure=True)
         self.test_cnx.autocommit = True
         self.cursor = self.test_cnx.cursor(dictionary=True)
+        try:
+            shutil.rmtree("Posts")
+        except:
+            pass
+
+    """
+    --------------------------
+    User functions
+    --------------------------
+    """
 
     def test_GivenNoUserWhenLoginWithUsernameNotExistingThenRaiseInvalidCredentials(self):
         # Given no user.
@@ -35,7 +48,7 @@ class TestUserClass(unittest.TestCase):
 
         # When login with username not existing.
         try:
-            user = User(username="notexistingusername", hash="testhash", cursor=self.cursor)
+            user = User(username="notexistingusername", hash="testhash", cnx=self.test_cnx)
         # Then raise invalid credentials.
         except InvalidCredentials as e:
             triggered_invalid_credentials = True
@@ -52,7 +65,7 @@ class TestUserClass(unittest.TestCase):
 
         # When login with wrong hash.
         try:
-            user = User(username="testusername", hash=hash + "wrong", cursor=self.cursor)
+            user = User(username="testusername", hash=hash + "wrong", cnx=self.test_cnx)
         # Then raise invalid credentials.
         except InvalidCredentials as e:
             triggered_invalid_credentials = True
@@ -70,7 +83,7 @@ class TestUserClass(unittest.TestCase):
         # When login successfully.
         user = None
         try:
-            user = User(username=username, hash=hash, cursor=self.cursor)
+            user = User(username=username, hash=hash, cnx=self.test_cnx)
         # Then raise no error and correct token.
         except Exception as e:
             self.assertTrue(False, f"error triggered : {e}")
@@ -90,7 +103,7 @@ class TestUserClass(unittest.TestCase):
             {"username": username, "hash": hash, "token": token, "token_registration_date": token_registration})
 
         # When getting token.
-        user = User(username=username, hash=hash, cursor=self.cursor)
+        user = User(username=username, hash=hash, cnx=self.test_cnx)
         new_token = user.token
 
         # Then is new one.
@@ -102,7 +115,7 @@ class TestUserClass(unittest.TestCase):
         hash = "hash"
 
         # When creating one with user method.
-        new_user = User.create(username=username, hash=hash, cursor=self.cursor)
+        new_user = User.create(username=username, hash=hash, cnx=self.test_cnx, email="email")
 
         # Then is created with correct data.
         self.assertIsNotNone(new_user)
@@ -119,7 +132,7 @@ class TestUserClass(unittest.TestCase):
         new_user = None
         # When creating one with same username.
         try:
-            new_user = User.create(username=username, hash=hash, cursor=self.cursor)
+            new_user = User.create(username=username, hash=hash, cnx=self.test_cnx, email="email")
         except UsernameTaken:
             raise_error = True
 
@@ -134,14 +147,93 @@ class TestUserClass(unittest.TestCase):
         self.add_user({"username": username, "hash": hash})
 
         # When creating one with user method.
-        new_user = User.create(username=username+"e", hash=hash, cursor=self.cursor)
+        new_user = User.create(username=username + "e", hash=hash, cnx=self.test_cnx, email="email")
 
         # Then is created with correct data.
         self.assertIsNotNone(new_user)
         self.assertEqual(username + "e", new_user.username)
         self.assertEqual(hash, new_user.hash)
 
+    """
+    --------------------------
+    Check if value exist
+    --------------------------
+    """
+
+    def testGivenEmailInDatabaseWhenCheckingIfExistThenIsTrue(self):
+        # Given email in database.
+        email = "test@bestagram.com"
+        self.add_user({"username": "t", "hash": "t", "email": email})
+
+        # When checking if exist.
+        exist = database.request_utils.value_in_database("UserTable", "email", email, cnx=self.test_cnx)
+
+        # Then is true.
+        self.assertTrue(exist)
+
+    def testGivenEmailNotInDatabaseWhenCheckingIfExistThenIsFalse(self):
+        # Given email not in database.
+        email = "notexisting@bestagram.com"
+
+        # When checking if exist.
+        exist = database.request_utils.value_in_database("UserTable", "email", email, cnx=self.test_cnx)
+
+        # Then is false.
+        self.assertFalse(exist)
+
+    """
+    --------------------------
+    Create post functions.
+    --------------------------
+    """
+
+    def test_givenNoDirectoryForStoringImagesWhenPreparingDirectoryForUserThenIsCreatedCorrectly(self):
+        # Given no directory for storing images.
+        try:
+            shutil.rmtree("Posts")
+        except:
+            pass
+
+        # When preparing directory for user.
+        name = "test"
+        hash = "hash"
+        self.add_user({"username": name, "hash": hash})
+        user = User(name, self.test_cnx, hash=hash)
+        user.prepare_directory()
+
+        # Then is created correctly.
+        self.assertTrue(os.path.exists(f"Posts/{name}"))
+
+    def test_givenNoImageInDatabaseWhenCreatingImageThenIsInDatabaseWithCorrectData(self):
+        # Given no image in database.
+        name = "test"
+        hash = "hash"
+        self.add_user({"username": name, "hash": hash})
+
+        # When creating image.
+        user = User(name, self.test_cnx, hash=hash)
+        description = "Test image."
+        with open("test_image.png", "r") as img:
+            image = werkzeug.datastructures.FileStorage(img)
+            print(image)
+            user.create_post(image=image, description=description)
+            image.close()
+
+        # Then is in database with correct data.
+        get_post_query = f"""
+        SELECT * FROM Post
+        WHERE user_id = {user.id};
+        """
+        self.cursor.execute(get_post_query)
+        result = self.cursor.fetchall()
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["description"], description)
+
     def tearDown(self) -> None:
+        try:
+            shutil.rmtree("Posts")
+        except:
+            pass
         pass
 
     def add_user(self, fields: dict):

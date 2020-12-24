@@ -7,15 +7,14 @@ The database is a MySQL database. All the tables uses the InnoDB motor.
 ## Naming
 Tables names must follow the *CamelCase* convention. 
 Indexes must follow the following syntax : *ind_column_name*.
-** Example :**
+**Example :**
 
     ALTER TABLE Post  
     ADD INDEX ind_user_id (user_id);
-
+ 
 Foreign Keys must follow the following syntax : *fk_table_name_column_name_reference_column_name*
 **Example :** 
   
-
     ALTER TABLE Post  
     ADD CONSTRAINT fk_Post_user_id_id FOREIGN KEY (user_id) REFERENCES UserTable(id);
 
@@ -27,17 +26,18 @@ This table stores all the **user profile data**. It is named like this because *
 
 | Field              | Type          | Null | Key | Default | Extra |
 | --------------------|---------------|------|-----|---------|-------|
-| id                 | bigint        | NO   | PRI | NULL    |       |
-| name               | varchar(30)   | NO   | UNI | NULL    |       |
-| hash               | varchar(100)  | NO   |     | NULL    |       |
-| token                   | varchar(30)   | YES  |     | NULL    |       |
-| token_registration_date | date          | YES  |     | NULL    |       |
-| description        | varchar(1000) | YES  |     | NULL    |       |
-| profile_image_path | varchar(30)   | YES  |     | NULL    |       |
+| id                      | bigint        | NO   | PRI | NULL    | auto_increment |
+| username                | varchar(30)   | NO   | UNI | NULL    |                |
+| hash                    | varchar(100)  | NO   |     | NULL    |                |
+| email                   | varchar(150)  | NO   | UNI | NULL    |                |
+| token                   | varchar(200)  | YES  |     | NULL    |                |
+| token_registration_date | datetime      | YES  |     | NULL    |                |
+| description             | varchar(1000) | YES  |     | NULL    |                |
+| profile_image_path      | varchar(30)   | YES  |     | NULL    |                |
 ### Id
 The id component uniquely identify each user. It is used throughout the other tables to identify elements from a user.
 This component cannot be changed by the user who has no access - nor read or write - to it.
-### Name
+### Username
 The username chosen by the user. This element is accessible by all user of the app as it is what is shown on the profile of someone. Only the user has a write access to it. It is unique as different people can't have the same name.
 ### Hash
 The hash generated with the user password and username. For more information on how it is generated see *API Documentation.md*.
@@ -54,11 +54,11 @@ Store a path that link to an image used as a profile image. The user has no dire
 Store a post and hit attributes.
 | Field       | Type          | Null | Key | Default | Extra |
 |-------------|---------------|------|-----|---------|-------|
-| id          | bigint        | NO   | PRI | NULL    |       |
-| image_path  | varchar(30)   | NO   |     | NULL    |       |
-| user_id     | bigint        | NO   | MUL | NULL    |       |
-| post_time   | date          | NO   |     | NULL    |       |
-| description | varchar(1000) | YES  |     | NULL    |       |
+| id          | bigint        | NO   | PRI | NULL    | auto_increment |
+| image_path  | varchar(30)   | NO   |     | NULL    |                |
+| user_id     | bigint        | NO   | MUL | NULL    |                
+| post_time   | datetime      | NO   |     | NULL    |                |
+| description | varchar(1000) | YES  |     | NULL    |                |
 ### Id
 Is the primary key of this table. Used to uniquely identified a given post in the database.
 ### Image_path
