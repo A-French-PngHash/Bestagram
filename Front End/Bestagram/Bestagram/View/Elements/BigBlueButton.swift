@@ -25,11 +25,11 @@ struct BigBlueButton: View {
                 ProgressView()
             } else {
                 Text(self.text)
-                    .font(ProximaNova.bodyBold)
+                    .font(ProximaNova.body)
             }
         })
         .padding()
-        .frame(height: 35)
+        .frame(height: 37)
         .frame(maxWidth: .infinity)
         .background(Color.blue)
         .foregroundColor(.white)

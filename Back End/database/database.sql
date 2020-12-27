@@ -5,7 +5,7 @@ USE Bestagram;
 CREATE TABLE UserTable(
     id BIGINT NOT NULL AUTO_INCREMENT,
     username VARCHAR(30) NOT NULL,
-    hash VARCHAR(100) NOT NULL,
+    hash VARCHAR(128) NOT NULL,
     email VARCHAR(150) NOT NULL,
     token VARCHAR(200),
     token_registration_date DATETIME,

@@ -3,6 +3,7 @@ from flask_restful import Resource, Api, reqparse
 from user import *
 import database.mysql_connection
 import database.request_utils
+import database.mysql_connection
 
 
 class Email(Resource):
@@ -17,5 +18,5 @@ class Email(Resource):
         if not params["email"]:
             return {"error": "Missing information"}, 400
 
-        taken = database.request_utils.value_in_database("UserTable", "email", params["email"])
+        taken = database.request_utils.value_in_database("UserTable", "email", params["email"], cnx=database.mysql_connection.cnx)
         return {"taken": taken}, 200

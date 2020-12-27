@@ -6,10 +6,11 @@
 	<dict/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>ProximaNova-Thin.otf</string>
+		<string>Proxima Nova Thin.otf</string>
+		<string>Langar.ttf</string>
+		<string>Proxima Nova Regular.otf</string>
+		<string>Proxima Nova Bold.otf</string>
 		<string>Billabong.ttf</string>
-		<string>ProximaNova-Regular.otf</string>
-		<string>ProximaNova-Bold.otf</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

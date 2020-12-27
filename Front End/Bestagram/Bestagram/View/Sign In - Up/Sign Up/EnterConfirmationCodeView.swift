@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+/// THIS VIEW IS NOT IMPLEMENTED FOR THE MOMENT AS THE API IS CURRENTLY NOT SENDING ANY EMAIL.
+
 /// Display a text field to the user asking him to validate the confirmation code that was sent to his email.
 struct EnterConfirmationCodeView: View {
 
@@ -41,7 +43,7 @@ struct EnterConfirmationCodeView: View {
                 CustomTextField(
                     displayCross: true,
                     placeholder: "Confirmation Code",
-                    distanceEdge: 0, input: $code, error : $textFieldErrorStyle) { (value) in
+                    distanceEdge: 0, contentType: .name, input: $code, error : $textFieldErrorStyle) { (value) in
                     if value.count != codeLength {
                         buttonStyle = .disabled
                     }

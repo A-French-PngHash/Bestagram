@@ -23,6 +23,8 @@ struct CustomTextField: View {
     var placeholder: String
     /// The distance that should be from the length of the screen on each side of the text field.
     var distanceEdge: CGFloat = 0
+    /// Content type of the text field.
+    var contentType : UITextContentType?
 
     /// Input entered by user in the field.
     @Binding var input: String
@@ -48,6 +50,8 @@ struct CustomTextField: View {
                                 edit(value)
                             }
                         })
+                        .textContentType(contentType == nil ? .none : contentType)
+                        .disableAutocorrection(true)
                 } else {
                     TextField(self.placeholder, text: $input)
                         .onChange(of: input, perform: { value in
@@ -55,6 +59,8 @@ struct CustomTextField: View {
                                 edit(value)
                             }
                         })
+                        .textContentType(contentType == nil ? .none : contentType)
+                        .disableAutocorrection(true)
                 }
                 // Shows the cross or not.
                 if displayCross && input != ""{
@@ -86,7 +92,7 @@ struct TextField_Previews: PreviewProvider {
     @State static var error : Bool = true
 
     static var previews: some View {
-        CustomTextField(displayCross: true, placeholder: "email", distanceEdge: 20, input: $input, error: $error, onEdit: { (_) in
+        CustomTextField(displayCross: true, placeholder: "email", distanceEdge: 20, contentType: .name, input: $input, error: $error,onEdit: { (_) in
 
         })
             .preferredColorScheme(.dark)

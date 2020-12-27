@@ -24,20 +24,32 @@ struct EnterLoginInfoView: View {
     @State var textFieldErrorStyle: Bool = false
     /// If the user login failed, this is the message that will be displayed to inform the user on what failed.
     @State var errorDescription: String = ""
+    /// Wether or not the loading of the user token with the provided
+    /// information was succesful or not.
+    @State var loadingSucceeded: Bool = false
 
     var body: some View {
-        HStack {
-            Spacer()
-                .frame(width: 15)
+        InterfacePositioningView(dontHaveAnAccount: true) {
             VStack(spacing: 20) {
                 Spacer()
                 Text("Bestagram")
                     .font(Billabong(size: 55).font)
 
-                CustomTextField(displayCross: true, placeholder: "Username or email", input: $nameEntered, error: $textFieldErrorStyle) { (value) in
+                CustomTextField(
+                    displayCross: true,
+                    placeholder: "Username or email",
+                    contentType: .username,
+                    input: $nameEntered,
+                    error: $textFieldErrorStyle) { (value) in
                     checkIfButtonShouldBeDisabled()
                 }
-                CustomTextField(displayCross: true, secureEntry: true, placeholder: "Password", distanceEdge: 0, input: $passwordEntered, error: $textFieldErrorStyle) { (value) in
+                CustomTextField(
+                    displayCross: true,
+                    secureEntry: true,
+                    placeholder: "Password",
+                    contentType: .password,
+                    input: $passwordEntered,
+                    error: $textFieldErrorStyle) { (value) in
                     checkIfButtonShouldBeDisabled()
                 }
                 if textFieldErrorStyle {
@@ -59,32 +71,25 @@ struct EnterLoginInfoView: View {
                     buttonStyle = .loading
                     let queue = DispatchQueue(label: "connect-user")
                     queue.async {
-                        self.user = User(username: self.nameEntered, password: self.passwordEntered, loadingFinished: { (success, error) in
+                        // Creating the user object will automatically start the hashing process and the fetch of the token.
+                        self.user = User(username: self.nameEntered.lowercased(), password: self.passwordEntered, name: nil, loadingFinished: { (success, error) in
                             userFinishedLoading(success: success, error: error)
                         })
                     }
                 }
-                Group {
-                    Spacer()
-                    Divider()
-                    HStack {
-                        Text("Don't have an account?")
-                        NavigationLink(
-                            destination: EnterPhoneOrEmailView(),
-                            label: {
-                                Text("Sign up")
-                            })
-                            .foregroundColor(.blue)
-                    }
-                    Spacer()
-                        .frame(height: 0)
+
+                if user != nil && loadingSucceeded {
+                    NavigationLink(
+                        destination: Text("main page"),
+                        isActive: .constant(true),
+                        label: {
+                            EmptyView()
+                        })
                 }
+                Spacer()
             }
-            Spacer()
-                .frame(width: 15)
         }
-        .navigationBarItems(leading: BackButton(presentationMode: presentationMode))
-        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
     }
 
     /// Update the style of the login button.
@@ -99,9 +104,8 @@ struct EnterLoginInfoView: View {
     func userFinishedLoading(success : Bool, error : BestagramError?) {
         loadingUser = false
         buttonStyle = .normal
-        if success {
-
-        } else {
+        loadingSucceeded = success
+        if !success {
             self.user = nil
             textFieldErrorStyle = true
             if let err = error {
@@ -113,8 +117,10 @@ struct EnterLoginInfoView: View {
 
 struct EnterLoginInfoView_Previews: PreviewProvider {
     static var previews: some View {
-        EnterLoginInfoView()
-            .preferredColorScheme(.dark)
-            .font(ProximaNova.body)
+        NavigationView {
+            EnterLoginInfoView()
+                .preferredColorScheme(.dark)
+                .font(ProximaNova.body)
+        }
     }
 }

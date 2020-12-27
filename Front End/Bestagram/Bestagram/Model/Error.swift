@@ -23,7 +23,7 @@ struct UnknownError : BestagramError {
 
     var description: String {
         get {
-            "An unknown error happenned - \(documentation)"
+            "An unknown error happenned - \(String(describing: documentation))"
         }
     }
 }
@@ -39,4 +39,8 @@ struct MissingInformations : BestagramError {
 
 struct UsernameAlreadyTaken : BestagramError {
     var description: String = "Sorry this username is already taken... Try a different one."
+}
+
+struct InvalidEmailAdress : BestagramError {
+    var description: String = "The email adress provided is invalid."
 }

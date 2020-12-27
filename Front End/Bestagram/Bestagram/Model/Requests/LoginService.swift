@@ -25,14 +25,15 @@ class LoginService {
     ///
     /// - parameter username: Username to use.
     /// - parameter password: **Encrypted** password. Encrypted as indicated in the API Documentation.
+    /// - parameter email: Email of the user, required only in case of a sign up.
     /// - Parameters:
     ///     - callback: Closure called when the API sent back the response.
     ///     - success : Wether the request succeeded or not.
     ///     - content: If the request succeeded then this contain the token. If the request failed then this contain the error documentation provided by the API.
     ///     - code: HTTPStatusCode describing the operation.
     ///
-    func fetchToken(username: String, password : String, register : Bool, callback : @escaping (_ success: Bool, _ content: String?, _ code: Int?) -> Void) {
-        let parameters = ["username": username, "hash": password]
+    func fetchToken(username: String, password : String, email : String = "", register : Bool, callback : @escaping (_ success: Bool, _ content: String?, _ code: Int?) -> Void) {
+        let parameters = ["username": username, "hash": password, "email": email]
 
         // The main difference between the user being logged in/registered is the method used.
         var method : HTTPMethod = .get

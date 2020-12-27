@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		32AE4886A67643FB58573CE8 /* Pods_Bestagram_BestagramUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0016E4F11A81D956860251 /* Pods_Bestagram_BestagramUITests.framework */; };
 		3F8630B7C660C8227525AB16 /* Pods_BestagramTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3683A6984771AA6851D85B80 /* Pods_BestagramTests.framework */; };
-		5B1D1FBC25725AB8006B5073 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5B1D1FBB25725AB8006B5073 /* ProximaNova-Regular.otf */; };
+		5B02904425973C55004E03EF /* BestagramUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B02904325973C55004E03EF /* BestagramUserTests.swift */; };
+		5B02904C2597EF15004E03EF /* DontHaveAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B02904B2597EF15004E03EF /* DontHaveAccountView.swift */; };
 		5B1D1FCD257260E0006B5073 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FCC257260E0006B5073 /* Post.swift */; };
 		5B1D1FD225726629006B5073 /* ProximaNova.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FD125726629006B5073 /* ProximaNova.swift */; };
 		5B1D1FF125727291006B5073 /* StringProtocolExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */; };
@@ -37,7 +38,14 @@
 		5BF0BAE725865DAB00C3B9FB /* EnterLoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */; };
 		5BF0BAEC25865E6D00C3B9FB /* Billabong.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BF0BAEB25865E6D00C3B9FB /* Billabong.ttf */; };
 		5BF0BAF225865E9A00C3B9FB /* Billabong.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF0BAF125865E9A00C3B9FB /* Billabong.swift */; };
-		5BF0BAF725866C5400C3B9FB /* ProximaNova-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5BF0BAF625866C5400C3B9FB /* ProximaNova-Thin.otf */; };
+		5BF300262595362B000E4DA1 /* EnterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF300252595362B000E4DA1 /* EnterNameView.swift */; };
+		5BF3004B25956820000E4DA1 /* Proxima Nova Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5BF3004A25956820000E4DA1 /* Proxima Nova Thin.otf */; };
+		5BF3005425956888000E4DA1 /* Proxima Nova Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5BF3005225956888000E4DA1 /* Proxima Nova Regular.otf */; };
+		5BF3005525956888000E4DA1 /* Proxima Nova Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5BF3005325956888000E4DA1 /* Proxima Nova Bold.otf */; };
+		5BF300602595E534000E4DA1 /* AlreadyHaveAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3005F2595E534000E4DA1 /* AlreadyHaveAccountView.swift */; };
+		5BF3006525962794000E4DA1 /* CreatePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3006425962794000E4DA1 /* CreatePasswordView.swift */; };
+		5BF3006A25964A25000E4DA1 /* WelcomeToBestagramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3006925964A25000E4DA1 /* WelcomeToBestagramView.swift */; };
+		5BF3006F25964CBB000E4DA1 /* InterfacePositioningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3006E25964CBB000E4DA1 /* InterfacePositioningView.swift */; };
 		E8C1AF7FB85A9D82857B218B /* Pods_Bestagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2FE10F21ADC5EB9CA01ADBC /* Pods_Bestagram.framework */; };
 /* End PBXBuildFile section */
 
@@ -61,10 +69,10 @@
 /* Begin PBXFileReference section */
 		3586BAC067A5F381D8FF1D8A /* Pods-BestagramTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BestagramTests.release.xcconfig"; path = "Target Support Files/Pods-BestagramTests/Pods-BestagramTests.release.xcconfig"; sourceTree = "<group>"; };
 		3683A6984771AA6851D85B80 /* Pods_BestagramTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BestagramTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B1D1FBB25725AB8006B5073 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
+		5B02904325973C55004E03EF /* BestagramUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramUserTests.swift; sourceTree = "<group>"; };
+		5B02904B2597EF15004E03EF /* DontHaveAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DontHaveAccountView.swift; sourceTree = "<group>"; };
 		5B1D1FCC257260E0006B5073 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		5B1D1FD125726629006B5073 /* ProximaNova.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximaNova.swift; sourceTree = "<group>"; };
-		5B1D1FEC25726BA0006B5073 /* ProximaNova-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Bold.otf"; sourceTree = "<group>"; };
 		5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringProtocolExtension.swift; sourceTree = "<group>"; };
 		5B1D1FF525727420006B5073 /* BestagramPostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramPostTests.swift; sourceTree = "<group>"; wrapsLines = 1; };
 		5B1D200E2572DF2A006B5073 /* DescriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionView.swift; sourceTree = "<group>"; };
@@ -96,7 +104,14 @@
 		5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterLoginInfoView.swift; sourceTree = "<group>"; };
 		5BF0BAEB25865E6D00C3B9FB /* Billabong.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Billabong.ttf; sourceTree = "<group>"; };
 		5BF0BAF125865E9A00C3B9FB /* Billabong.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Billabong.swift; sourceTree = "<group>"; };
-		5BF0BAF625866C5400C3B9FB /* ProximaNova-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Thin.otf"; sourceTree = "<group>"; };
+		5BF300252595362B000E4DA1 /* EnterNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterNameView.swift; sourceTree = "<group>"; };
+		5BF3004A25956820000E4DA1 /* Proxima Nova Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Proxima Nova Thin.otf"; sourceTree = "<group>"; };
+		5BF3005225956888000E4DA1 /* Proxima Nova Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Proxima Nova Regular.otf"; sourceTree = "<group>"; };
+		5BF3005325956888000E4DA1 /* Proxima Nova Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Proxima Nova Bold.otf"; sourceTree = "<group>"; };
+		5BF3005F2595E534000E4DA1 /* AlreadyHaveAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlreadyHaveAccountView.swift; sourceTree = "<group>"; };
+		5BF3006425962794000E4DA1 /* CreatePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePasswordView.swift; sourceTree = "<group>"; };
+		5BF3006925964A25000E4DA1 /* WelcomeToBestagramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeToBestagramView.swift; sourceTree = "<group>"; };
+		5BF3006E25964CBB000E4DA1 /* InterfacePositioningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfacePositioningView.swift; sourceTree = "<group>"; };
 		6708ED6011F9118EB53F4B60 /* Pods-Bestagram-BestagramUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram-BestagramUITests.release.xcconfig"; path = "Target Support Files/Pods-Bestagram-BestagramUITests/Pods-Bestagram-BestagramUITests.release.xcconfig"; sourceTree = "<group>"; };
 		6CBAF8711BA4DEC12E4FE49A /* Pods-BestagramTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BestagramTests.debug.xcconfig"; path = "Target Support Files/Pods-BestagramTests/Pods-BestagramTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A9FA6428F46D234D921F1DA8 /* Pods-Bestagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram.release.xcconfig"; path = "Target Support Files/Pods-Bestagram/Pods-Bestagram.release.xcconfig"; sourceTree = "<group>"; };
@@ -148,10 +163,10 @@
 		5B1D1FBA25725AAA006B5073 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				5BF3004A25956820000E4DA1 /* Proxima Nova Thin.otf */,
+				5BF3005325956888000E4DA1 /* Proxima Nova Bold.otf */,
+				5BF3005225956888000E4DA1 /* Proxima Nova Regular.otf */,
 				5BF0BAEB25865E6D00C3B9FB /* Billabong.ttf */,
-				5B1D1FEC25726BA0006B5073 /* ProximaNova-Bold.otf */,
-				5B1D1FBB25725AB8006B5073 /* ProximaNova-Regular.otf */,
-				5BF0BAF625866C5400C3B9FB /* ProximaNova-Thin.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -212,6 +227,7 @@
 				5BA7A0FF2571BE5500993718 /* BestagramTests.swift */,
 				5BA7A1012571BE5500993718 /* Info.plist */,
 				5B1D1FF525727420006B5073 /* BestagramPostTests.swift */,
+				5B02904325973C55004E03EF /* BestagramUserTests.swift */,
 			);
 			path = BestagramTests;
 			sourceTree = "<group>";
@@ -259,6 +275,7 @@
 				5BF0BAA22585411700C3B9FB /* Sign In */,
 				5BB7D83525815495001AE07C /* Sign Up */,
 				5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */,
+				5BF3006E25964CBB000E4DA1 /* InterfacePositioningView.swift */,
 			);
 			path = "Sign In - Up";
 			sourceTree = "<group>";
@@ -266,8 +283,12 @@
 		5BB7D83525815495001AE07C /* Sign Up */ = {
 			isa = PBXGroup;
 			children = (
-				5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */,
 				5B4A618F25852E9C008FDED5 /* EnterConfirmationCodeView.swift */,
+				5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */,
+				5BF300252595362B000E4DA1 /* EnterNameView.swift */,
+				5BF3006425962794000E4DA1 /* CreatePasswordView.swift */,
+				5BF3006925964A25000E4DA1 /* WelcomeToBestagramView.swift */,
+				5BF3005F2595E534000E4DA1 /* AlreadyHaveAccountView.swift */,
 			);
 			path = "Sign Up";
 			sourceTree = "<group>";
@@ -285,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */,
+				5B02904B2597EF15004E03EF /* DontHaveAccountView.swift */,
 			);
 			path = "Sign In";
 			sourceTree = "<group>";
@@ -435,10 +457,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BA7A0F52571BE5500993718 /* Preview Assets.xcassets in Resources */,
+				5BF3005425956888000E4DA1 /* Proxima Nova Regular.otf in Resources */,
 				5BA7A0F22571BE5500993718 /* Assets.xcassets in Resources */,
-				5BF0BAF725866C5400C3B9FB /* ProximaNova-Thin.otf in Resources */,
-				5B1D1FBC25725AB8006B5073 /* ProximaNova-Regular.otf in Resources */,
+				5BF3005525956888000E4DA1 /* Proxima Nova Bold.otf in Resources */,
 				5BF0BAEC25865E6D00C3B9FB /* Billabong.ttf in Resources */,
+				5BF3004B25956820000E4DA1 /* Proxima Nova Thin.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,12 +610,15 @@
 				5BF0BAE725865DAB00C3B9FB /* EnterLoginInfoView.swift in Sources */,
 				5B70B66625840FE3004221D5 /* BackButton.swift in Sources */,
 				5BB7D82E25815399001AE07C /* SignInOrUpChoiceView.swift in Sources */,
+				5BF300602595E534000E4DA1 /* AlreadyHaveAccountView.swift in Sources */,
 				5BA7A0F02571BE5300993718 /* PostView.swift in Sources */,
 				5B4A619025852E9C008FDED5 /* EnterConfirmationCodeView.swift in Sources */,
 				5BB37714258E73D0003559DE /* Error.swift in Sources */,
 				5B1D200F2572DF2A006B5073 /* DescriptionView.swift in Sources */,
 				5B5DF1ED2581887400A756D9 /* BigBlueButton.swift in Sources */,
 				5BDCB8FC2586B77F00056B2B /* Api.swift in Sources */,
+				5BF300262595362B000E4DA1 /* EnterNameView.swift in Sources */,
+				5BF3006F25964CBB000E4DA1 /* InterfacePositioningView.swift in Sources */,
 				5B5DF1F225818AD700A756D9 /* CustomTextField.swift in Sources */,
 				5BB3770E258E4F41003559DE /* Hashing.swift in Sources */,
 				5BA7A0EE2571BE5300993718 /* BestagramApp.swift in Sources */,
@@ -602,6 +628,9 @@
 				5B1D1FD225726629006B5073 /* ProximaNova.swift in Sources */,
 				5B1D1FF125727291006B5073 /* StringProtocolExtension.swift in Sources */,
 				5BDCB8F42586B34C00056B2B /* LoginService.swift in Sources */,
+				5BF3006525962794000E4DA1 /* CreatePasswordView.swift in Sources */,
+				5BF3006A25964A25000E4DA1 /* WelcomeToBestagramView.swift in Sources */,
+				5B02904C2597EF15004E03EF /* DontHaveAccountView.swift in Sources */,
 				5B1D1FCD257260E0006B5073 /* Post.swift in Sources */,
 				5BF0BAF225865E9A00C3B9FB /* Billabong.swift in Sources */,
 			);
@@ -612,6 +641,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B1D1FF625727420006B5073 /* BestagramPostTests.swift in Sources */,
+				5B02904425973C55004E03EF /* BestagramUserTests.swift in Sources */,
 				5BA7A1002571BE5500993718 /* BestagramTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
