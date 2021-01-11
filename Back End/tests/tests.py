@@ -7,6 +7,324 @@ import datetime
 import database.request_utils
 import werkzeug
 import shutil
+import database.mysql_connection
+import requests
+from flask import Flask, request
+from flask_restful import Api
+from api import login, email, posts
+import threading
+import errors
+import json
+
+api_route = "https://0.0.0.0:5002/"
+default_image_file = ('image', ('test_image.png', open('../tests/test_image.png', 'rb'), 'image/png'))
+
+
+def start_api():
+    PORT = 5002
+    HOST = "0.0.0.0"
+
+    app = Flask(__name__)
+
+    api = Api(app)
+
+    api.add_resource(login.Login, "/login")
+    api.add_resource(email.Email, "/email/taken")
+    api.add_resource(posts.Post, "/post")
+
+    app.run(host=HOST, port=PORT, ssl_context=("../ApiCertificate/0.0.0.0:5002.crt",
+                                               "../ApiCertificate/0.0.0.0:5002.key"))
+
+
+def ex_request(method: str, route: str, params: dict = None, headers: dict = None, files: list = None,
+               payload: str = "") -> (int, dict):
+    """
+    Execute a request to the api using the provided parameters.
+
+    :param method: Method to use to contact the api.
+    :param route: Route leading to the resources
+    :param params: Query parameters.
+    :param headers: Request headers.
+    :param files: File to send with the request in body.
+    :param payload: Body json.
+
+    :return: Returns status code and json content of the response.
+    """
+    if files is None:
+        files = {}
+    if headers is None:
+        headers = {}
+    if params is None:
+        params = {}
+    url = api_route + route
+
+    # Adds parameters to the url.
+    if params != {}:
+        url += "?"
+        for (k, e) in params.items():
+            url += k + "=" + e + "&"
+        # Unwanted & at the end
+        url = url[:-1]
+    response = requests.request(method, url, headers=headers, data=payload, files=files, verify=False)
+    code = response.status_code
+    content = json.loads(response.content)
+    return code, content
+
+
+class TestsVTwo(unittest.TestCase):
+    """
+    This is a new test class featuring the new version of testing the backend.
+    Rather than testing the class methods independently, this will actually reproduce requests to the api endpoints
+    leading to more accurate tests on customer expectation.
+    """
+
+    default_hash = "hash"
+    default_username = "test_username"
+    default_email = "test.test@bestagram.com"
+
+    def user_in_db(self, username: str) -> (bool, dict):
+        """
+        Fetch a user's data from the db if exists.
+        :param username: Username of the user.
+        :return: Operation successful, if yes the dict contain the data.
+        """
+        query = f"""
+        SELECT * FROM UserTable
+        WHERE username = "{username}";
+        """
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        if len(result) == 0:
+            return False, None
+        return True, result[0]
+
+    def add_user(self, fields: dict):
+        """
+        Add a user in the test database.
+        :param fields: Dictionary of the field for the user. Key is the field and value is the value.
+
+        :return:
+        """
+        add_user_query = """
+            INSERT INTO UserTable (
+            """
+        # Adding columns name.
+        for i in fields.keys():
+            add_user_query += i + ","
+        # Removing unwanted comma.
+        add_user_query = add_user_query[:-1] + ") VALUES ("
+        # Adding values name.
+        for i in fields.values():
+            add_user_query += "\"" + str(i) + "\","
+        # Removing unwanted comma.
+        add_user_query = add_user_query[:-1] + ");"
+        self.cursor.execute(add_user_query)
+
+    def create_db(self):
+        source_file = f"\"{os.getcwd()}/test_database.sql\""
+        command = """mysql -u %s -p"%s" --host %s --port %s %s < %s""" % (
+            config.databaseUserName, config.password, config.host, 3306, config.databaseName, source_file)
+        os.system(command)
+
+    def add_default_user(self):
+        self.add_user(
+            fields={"username": self.default_username, "hash": self.default_hash, "email": self.default_email})
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.api = threading.Thread(target=start_api, name="api", daemon=True)
+        cls.api.start()
+
+    def setUp(self) -> None:
+        self.create_db()
+
+        database.mysql_connection.cnx = mysql.connector.connect(
+            user=config.databaseUserName,
+            password=config.password,
+            host=config.host,
+            database="BestagramTest",
+            use_pure=True)
+        database.mysql_connection.cnx.autocommit = True
+        self.cursor = database.mysql_connection.cnx.cursor(dictionary=True)
+
+        try:
+            # Erase directory named Posts if exists.
+            shutil.rmtree("Posts")
+        except:
+            pass
+
+    """
+    --------------------------
+    Login tests
+    --------------------------
+    """
+
+    def test_GivenNoUserInDatabaseWhenLoginWithAnyDataThenReturnInvalidCredentials(self):
+        # Given no user in database.
+
+        # When login with any data
+        parameters = {"username": "test", "hash": "hash", "email": "test@bestagram"}
+        code, content = ex_request("GET", route="login", params=parameters)
+
+        # Then return invalid credentials.
+        self.assertEqual(code, 401)
+        self.assertEqual(errors.InvalidCredentials.description, content["error"])
+
+    def test_GivenUserInDatabaseWhenLoginWithIncorrectPasswordThenRaiseInvalidCredentials(self):
+        # Given user in database.
+        self.add_default_user()
+        incorrect_hash = "incorrect"
+
+        # When login with incorrect password.
+        code, content = ex_request("GET", "login", params={"username": self.default_username, "hash": incorrect_hash})
+
+        # Then raise invalid credentials.
+        self.assertEqual(code, 401)
+        self.assertEqual(content["error"], InvalidCredentials.description)
+
+    def test_GivenUserInDatabaseWhenLoginWithCorrectDataThenSuccessfulLogin(self):
+        # Given user in database.
+        self.add_default_user()
+
+        # When login with correct data.
+        code, content = ex_request("GET", "login",
+                                   params={"username": self.default_username, "hash": self.default_hash})
+
+        # Then successful login.
+        self.assertEqual(code, 200)
+
+    def test_GivenUserInDatabaseWhenLoginWithoutProvidingPasswordThenRaiseMissingInformation(self):
+        # Given user in database.
+        self.add_default_user()
+
+        # When login without providing password.
+        code, content = ex_request("GET", "login", params={"username": self.default_username})
+
+        # Then raise missing information.
+        self.assertEqual(code, 400)
+        self.assertEqual(MissingInformation.description, content["error"])
+
+    def test_GivenUserInDatabaseWhenLoginWithoutProvidingUsernameThenRaiseMissingInformation(self):
+        # Given user in database.
+        self.add_default_user()
+
+        # When login without providing username.
+        code, content = ex_request("GET", "login", params={"hash": self.default_hash})
+
+        # Then raise missing information.
+        self.assertEqual(code, 400)
+        self.assertEqual(MissingInformation.description, content["error"])
+
+    """
+    --------------------------
+    Sign up tests
+    --------------------------
+    """
+
+    def test_GivenNoUserWhenRegisteringThenIsCreatedWithCorrectDataAndReturnNoError(self):
+        # Given no user.
+
+        # When registering.
+        code, content = ex_request("PUT", route="login", params={
+            "username": self.default_username,
+            "hash": self.default_hash,
+            "email": self.default_email}
+                                   )
+
+        # Then is created with correct data and return no error.
+        token = content["token"]
+        success, user_data = self.user_in_db(username=self.default_username)
+        self.assertTrue(success)  # If this is false then there war no user created.
+        self.assertEqual(code, 201)
+        self.assertEqual(token, user_data["token"])
+        self.assertEqual(self.default_hash, user_data["hash"])
+        self.assertEqual(self.default_email, user_data["email"])
+
+    def test_GivenNoUserWhenRegisteringWithInvalidEmailThenIsNotCreatedAndRaiseInvalidEmail(self):
+        # Given no user.
+
+        # When registering with invalid email.
+        invalid_email = "invalid.email.@"
+        code, content = ex_request("PUT", route="login", params={
+            "username": self.default_username,
+            "hash": self.default_hash,
+            "email": invalid_email
+        })
+
+        # Then is not created and raise invalid email.
+        success, i = self.user_in_db(self.default_username)
+        self.assertEqual(code, 406)
+        self.assertEqual(content["error"], InvalidEmail.description)
+        self.assertFalse(success)
+
+    def test_GivenUserWhenRegisteringWithSameUsernameThenIsNotCreatedAndRaiseUsernameTaken(self):
+        # Given user.
+        self.add_default_user()
+
+        # When registering with same username.
+        code, content = ex_request("PUT", route="login", params={
+            "username": self.default_username,
+            "hash": self.default_hash,
+            "email": "random.email@bestagram.com"
+        })
+
+        # Then is not created and raise username taken.
+        query = f"""
+        SELECT * FROM UserTable
+        WHERE username = "{self.default_username}";
+        """
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+
+        self.assertEqual(len(result), 1)  # If two then another user has been created in db.
+        self.assertEqual(code, 409)
+        self.assertEqual(content["error"], UsernameTaken.description)
+
+    def test_GivenUserWhenRegisteringWithSameEmailThenIsNotCreatedAndRaiseEmailTaken(self):
+        # Given user.
+        self.add_default_user()
+
+        # When registering with same email.
+        code, content = ex_request("PUT", route="login", params={
+            "username": "random_username",
+            "hash": self.default_hash,
+            "email": self.default_email
+        })
+
+        # Then is not created and raise email taken.
+        query = f"""
+        SELECT * FROM UserTable
+        WHERE email = "{self.default_email}";
+        """
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+
+        self.assertEqual(len(result), 1)  # If two then another user has been created in db.
+        self.assertEqual(code, 409)
+        self.assertEqual(content["error"], EmailTaken.description)
+
+    def test_GivenNoUserWhenRegisteringWithTooLongUsernameThenIsNotCreatedAndRaiseInvalidUsername(self):
+        # Given no user.
+
+        # When registering with too long username.
+        username = "a" * (config.MAX_USERNAME_LENGTH + 5)
+        code, content = ex_request("PUT", route="login", params={
+            "username": username,
+            "hash": self.default_hash,
+            "email": self.default_email
+        })
+
+        # Then is not created and raise invalid username.
+        success, i = self.user_in_db(username)
+        self.assertFalse(success)
+        self.assertEqual(code, 406)
+        self.assertEqual(content["error"], InvalidUsername.description)
+
+    def tearDown(self) -> None:
+        try:
+            shutil.rmtree("Posts")
+        except:
+            pass
 
 
 class Tests(unittest.TestCase):
@@ -235,24 +553,3 @@ class Tests(unittest.TestCase):
         except:
             pass
         pass
-
-    def add_user(self, fields: dict):
-        """
-        Add a user in the test database.
-        :param fields: Dictionary of the field for the user. Key is the field and value is the value.
-        :return:
-        """
-        add_user_query = """
-        INSERT INTO UserTable (
-        """
-        # Adding columns name.
-        for i in fields.keys():
-            add_user_query += i + ","
-        # Removing unwanted comma.
-        add_user_query = add_user_query[:-1] + ") VALUES ("
-        # Adding values name.
-        for i in fields.values():
-            add_user_query += "\"" + str(i) + "\","
-        # Removing unwanted comma.
-        add_user_query = add_user_query[:-1] + ");"
-        self.cursor.execute(add_user_query)

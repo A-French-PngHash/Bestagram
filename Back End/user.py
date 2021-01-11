@@ -1,11 +1,12 @@
-from errors import *
 import datetime
-import config
-import random
-import mysql.connector
-from database.request_utils import value_in_database
-import werkzeug
 import os
+import random
+import re
+import werkzeug
+import config
+import database.mysql_connection
+from database.request_utils import value_in_database
+from errors import *
 
 
 def generate_token() -> str:
@@ -21,13 +22,28 @@ def generate_token() -> str:
     return token
 
 
+def email_is_valid(email: str) -> bool:
+    """
+    Check if an email is valid or not.
+    :param email: The email.
+    :return:
+    """
+    email_valid_regex = r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$"
+    result = re.findall(email_valid_regex, string=email)
+    return len(result) == 1
+
+
+def username_is_valid(username: str) -> bool:
+    regex = r"^[a-z0-9_.]{" + str(config.MIN_USERNAME_LENGTH) + "," + str(config.MAX_USERNAME_LENGTH) + "}$"
+    return len(re.findall(regex, username)) == 1
+
+
 class User:
     """
     User of Bestagram.
     """
 
-    def __init__(self, username: str, cnx: mysql.connector.MySQLConnection, hash: str = None,
-                 token: str = None):
+    def __init__(self, username: str, hash: str = None, token: str = None):
         """
         Initialize the user object. This is the login, if a user need to be registered, the static function create must
         be called. Note that either the hash parameter OR the token is required.
@@ -35,7 +51,6 @@ class User:
         :param username: Username of the user.
         :param hash: Hash of the user.
         :param token: Token to connect with.
-        :param cnx: Connection to the database.
 
         :raise InvalidCredentials: When the username and hash don't both correspond to the data of a user.
         """
@@ -47,7 +62,7 @@ class User:
         FROM UserTable
         WHERE UserTable.username = "{username}";
         """
-        self.cursor = cnx.cursor(dictionary=True)
+        self.cursor = database.mysql_connection.cnx.cursor(dictionary=True)
         self.cursor.execute(user_query)
         result = self.cursor.fetchall()
 
@@ -178,26 +193,35 @@ class User:
             os.makedirs(self.directory)
 
     @staticmethod
-    def create(username: str, hash: str, email: str, cnx: mysql.connector.MySQLConnection):
+    def create(username: str, hash: str, email: str):
         """
         Add a user in the database and return the User object associated. Also check if the username is not already
         taken.
         :param username: The username of the user to create.
         :param email: Email of the user.
         :param hash: The hash the user use to login.
-        :param cnx: Connection to the database.
 
         :raise UsernameTaken:
         :raise EmailTaken:
 
         :return: User object created.
         """
+        username = username.lower()
 
-        if value_in_database("UserTable", "username", username, cnx=cnx):
+
+        if not email_is_valid(email):
+            raise InvalidEmail(email=email)
+
+        if not username_is_valid(username):
+            raise InvalidUsername(username=username)
+
+        re.findall("string", "test")
+
+        if value_in_database("UserTable", "username", username):
             # Username is taken.
             raise UsernameTaken(username=username)
 
-        if value_in_database("UserTable", "email", email, cnx=cnx):
+        if value_in_database("UserTable", "email", email):
             # Email is taken.
             raise EmailTaken(email=email)
 
@@ -205,7 +229,7 @@ class User:
         INSERT INTO UserTable (username, hash, email) VALUES
         ("{username}", "{hash}", "{email}");
         """
-        cursor = cnx.cursor()
+        cursor = database.mysql_connection.cnx.cursor()
         cursor.execute(add_user_query)
         cursor.close()
-        return User(username, cnx, hash)
+        return User(username, hash=hash)

@@ -2,17 +2,9 @@ import config
 import mysql.connector
 
 """
-Establish the connection to the database.
+This variable is the connection to the database. It is not defined here as its content depends on the context.
+If what is running is the production version (main.py) then it is defined in main.py.
+If what is running is tests then it is defined in tests/tests.py pointing to the test database.
+This enable testing without altering the production database.
 """
-cnx = mysql.connector.connect(
-    user=config.databaseUserName,
-    password=config.password,
-    host=config.host,
-    database=config.databaseName,
-    use_pure=True)
-cnx.autocommit = True
-cursor = cnx.cursor(dictionary=True)
-
-def make_cursor():
-    return cnx.cursor(dictionary=True)
-
+cnx = None

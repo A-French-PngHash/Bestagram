@@ -9,9 +9,9 @@ from errors import *
 
 class Post(Resource):
     """
-    Retrieve or post posts using this endpoint.
+    Retrieve or put posts using this endpoint.
     """
-    def post(self) -> (dict, int):
+    def put(self) -> (dict, int):
         """
         Uploading a post.
         """
@@ -23,13 +23,16 @@ class Post(Resource):
         parser.add_argument("Username", location="headers")
         # Description of the image.
         parser.add_argument("description")
+
+        json = request.get_json()
+        print(json)
         params = parser.parse_args()
 
         if params["image"] == "" or params["description"] == "":
             return {"error": "Missing Information"}, 400
 
         try:
-            user = User(username=params["Username"], token=params["Authorization"], cnx=cnx)
+            user = User(username=params["Username"], token=params["Authorization"])
         except InvalidCredentials as e:
             return {"error": "Invalid Credentials"}, 401
 

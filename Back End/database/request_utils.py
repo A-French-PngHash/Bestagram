@@ -1,11 +1,10 @@
-import mysql.connector
+import database.mysql_connection
 
 
-def value_in_database(table: str, field: str, value: str, cnx: mysql.connector.MySQLConnection) -> bool:
+def value_in_database(table: str, field: str, value: str) -> bool:
     """
     Check if a value is present in the database.
 
-    :param cnx: Connection to the database.
     :param table: The table the value should be in.
     :param field: The field to check.
     :param value: Value to look for.
@@ -15,15 +14,15 @@ def value_in_database(table: str, field: str, value: str, cnx: mysql.connector.M
     SELECT * FROM {table}
     WHERE {field} = \"{value}\";
     """
-    pcursor = cnx.cursor(dictionary=True)
+    cursor = database.mysql_connection.cnx.cursor(dictionary=True)
 
     try:
-        pcursor.execute(request)
+        cursor.execute(request)
     except Exception as e:
         print(e)
-        pcursor.close()
+        cursor.close()
         return False
-    result = pcursor.fetchall()
-    pcursor.close()
+    result = cursor.fetchall()
+    cursor.close()
     return len(result) > 0
 

@@ -7,6 +7,9 @@ When there is an error, the first field of the answer will always be named "erro
 
 # Login
 ## GET
+
+    GET /login
+   
 Return the token of a user. 
 
 Parameters : 
@@ -22,6 +25,8 @@ Response if operation successful :
     {"token" : "x"} - 200
 
 ## PUT
+    PUT /login
+   
 Register a user into the database and return the token. 
 
 Parameters :
@@ -33,6 +38,7 @@ Errors :
  - "Missing information" code **400**.
  - "Username already taken" code **409**.
  - "Email already taken" code **409**.
+ - "Invalid email" code **406**.
 
 Response if operation successful :
 
@@ -40,6 +46,9 @@ Response if operation successful :
 
 # Email
 ## Get
+
+    GET /email
+   
 Check if an email is already taken by someone. 
 
 Parameters : 
@@ -54,6 +63,9 @@ Response if operation successful :
 
 # Post
 ## Post
+
+    POST /post
+   
 Create a post with an image, description...
 Headers :
  - Authorization : Token of the user.
