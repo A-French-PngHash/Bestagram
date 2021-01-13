@@ -8,68 +8,13 @@ import database.request_utils
 import werkzeug
 import shutil
 import database.mysql_connection
-import requests
 from flask import Flask, request
 from flask_restful import Api
 from api import login, email, posts
-import threading
 import errors
-import json
+import main
 
-api_route = "https://0.0.0.0:5002/"
 default_image_file = ('image', ('test_image.png', open('../tests/test_image.png', 'rb'), 'image/png'))
-
-
-def start_api():
-    PORT = 5002
-    HOST = "0.0.0.0"
-
-    app = Flask(__name__)
-
-    api = Api(app)
-
-    api.add_resource(login.Login, "/login")
-    api.add_resource(email.Email, "/email/taken")
-    api.add_resource(posts.Post, "/post")
-
-    app.run(host=HOST, port=PORT, ssl_context=("../ApiCertificate/0.0.0.0:5002.crt",
-                                               "../ApiCertificate/0.0.0.0:5002.key"))
-
-
-def ex_request(method: str, route: str, params: dict = None, headers: dict = None, files: list = None,
-               payload: str = "") -> (int, dict):
-    """
-    Execute a request to the api using the provided parameters.
-
-    :param method: Method to use to contact the api.
-    :param route: Route leading to the resources
-    :param params: Query parameters.
-    :param headers: Request headers.
-    :param files: File to send with the request in body.
-    :param payload: Body json.
-
-    :return: Returns status code and json content of the response.
-    """
-    if files is None:
-        files = {}
-    if headers is None:
-        headers = {}
-    if params is None:
-        params = {}
-    url = api_route + route
-
-    # Adds parameters to the url.
-    if params != {}:
-        url += "?"
-        for (k, e) in params.items():
-            url += k + "=" + e + "&"
-        # Unwanted & at the end
-        url = url[:-1]
-    response = requests.request(method, url, headers=headers, data=payload, files=files, verify=False)
-    code = response.status_code
-    content = json.loads(response.content)
-    return code, content
-
 
 class TestsVTwo(unittest.TestCase):
     """
@@ -130,13 +75,43 @@ class TestsVTwo(unittest.TestCase):
         self.add_user(
             fields={"username": self.default_username, "hash": self.default_hash, "email": self.default_email})
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.api = threading.Thread(target=start_api, name="api", daemon=True)
-        cls.api.start()
+    def ex_request(self, method: str, route: str, params: dict = None, headers: dict = None, files: list = None,
+                   payload: str = "") -> (int, dict):
+        """
+        Execute a request to the api using the provided parameters.
+
+        :param method: Method to use to contact the api.
+        :param route: Route leading to the resources
+        :param params: Query parameters.
+        :param headers: Request headers.
+        :param files: File to send with the request in body.
+        :param payload: Body json.
+
+        :return: Returns status code and json content of the response.
+        """
+        if files is None:
+            files = {}
+        if headers is None:
+            headers = {}
+        if params is None:
+            params = {}
+
+        response = self.client.open(
+            route,
+            query_string= params,
+            method = method,
+            headers=headers,
+            data=payload
+        )
+        code = response.status_code
+        content = response.get_json()
+
+        return code, content
 
     def setUp(self) -> None:
         self.create_db()
+        main.app.testing = True
+        self.client = main.app.test_client()
 
         database.mysql_connection.cnx = mysql.connector.connect(
             user=config.databaseUserName,
@@ -164,7 +139,7 @@ class TestsVTwo(unittest.TestCase):
 
         # When login with any data
         parameters = {"username": "test", "hash": "hash", "email": "test@bestagram"}
-        code, content = ex_request("GET", route="login", params=parameters)
+        code, content = self.ex_request("GET", route="login", params=parameters)
 
         # Then return invalid credentials.
         self.assertEqual(code, 401)
@@ -176,7 +151,7 @@ class TestsVTwo(unittest.TestCase):
         incorrect_hash = "incorrect"
 
         # When login with incorrect password.
-        code, content = ex_request("GET", "login", params={"username": self.default_username, "hash": incorrect_hash})
+        code, content = self.ex_request("GET", "login", params={"username": self.default_username, "hash": incorrect_hash})
 
         # Then raise invalid credentials.
         self.assertEqual(code, 401)
@@ -187,7 +162,7 @@ class TestsVTwo(unittest.TestCase):
         self.add_default_user()
 
         # When login with correct data.
-        code, content = ex_request("GET", "login",
+        code, content = self.ex_request("GET", "login",
                                    params={"username": self.default_username, "hash": self.default_hash})
 
         # Then successful login.
@@ -198,7 +173,7 @@ class TestsVTwo(unittest.TestCase):
         self.add_default_user()
 
         # When login without providing password.
-        code, content = ex_request("GET", "login", params={"username": self.default_username})
+        code, content = self.ex_request("GET", "login", params={"username": self.default_username})
 
         # Then raise missing information.
         self.assertEqual(code, 400)
@@ -209,7 +184,7 @@ class TestsVTwo(unittest.TestCase):
         self.add_default_user()
 
         # When login without providing username.
-        code, content = ex_request("GET", "login", params={"hash": self.default_hash})
+        code, content = self.ex_request("GET", "login", params={"hash": self.default_hash})
 
         # Then raise missing information.
         self.assertEqual(code, 400)
@@ -225,7 +200,7 @@ class TestsVTwo(unittest.TestCase):
         # Given no user.
 
         # When registering.
-        code, content = ex_request("PUT", route="login", params={
+        code, content = self.ex_request("PUT", route="login", params={
             "username": self.default_username,
             "hash": self.default_hash,
             "email": self.default_email}
@@ -245,7 +220,7 @@ class TestsVTwo(unittest.TestCase):
 
         # When registering with invalid email.
         invalid_email = "invalid.email.@"
-        code, content = ex_request("PUT", route="login", params={
+        code, content = self.ex_request("PUT", route="login", params={
             "username": self.default_username,
             "hash": self.default_hash,
             "email": invalid_email
@@ -262,7 +237,7 @@ class TestsVTwo(unittest.TestCase):
         self.add_default_user()
 
         # When registering with same username.
-        code, content = ex_request("PUT", route="login", params={
+        code, content = self.ex_request("PUT", route="login", params={
             "username": self.default_username,
             "hash": self.default_hash,
             "email": "random.email@bestagram.com"
@@ -285,7 +260,7 @@ class TestsVTwo(unittest.TestCase):
         self.add_default_user()
 
         # When registering with same email.
-        code, content = ex_request("PUT", route="login", params={
+        code, content = self.ex_request("PUT", route="login", params={
             "username": "random_username",
             "hash": self.default_hash,
             "email": self.default_email
@@ -308,7 +283,7 @@ class TestsVTwo(unittest.TestCase):
 
         # When registering with too long username.
         username = "a" * (config.MAX_USERNAME_LENGTH + 5)
-        code, content = ex_request("PUT", route="login", params={
+        code, content = self.ex_request("PUT", route="login", params={
             "username": username,
             "hash": self.default_hash,
             "email": self.default_email
