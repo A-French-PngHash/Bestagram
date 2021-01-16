@@ -3,18 +3,13 @@ import mysql.connector
 from user import *
 import os
 import config
-import datetime
 import database.request_utils
-import werkzeug
 import shutil
 import database.mysql_connection
-from flask import Flask, request
-from flask_restful import Api
-from api import login, email, posts
 import errors
 import main
+from PIL import Image
 
-default_image_file = ('image', ('test_image.png', open('../tests/test_image.png', 'rb'), 'image/png'))
 
 class TestsVTwo(unittest.TestCase):
     """
@@ -23,9 +18,30 @@ class TestsVTwo(unittest.TestCase):
     leading to more accurate tests on customer expectation.
     """
 
+    image_square = ('test_image.png', open('test_image.png'), 'image/png')
+    image_portrait = ('1280-1920.png', open('1280-1920.png'), 'image/png')
+    image_landscape_big = ("3840-2160.png", open("3840-2160.png"), "image/png")
+    image_landscape_small = ("474-266.png", open("474-266.png"), "image/png")
     default_hash = "hash"
     default_username = "test_username"
     default_email = "test.test@bestagram.com"
+    default_json = {
+        "tags":
+            {
+                "0":
+                    {
+                        "x_pos": 0.43,
+                        "y_pos": 0.87,
+                        "username": "john.fries"
+                    },
+                "1":
+                    {
+                        "x_pos": 0.29,
+                        "y_pos": 0.44,
+                        "username": "titouan"
+                    }
+            }
+    }
 
     def user_in_db(self, username: str) -> (bool, dict):
         """
@@ -75,8 +91,8 @@ class TestsVTwo(unittest.TestCase):
         self.add_user(
             fields={"username": self.default_username, "hash": self.default_hash, "email": self.default_email})
 
-    def ex_request(self, method: str, route: str, params: dict = None, headers: dict = None, files: list = None,
-                   payload: str = "") -> (int, dict):
+    def ex_request(self, method: str, route: str, params: dict = None, headers: dict = None, file=None,
+                   json: dict = None) -> (int, dict):
         """
         Execute a request to the api using the provided parameters.
 
@@ -84,29 +100,47 @@ class TestsVTwo(unittest.TestCase):
         :param route: Route leading to the resources
         :param params: Query parameters.
         :param headers: Request headers.
-        :param files: File to send with the request in body.
-        :param payload: Body json.
+        :param file: File to send with the request in body.
+        :param json: Body json.
 
         :return: Returns status code and json content of the response.
         """
-        if files is None:
-            files = {}
         if headers is None:
             headers = {}
         if params is None:
             params = {}
+        if json is None:
+            json = {}
 
+        data = dict(
+            image=file,
+            json=(json, "application/json")
+        )
         response = self.client.open(
             route,
-            query_string= params,
-            method = method,
+            query_string=params,
+            method=method,
             headers=headers,
-            data=payload
+            data=data
         )
         code = response.status_code
         content = response.get_json()
 
         return code, content
+
+    def login(self, username: str, password: str) -> (bool, str):
+        """
+        Login a user using provided credentials.
+        :param username:
+        :param password:
+        :return: Return success of operation and token if successful.
+        """
+        code, content = self.ex_request("GET", "login",
+                                        params={"username": username, "hash": password})
+        if code == 200:
+            return True, content["token"]
+        else:
+            return False, ""
 
     def setUp(self) -> None:
         self.create_db()
@@ -151,7 +185,8 @@ class TestsVTwo(unittest.TestCase):
         incorrect_hash = "incorrect"
 
         # When login with incorrect password.
-        code, content = self.ex_request("GET", "login", params={"username": self.default_username, "hash": incorrect_hash})
+        code, content = self.ex_request("GET", "login",
+                                        params={"username": self.default_username, "hash": incorrect_hash})
 
         # Then raise invalid credentials.
         self.assertEqual(code, 401)
@@ -163,7 +198,7 @@ class TestsVTwo(unittest.TestCase):
 
         # When login with correct data.
         code, content = self.ex_request("GET", "login",
-                                   params={"username": self.default_username, "hash": self.default_hash})
+                                        params={"username": self.default_username, "hash": self.default_hash})
 
         # Then successful login.
         self.assertEqual(code, 200)
@@ -203,8 +238,7 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.ex_request("PUT", route="login", params={
             "username": self.default_username,
             "hash": self.default_hash,
-            "email": self.default_email}
-                                   )
+            "email": self.default_email})
 
         # Then is created with correct data and return no error.
         token = content["token"]
@@ -295,236 +329,167 @@ class TestsVTwo(unittest.TestCase):
         self.assertEqual(code, 406)
         self.assertEqual(content["error"], InvalidUsername.description)
 
-    def tearDown(self) -> None:
-        try:
-            shutil.rmtree("Posts")
-        except:
-            pass
-
-
-class Tests(unittest.TestCase):
-    """
-    Unit testing for functions related to the database.
-    """
-
-    def create_db(self):
-        source_file = f"\"{os.getcwd()}/test_database.sql\""
-        command = """mysql -u %s -p"%s" --host %s --port %s %s < %s""" % (
-            config.databaseUserName, config.password, config.host, 3306, config.databaseName, source_file)
-        os.system(command)
-
-    def setUp(self) -> None:
-        self.create_db()
-        self.test_cnx = mysql.connector.connect(
-            user=config.databaseUserName,
-            password=config.password,
-            host=config.host,
-            database="BestagramTest",
-            use_pure=True)
-        self.test_cnx.autocommit = True
-        self.cursor = self.test_cnx.cursor(dictionary=True)
-        try:
-            shutil.rmtree("Posts")
-        except:
-            pass
-
     """
     --------------------------
-    User functions
+    Email taken tests
     --------------------------
     """
 
-    def test_GivenNoUserWhenLoginWithUsernameNotExistingThenRaiseInvalidCredentials(self):
+    def test_GivenEmailNotTakenWhenCheckingIfEmailIsTakenThenIsNot(self):
+        # Given email not taken.
+
+        # When checking if email is taken.
+        code, content = self.ex_request(method="GET", route="/email/taken", params={"email": self.default_email})
+
+        # Then is not.
+        self.assertEqual(code, 200)
+        self.assertFalse(content["taken"])
+
+    def test_GivenEmailTakenWhenCheckingIfEmailIsTakenThenIs(self):
+        # Given email taken.
+        self.add_default_user()
+
+        # WHen checking if email is taken.
+        code, content = self.ex_request(method="GET", route="/email/taken", params={"email": self.default_email})
+
+        # Then is.
+        self.assertEqual(code, 200)
+        self.assertTrue(content["taken"])
+
+    """
+    --------------------------
+    Post tests
+    --------------------------
+    """
+
+    def test_GivenNoUserWhenPostingWithInvalidCredentialsThenRaiseInvalidCredentials(self):
         # Given no user.
 
-        triggered_invalid_credentials = False
+        # When posting with invalid credentials.
+        code, content = self.ex_request(
+            method="PUT",
+            route="/post",
+            params={"caption": "an image"},
+            headers={"Authorization": "invalid_token", "username": self.default_username},
+            file=self.image_square
+        )
 
-        # When login with username not existing.
-        try:
-            user = User(username="notexistingusername", hash="testhash", cnx=self.test_cnx)
         # Then raise invalid credentials.
-        except InvalidCredentials as e:
-            triggered_invalid_credentials = True
+        self.assertEqual(code, 401)
+        self.assertEqual(content["error"], InvalidCredentials.description)
 
-        self.assertTrue(triggered_invalid_credentials)
-
-    def test_givenUserWhenLoginWithWrongHashThenRaiseInvalidCredentials(self):
+    def test_GivenUserWhenPostingWithValidCredentialsThenIsSuccessful(self):
         # Given user.
-        username = "testusername"
-        hash = "thisisahash"
-        self.add_user(fields={"username": username, "hash": hash})
+        self.add_default_user()
+        _, token = self.login(self.default_username, self.default_hash)
 
-        triggered_invalid_credentials = False
+        # When posting with valid credentials.
+        code, content = self.ex_request(
+            method="PUT",
+            route="/post",
+            params={"caption": "an image"},
+            headers={"Authorization": token, "Username": self.default_username},
+            file=self.image_square
+        )
 
-        # When login with wrong hash.
-        try:
-            user = User(username="testusername", hash=hash + "wrong", cnx=self.test_cnx)
-        # Then raise invalid credentials.
-        except InvalidCredentials as e:
-            triggered_invalid_credentials = True
-        self.assertTrue(triggered_invalid_credentials)
+        # Then is successful.
+        self.assertEqual(code, 201)
 
-    def test_givenUserWhenLoginSuccesfullyThenRaiseNoErrorAndCorrectToken(self):
-        # Given user.
-        username = "username"
-        hash = "hash"
-        token = "token"
-        token_registration = datetime.datetime.now().replace(microsecond=0)
-        self.add_user(
-            {"username": username, "hash": hash, "token": token, "token_registration_date": token_registration})
+    def test_GivenImageIsInPortraitModeWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
+        # Given image is in portrait mode.
+        image = self.image_portrait
+        self.add_default_user()
+        _, token = self.login(self.default_username, self.default_hash)
 
-        # When login successfully.
-        user = None
-        try:
-            user = User(username=username, hash=hash, cnx=self.test_cnx)
-        # Then raise no error and correct token.
-        except Exception as e:
-            self.assertTrue(False, f"error triggered : {e}")
+        # When posting.
+        code, content = self.ex_request(
+            method="PUT",
+            route="/post",
+            params={"caption": "an image"},
+            headers={"Authorization": token, "Username": self.default_username},
+            file=image
+        )
 
-        self.assertEqual(token, user.token)
+        # Then is successful and created in correct size.
+        self.assertEqual(code, 201)
+        new_im = Image.open(f"Posts/{self.default_username}/0.png")
+        self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
+        new_im.close()
 
-    def test_givenUserWithExpiredTokenWhenGettingTokenThenIsNewOne(self):
-        # Given user with expired token.
-        username = "username"
-        hash = "hash"
-        token = "token"
-        # Creating an expired date by taking the date right now and removing the token expiration number of seconds
-        # plus a security interval (here 2).
-        token_registration = datetime.datetime.now().replace(microsecond=0) - datetime.timedelta(
-            seconds=config.TOKEN_EXPIRATION + 2)
-        self.add_user(
-            {"username": username, "hash": hash, "token": token, "token_registration_date": token_registration})
+    def test_GivenImageIsInLandscapeModeWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
+        # Given image is in portrait mode.
+        image = self.image_landscape_big
+        self.add_default_user()
+        _, token = self.login(self.default_username, self.default_hash)
 
-        # When getting token.
-        user = User(username=username, hash=hash, cnx=self.test_cnx)
-        new_token = user.token
+        # When posting.
+        code, content = self.ex_request(
+            method="PUT",
+            route="/post",
+            params={"caption": "an image"},
+            headers={"Authorization": token, "Username": self.default_username},
+            file=image
+        )
 
-        # Then is new one.
-        self.assertNotEqual(token, new_token)
+        # Then is successful and created in correct size.
+        self.assertEqual(code, 201)
+        new_im = Image.open(f"Posts/{self.default_username}/0.png")
+        self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
+        new_im.close()
 
-    def test_givenNoUserWhenCreatingOneWithUserMethodThenIsCreatedAndWithCorrectData(self):
-        # Given no user.
-        username = "username"
-        hash = "hash"
+    def test_GivenImageUnderFinalResolutionWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
+        # Given image is in portrait mode.
+        image = self.image_landscape_small
+        self.add_default_user()
+        _, token = self.login(self.default_username, self.default_hash)
 
-        # When creating one with user method.
-        new_user = User.create(username=username, hash=hash, cnx=self.test_cnx, email="email")
+        # When posting.
+        code, content = self.ex_request(
+            method="PUT",
+            route="/post",
+            params={"caption": "an image"},
+            headers={"Authorization": token, "Username": self.default_username},
+            file=image
+        )
 
-        # Then is created with correct data.
-        self.assertIsNotNone(new_user)
-        self.assertEqual(username, new_user.username)
-        self.assertEqual(hash, new_user.hash)
+        # Then is successful and created in correct size.
+        self.assertEqual(code, 201)
+        new_im = Image.open(f"Posts/{self.default_username}/0.png")
+        self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
+        new_im.close()
 
-    def test_givenUserExistWhenCreatingOneWithSameUsernameThenIsNotCreatedAndRaiseErrors(self):
-        # Given user exist.
-        username = "username"
-        hash = "hash"
-        self.add_user({"username": username, "hash": hash})
+    def test_GivenPostingImageWhenRetrievingImageDataFromDatabaseThenIsCorrectData(self):
+        # Given posting image.
+        self.add_default_user()
+        _, token = self.login(self.default_username, self.default_hash)
+        caption = "a big image"
+        code, content = self.ex_request(
+            method="PUT",
+            route="/post",
+            params={"caption": caption},
+            headers={"Authorization": token, "Username": self.default_username},
+            file=self.image_square
+        )
 
-        raise_error = False
-        new_user = None
-        # When creating one with same username.
-        try:
-            new_user = User.create(username=username, hash=hash, cnx=self.test_cnx, email="email")
-        except UsernameTaken:
-            raise_error = True
+        # When retrieving image data from database.
+        query = """
+        SELECT * FROM Post;""" # There should be only one image inside so we can fetch everything.
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()[0]
 
-        # Then is not created and raise errors.
-        self.assertIsNone(new_user)
-        self.assertTrue(raise_error)
+        self.assertEqual(result["caption"], caption)
+        self.assertEqual(result["image_path"], f"Posts/{self.default_username}/0.png")
 
-    def test_givenUserExistWhenCreatingOneWithDifferentUsernameThenIsCreatedAndWithCorrectData(self):
-        # Given no user.
-        username = "username"
-        hash = "hash"
-        self.add_user({"username": username, "hash": hash})
-
-        # When creating one with user method.
-        new_user = User.create(username=username + "e", hash=hash, cnx=self.test_cnx, email="email")
-
-        # Then is created with correct data.
-        self.assertIsNotNone(new_user)
-        self.assertEqual(username + "e", new_user.username)
-        self.assertEqual(hash, new_user.hash)
-
-    """
-    --------------------------
-    Check if value exist
-    --------------------------
-    """
-
-    def testGivenEmailInDatabaseWhenCheckingIfExistThenIsTrue(self):
-        # Given email in database.
-        email = "test@bestagram.com"
-        self.add_user({"username": "t", "hash": "t", "email": email})
-
-        # When checking if exist.
-        exist = database.request_utils.value_in_database("UserTable", "email", email, cnx=self.test_cnx)
-
-        # Then is true.
-        self.assertTrue(exist)
-
-    def testGivenEmailNotInDatabaseWhenCheckingIfExistThenIsFalse(self):
-        # Given email not in database.
-        email = "notexisting@bestagram.com"
-
-        # When checking if exist.
-        exist = database.request_utils.value_in_database("UserTable", "email", email, cnx=self.test_cnx)
-
-        # Then is false.
-        self.assertFalse(exist)
-
-    """
-    --------------------------
-    Create post functions.
-    --------------------------
-    """
-
-    def test_givenNoDirectoryForStoringImagesWhenPreparingDirectoryForUserThenIsCreatedCorrectly(self):
-        # Given no directory for storing images.
-        try:
-            shutil.rmtree("Posts")
-        except:
-            pass
-
-        # When preparing directory for user.
-        name = "test"
-        hash = "hash"
-        self.add_user({"username": name, "hash": hash})
-        user = User(name, self.test_cnx, hash=hash)
-        user.prepare_directory()
-
-        # Then is created correctly.
-        self.assertTrue(os.path.exists(f"Posts/{name}"))
-
-    def test_givenNoImageInDatabaseWhenCreatingImageThenIsInDatabaseWithCorrectData(self):
-        # Given no image in database.
-        name = "test"
-        hash = "hash"
-        self.add_user({"username": name, "hash": hash})
-
-        # When creating image.
-        user = User(name, self.test_cnx, hash=hash)
-        description = "Test image."
-        with open("test_image.png", "r") as img:
-            image = werkzeug.datastructures.FileStorage(img)
-            print(image)
-            user.create_post(image=image, description=description)
-            image.close()
-
-        # Then is in database with correct data.
-        get_post_query = f"""
-        SELECT * FROM Post
-        WHERE user_id = {user.id};
-        """
-        self.cursor.execute(get_post_query)
-        result = self.cursor.fetchall()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]["description"], description)
+    def test_post(self):
+        self.add_default_user()
+        token = User(username=self.default_username, hash=self.default_hash).token
 
     def tearDown(self) -> None:
+        self.image_landscape_small[1].close()
+        self.image_portrait[1].close()
+        self.image_landscape_big[1].close()
+        self.image_square[1].close()
         try:
             shutil.rmtree("Posts")
         except:
             pass
-        pass

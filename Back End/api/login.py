@@ -54,5 +54,7 @@ class Login(Resource):
             return {"error": EmailTaken.description}, 409
         except InvalidEmail:
             return {"error": InvalidEmail.description}, 406
+        except InvalidUsername:
+            return {"error": InvalidUsername.description}, 406
 
         return {"token": user.token}, 201

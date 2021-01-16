@@ -86,3 +86,17 @@ class MissingInformation(Exception):
     Request made without all required information.
     """
     description = "Missing information"
+
+
+class UsernameNotExisting(Exception):
+    """
+    This username is not registered in the database.
+    """
+    def __init__(self, username: str = None):
+        self.username = username
+
+    def __str__(self):
+        msg = "Username not existing"
+        if self.username:
+            msg += f" (username : {self.username})"
+        return msg

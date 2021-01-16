@@ -15,3 +15,9 @@ database to the new value you put for the token.
 """
 MAX_USERNAME_LENGTH = 30
 MIN_USERNAME_LENGTH = 5
+
+"""
+Dimension to resize the images to when an upload is made.
+"""
+DEFAULT_IMAGE_DIMENSION = 1080
+

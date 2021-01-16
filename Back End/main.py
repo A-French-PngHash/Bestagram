@@ -6,15 +6,21 @@ from api import posts
 import database.mysql_connection
 import config
 import mysql.connector
+import errors
 
 PORT = 5002
 HOST = "0.0.0.0"
 
+"""
+WARNING: 
+Endpoint classes are not that much documented as all of the documentation is in "api/Api Documentation.md".
+Consult that file to get information on how to contact these endpoints providing the right data.
+"""
+
 app = Flask(__name__)
 
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024 # Limit contents upload to 5 megabytes.
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Limit contents upload to 5 megabytes.
 
-# TODO: - Implement error dictionary
 api = Api(app)
 
 # Establishing connection.
@@ -30,6 +36,7 @@ database.mysql_connection.cnx.autocommit = True
 api.add_resource(login.Login, "/login")
 api.add_resource(email.Email, "/email/taken")
 api.add_resource(posts.Post, "/post")
+
 
 if __name__ == "__main__":
     # Running the api.

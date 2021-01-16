@@ -9,7 +9,7 @@ CREATE TABLE UserTable(
     email VARCHAR(150) NOT NULL,
     token VARCHAR(200),
     token_registration_date DATETIME,
-    description VARCHAR(1000),
+    caption VARCHAR(1000),
     profile_image_path VARCHAR(30),
     PRIMARY KEY (id)
 )
@@ -26,7 +26,7 @@ CREATE TABLE Post(
     image_path VARCHAR(30) NOT NULL,
     user_id BIGINT NOT NULL,
     post_time DATETIME NOT NULL,
-    description VARCHAR(1000),
+    caption VARCHAR(2200),
     PRIMARY KEY(id)
 )
 ENGINE=INNODB;
@@ -34,6 +34,14 @@ ENGINE=INNODB;
 CREATE TABLE Follow(
     user_id BIGINT NOT NULL,
     user_id_followed BIGINT NOT NULL
+)
+ENGINE=INNODB;
+
+CREATE TABLE Tag(
+    post_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    x_pos FLOAT NOT NULL,
+    y_pos FLOAT NOT NULL
 )
 ENGINE=INNODB;
 
@@ -59,6 +67,14 @@ ADD INDEX ind_user_id_followed (user_id_followed);
 ALTER TABLE Post
 ADD INDEX ind_user_id (user_id);
 
+ALTER TABLE Tag
+ADD INDEX ind_user_id (user_id);
+
+ALTER TABLE Tag
+ADD INDEX ind_post_id (post_id);
+
+-- Foreign Keys
+
 ALTER TABLE LikeTable
 ADD CONSTRAINT fk_LikeTable_user_id_id FOREIGN KEY (user_id) REFERENCES UserTable(id);
 
@@ -73,3 +89,9 @@ ADD CONSTRAINT fk_Follow_user_id_followed_id FOREIGN KEY (user_id_followed) REFE
 
 ALTER TABLE Post
 ADD CONSTRAINT fk_Post_user_id_id FOREIGN KEY (user_id) REFERENCES UserTable(id);
+
+ALTER TABLE Tag
+ADD CONSTRAINT fk_Tag_user_id_id FOREIGN KEY (user_id) REFERENCES UserTable(id);
+
+ALTER TABLE Tag
+ADD CONSTRAINT fk_Tag_post_id_id FOREIGN KEY (post_id) REFERENCES Post(id);

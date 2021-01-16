@@ -12,7 +12,7 @@ When there is an error, the first field of the answer will always be named "erro
    
 Return the token of a user. 
 
-Parameters : 
+Query Parameters : 
  - username : name the user want to have.
  - hash : encrypted password.
  
@@ -29,7 +29,7 @@ Response if operation successful :
    
 Register a user into the database and return the token. 
 
-Parameters :
+Query parameters :
  - username : name the user want to have.
  - hash : encrypted password.
  - email : email associated to the account.
@@ -39,6 +39,7 @@ Errors :
  - "Username already taken" code **409**.
  - "Email already taken" code **409**.
  - "Invalid email" code **406**.
+ - "Invalid username" code **406**.
 
 Response if operation successful :
 
@@ -51,7 +52,7 @@ Response if operation successful :
    
 Check if an email is already taken by someone. 
 
-Parameters : 
+Query parameters :
  - email : The email to check for.
 
 Errors :
@@ -66,14 +67,39 @@ Response if operation successful :
 
     POST /post
    
-Create a post with an image, description...
+Create a post with an image, caption...
 Headers :
  - Authorization : Token of the user.
  - Username : Username of the user who is making the post.
 
-Parameters :
+Query parameters :
+ - caption : Caption of the post.
+
+Files : 
  - image : The image of the post.
- - description : Description of the post.
+
+Json Body : 
+ - The json body is **not mandatory**. It contains the tags for this post. The tag information include the username of the tagged user. It also include the position of the tag **relative to the bottom left corner of the image**. The position is stored into two float element, pos_x and pos_y. Both are numbers between 1 and 0. To get the true coordinate multiply pos_x by width and pos_y by height. Note that if multiple tags are sent with the same person tagged, the api will only store one of them and discard the others.
+
+An example of a valid json body is : 
+	
+	{  
+		"tags" : 
+		{ 
+			"0" : 
+			{ 
+				"x_pos" : 0.43, 
+				"y_pos" : 0.87, 
+				"username" : "john.fries"
+			}, 
+			"1" : 
+			{ 	
+				x_pos" : 0.29, 
+				"y_pos" : 0.44, 
+				"username" : "titouan" 
+			}
+		}
+	}
 
 Errors :
  - "Missing Information" code **400**.

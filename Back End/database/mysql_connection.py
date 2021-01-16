@@ -7,4 +7,4 @@ If what is running is the production version (main.py) then it is defined in mai
 If what is running is tests then it is defined in tests/tests.py pointing to the test database.
 This enable testing without altering the production database.
 """
-cnx = None
+cnx : mysql.connector.MySQLConnection = None
