@@ -17,6 +17,16 @@ Endpoint classes are not that much documented as all of the documentation is in 
 Consult that file to get information on how to contact these endpoints providing the right data.
 """
 
+#TODO: Create search endpoint
+"""
+Search strategy : 
+ - select all the person followed by the user searching which correspond to the current search string
+ - select all the person NOT FOLLOWED by the user searching but with public account which correspond to the current 
+    search string
+    
+combine both, one on top of the other
+ """
+
 app = Flask(__name__)
 
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Limit contents upload to 5 megabytes.

@@ -9,6 +9,7 @@ import database.mysql_connection
 import errors
 import main
 from PIL import Image
+import json
 
 
 class TestsVTwo(unittest.TestCase):
@@ -17,7 +18,6 @@ class TestsVTwo(unittest.TestCase):
     Rather than testing the class methods independently, this will actually reproduce requests to the api endpoints
     leading to more accurate tests on customer expectation.
     """
-
     image_square = ('test_image.png', open('test_image.png'), 'image/png')
     image_portrait = ('1280-1920.png', open('1280-1920.png'), 'image/png')
     image_landscape_big = ("3840-2160.png", open("3840-2160.png"), "image/png")
@@ -25,23 +25,8 @@ class TestsVTwo(unittest.TestCase):
     default_hash = "hash"
     default_username = "test_username"
     default_email = "test.test@bestagram.com"
-    default_json = {
-        "tags":
-            {
-                "0":
-                    {
-                        "x_pos": 0.43,
-                        "y_pos": 0.87,
-                        "username": "john.fries"
-                    },
-                "1":
-                    {
-                        "x_pos": 0.29,
-                        "y_pos": 0.44,
-                        "username": "titouan"
-                    }
-            }
-    }
+    default_tags = {"tags": {"0": {"pos_x": 0.43, "pos_y": 0.87, "username": "john.fries"},
+                             "1": {"pos_x": 0.29, "pos_y": 0.44, "username": "titouan"}}}
 
     def user_in_db(self, username: str) -> (bool, dict):
         """
@@ -111,10 +96,12 @@ class TestsVTwo(unittest.TestCase):
             params = {}
         if json is None:
             json = {}
+        else:
+            json = (None, json, "application/json")
 
         data = dict(
             image=file,
-            json=(json, "application/json")
+            json=json
         )
         response = self.client.open(
             route,
@@ -141,6 +128,43 @@ class TestsVTwo(unittest.TestCase):
             return True, content["token"]
         else:
             return False, ""
+
+    def post(self, default: bool, file: tuple, caption=None, tag: dict = None, username: str = None,
+             token: str = None) -> tuple:
+        """
+        Post a picture.
+
+        :param default: Use default account or not. If the default account doesn't already exist, will create it and
+        then use it to post the picture.
+        :param file: Image file to post.
+        :param caption: Caption to the image.
+        :param tag: Tag to register with the picture.
+        :param username: If the default option is set to false then this is the username of the account to use for
+        posting.
+        :param token: If the default option is set to false then this is the token that goes with the username of the
+        account to use for posting.
+        :return:
+        """
+
+        name = username
+        authorization = token
+        if default:
+            if not self.user_in_db(self.default_username)[0]:
+                self.add_default_user()
+            _, authorization = self.login(self.default_username, self.default_hash)
+
+            name = self.default_username
+
+        # When posting with valid credentials.
+
+        code, content = self.ex_request(
+            method="PUT",
+            route="/post",
+            params={"caption": caption, "tag": json.dumps(tag)},
+            headers={"Authorization": authorization, "Username": name},
+            file=file
+        )
+        return code, content
 
     def setUp(self) -> None:
         self.create_db()
@@ -366,13 +390,8 @@ class TestsVTwo(unittest.TestCase):
         # Given no user.
 
         # When posting with invalid credentials.
-        code, content = self.ex_request(
-            method="PUT",
-            route="/post",
-            params={"caption": "an image"},
-            headers={"Authorization": "invalid_token", "username": self.default_username},
-            file=self.image_square
-        )
+        code, content = self.post(default=False, file=self.image_square, username=self.default_username,
+                                  token="invalid_token")
 
         # Then raise invalid credentials.
         self.assertEqual(code, 401)
@@ -380,35 +399,18 @@ class TestsVTwo(unittest.TestCase):
 
     def test_GivenUserWhenPostingWithValidCredentialsThenIsSuccessful(self):
         # Given user.
-        self.add_default_user()
-        _, token = self.login(self.default_username, self.default_hash)
-
         # When posting with valid credentials.
-        code, content = self.ex_request(
-            method="PUT",
-            route="/post",
-            params={"caption": "an image"},
-            headers={"Authorization": token, "Username": self.default_username},
-            file=self.image_square
-        )
+        code, content = self.post(default=True, file=self.image_square)
 
         # Then is successful.
-        self.assertEqual(code, 201)
+        self.assertEqual(201, code)
 
     def test_GivenImageIsInPortraitModeWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
         # Given image is in portrait mode.
         image = self.image_portrait
-        self.add_default_user()
-        _, token = self.login(self.default_username, self.default_hash)
 
         # When posting.
-        code, content = self.ex_request(
-            method="PUT",
-            route="/post",
-            params={"caption": "an image"},
-            headers={"Authorization": token, "Username": self.default_username},
-            file=image
-        )
+        code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
         self.assertEqual(code, 201)
@@ -417,19 +419,11 @@ class TestsVTwo(unittest.TestCase):
         new_im.close()
 
     def test_GivenImageIsInLandscapeModeWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
-        # Given image is in portrait mode.
+        # Given image is in landscape mode.
         image = self.image_landscape_big
-        self.add_default_user()
-        _, token = self.login(self.default_username, self.default_hash)
 
         # When posting.
-        code, content = self.ex_request(
-            method="PUT",
-            route="/post",
-            params={"caption": "an image"},
-            headers={"Authorization": token, "Username": self.default_username},
-            file=image
-        )
+        code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
         self.assertEqual(code, 201)
@@ -438,19 +432,11 @@ class TestsVTwo(unittest.TestCase):
         new_im.close()
 
     def test_GivenImageUnderFinalResolutionWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
-        # Given image is in portrait mode.
+        # Given image under final resolution.
         image = self.image_landscape_small
-        self.add_default_user()
-        _, token = self.login(self.default_username, self.default_hash)
 
         # When posting.
-        code, content = self.ex_request(
-            method="PUT",
-            route="/post",
-            params={"caption": "an image"},
-            headers={"Authorization": token, "Username": self.default_username},
-            file=image
-        )
+        code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
         self.assertEqual(code, 201)
@@ -461,28 +447,73 @@ class TestsVTwo(unittest.TestCase):
     def test_GivenPostingImageWhenRetrievingImageDataFromDatabaseThenIsCorrectData(self):
         # Given posting image.
         self.add_default_user()
-        _, token = self.login(self.default_username, self.default_hash)
-        caption = "a big image"
-        code, content = self.ex_request(
-            method="PUT",
-            route="/post",
-            params={"caption": caption},
-            headers={"Authorization": token, "Username": self.default_username},
-            file=self.image_square
-        )
+        caption = "this is a caption"
+        code, content = self.post(default=True, file=self.image_square, caption=caption)
 
         # When retrieving image data from database.
         query = """
-        SELECT * FROM Post;""" # There should be only one image inside so we can fetch everything.
+        SELECT * FROM Post;"""  # There should be only one image inside so we can fetch everything.
         self.cursor.execute(query)
         result = self.cursor.fetchall()[0]
 
         self.assertEqual(result["caption"], caption)
         self.assertEqual(result["image_path"], f"Posts/{self.default_username}/0.png")
 
-    def test_post(self):
-        self.add_default_user()
-        token = User(username=self.default_username, hash=self.default_hash).token
+    """
+    Tag test
+    """
+
+    def test_GivenHavingTagLinkingNonExistingUserWhenPostingThenDoesntAddTags(self):
+        # Given having tag linking existing user.
+        tags = self.default_tags
+
+        # When posting.
+        code, content = self.post(default=True, file=self.image_square, tag=tags)
+
+        # Then doesn't add tags.
+        query = """
+        SELECT * FROM Tag;
+        """
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        self.assertEqual(201, code)
+        self.assertEqual(0, len(result))
+
+    def test_GivenHavingTagLinkingExistingUserWhenPostingThenAddTags(self):
+        # Given having tag with linking existing user.
+        self.add_user(fields={"username": "john.fries", "hash": "test", "email": "test.test@bestagram"})
+        self.add_user(fields={"username": "titouan", "hash": "test", "email": "test@bestagram"})
+        tags = self.default_tags
+
+        # When posting.
+        code, content = self.post(default=True, file=self.image_square, tag=tags)
+
+        # Then add tags.
+        query = """
+                SELECT * FROM Tag;
+                """
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        self.assertEqual(201, code)
+        self.assertEqual(2, len(result))
+
+    def test_GivenTagLinkingToTheSameUserWhenPostingThenAddOnlyOne(self):
+        # Given tag linking to the same user.
+        self.add_user(fields={"username": "john.fries", "hash": "test", "email": "test.test@bestagram"})
+        tags = {"tags": {"0": {"pos_x": 0.5, "pos_y": 0.3, "username": "john.fries"},
+                         "1": {"pos_x": 0.3, "pos_y": 0.5, "username": "john.fries"}}}
+
+        # When posting.
+        code, content = self.post(default=True, file=self.image_square, tag=tags)
+
+        # Then add only one.
+        query = """
+                SELECT * FROM Tag;
+                """
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        self.assertEqual(201, code)
+        self.assertEqual(1, len(result))
 
     def tearDown(self) -> None:
         self.image_landscape_small[1].close()

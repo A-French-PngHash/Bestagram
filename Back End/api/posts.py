@@ -5,7 +5,7 @@ from user import User
 from database.request_utils import *
 from errors import *
 from tag import *
-
+from json import loads
 
 class Post(Resource):
     """
@@ -13,16 +13,7 @@ class Post(Resource):
 
     Query parameters :
         - caption
-
-    Header :
-        - Authorization
-        - Username
-
-    Files :
-        - image
-
-    Body :
-        - json body. Contain tags information (position + username of person mentioned). Must look something like this :
+        - tag : Contain tags information (position + username of person mentioned). Must look something like this :
         {
             "tags" :
             {
@@ -41,6 +32,13 @@ class Post(Resource):
             }
         }
 
+    Header :
+        - Authorization
+        - Username
+
+    Files :
+        - image
+
     """
 
     def put(self) -> (dict, int):
@@ -55,29 +53,36 @@ class Post(Resource):
         parser.add_argument("Username", location="headers")
         # Caption of the image.
         parser.add_argument("caption")
+        # Tag included with the image.
+        parser.add_argument("tag")
 
-        json = request.get_json()
         params = parser.parse_args()
+        tags = params["tag"]
+        tags = loads(tags)
 
         # This part is where we retrieve tags.
-        tags = []
+        tags_list = []
+
+        json = tags["tags"]
         try:
-            json = json["tags"]
             for i in json:
                 tag = json[i]
                 try:
                     id = get_user_id_from_username(username=tag["username"])
                     tag = Tag(user_id=id, pos_x=tag["pos_x"], pos_y=tag["pos_y"])
-                    if tag not in tags: # Prevent redundant tags with the same person tagged.
-                        tags.append(tag)
+                    if tag not in tags_list:  # Prevent redundant tags_list with the same person tagged.
+                        tags_list.append(tag)
                 except UsernameNotExisting:
                     pass
+                except Exception as e:
+                    # Error in json. Skipping to next tag.
+                    print("Error while parsing json : ", e)
         except Exception as e:
-            # This code is executed if there is an error while retrieving the json, we just assume there is no tag in
-            # this case.
-            print(e)
+            # This code is executed if there is an error while parsing the json, we just keep the already registered
+            # tags in this case.
+            print("Error while parsing json : ", e)
 
-        if params["image"] == "" or params["caption"] == "":
+        if params["image"] == "":  # Caption is not mandatory.
             return {"error": MissingInformation.description}, 400
 
         try:
@@ -86,5 +91,5 @@ class Post(Resource):
             return {"error": InvalidCredentials.description}, 401
 
         img = params["image"]
-        user.create_post(img, caption=params["caption"], tags=tags)
+        user.create_post(img, caption=params["caption"], tags=tags_list)
         return {"status": "Image Received"}, 201

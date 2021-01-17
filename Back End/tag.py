@@ -24,7 +24,7 @@ class Tag:
         :param post_id:
         """
         query = f"""
-        INSERT INTO Tags
+        INSERT INTO Tag
         VALUES({post_id}, {self.user_id}, {self.pos_x}, {self.pos_y}); 
         """
         cursor = database.mysql_connection.cnx.cursor(dictionary=True)

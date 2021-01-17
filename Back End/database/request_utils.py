@@ -47,4 +47,4 @@ def get_user_id_from_username(username: str) -> int:
     if len(result) == 0:
         raise UsernameNotExisting(username=username)
     else:
-        return result["id"]
+        return result[0]["id"]

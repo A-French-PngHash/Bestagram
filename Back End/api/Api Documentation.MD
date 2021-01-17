@@ -74,32 +74,32 @@ Headers :
 
 Query parameters :
  - caption : Caption of the post.
+ - tag : The tag parameters is **not mandatory**. It contains the tags for this post in a json string. 
+The tag information include the username of the tagged user. It also include the position of the tag **relative to the bottom left corner of the image**. The position is stored into two float element, pos_x and pos_y. Both are numbers between 1 and 0. To get the true coordinate multiply pos_x by width and pos_y by height. Note that if multiple tags are sent with the same person tagged, the api will only store one of them and discard the others.
+
+An example of a valid json body is : 
+    
+    {  
+        "tags" : 
+        { 
+            "0" : 
+            { 
+                "pos_x" : 0.43, 
+                "pox_y" : 0.87, 
+                "username" : "john.fries"
+            }, 
+            "1" : 
+            {     
+                "pos_x" : 0.29, 
+                "pos_y" : 0.44, 
+                "username" : "titouan" 
+            }
+        }
+    }
+
 
 Files : 
  - image : The image of the post.
-
-Json Body : 
- - The json body is **not mandatory**. It contains the tags for this post. The tag information include the username of the tagged user. It also include the position of the tag **relative to the bottom left corner of the image**. The position is stored into two float element, pos_x and pos_y. Both are numbers between 1 and 0. To get the true coordinate multiply pos_x by width and pos_y by height. Note that if multiple tags are sent with the same person tagged, the api will only store one of them and discard the others.
-
-An example of a valid json body is : 
-	
-	{  
-		"tags" : 
-		{ 
-			"0" : 
-			{ 
-				"x_pos" : 0.43, 
-				"y_pos" : 0.87, 
-				"username" : "john.fries"
-			}, 
-			"1" : 
-			{ 	
-				x_pos" : 0.29, 
-				"y_pos" : 0.44, 
-				"username" : "titouan" 
-			}
-		}
-	}
 
 Errors :
  - "Missing Information" code **400**.

@@ -263,6 +263,7 @@ class User:
         COMMIT;
         """
         iterable = self.cursor.execute(create_post_query, multi=True)
+        # 4 request are made a the same time. The third is the select one.
         index = 0
         result: list = []
 
