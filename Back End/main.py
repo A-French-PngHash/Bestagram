@@ -1,8 +1,6 @@
 from flask import Flask
 from flask_restful import Api
-from api import login
-from api import email
-from api import posts
+from api import login, email, posts, search
 import database.mysql_connection
 import config
 import mysql.connector
@@ -14,18 +12,11 @@ HOST = "0.0.0.0"
 """
 WARNING: 
 Endpoint classes are not that much documented as all of the documentation is in "api/Api Documentation.md".
-Consult that file to get information on how to contact these endpoints providing the right data.
+Consult that file to get information on how to contact these endpoints to get access to the right data.
 """
 
-#TODO: Create search endpoint
-"""
-Search strategy : 
- - select all the person followed by the user searching which correspond to the current search string
- - select all the person NOT FOLLOWED by the user searching but with public account which correspond to the current 
-    search string
-    
-combine both, one on top of the other
- """
+#TODO: Add hash verification
+
 
 app = Flask(__name__)
 
@@ -46,6 +37,7 @@ database.mysql_connection.cnx.autocommit = True
 api.add_resource(login.Login, "/login")
 api.add_resource(email.Email, "/email/taken")
 api.add_resource(posts.Post, "/post")
+api.add_resource(search.Search, "/search")
 
 
 if __name__ == "__main__":

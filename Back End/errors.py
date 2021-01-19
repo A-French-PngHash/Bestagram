@@ -4,9 +4,10 @@ class InvalidCredentials(Exception):
     """
     description = "Invalid credentials"
 
-    def __init__(self, username: str = None, hash: str = None):
+    def __init__(self, username: str = None, hash: str = None, token : str = None):
         self.username = username
         self.hash = hash
+        self.token = token
 
     def __str__(self):
         msg = "Invalid Credentials"
@@ -14,6 +15,8 @@ class InvalidCredentials(Exception):
             msg += f", username : {self.username}"
         if self.hash:
             msg += f", hash : {self.hash}"
+        if self.token:
+            msg += f", token : {self.token}"
         return msg
 
 
@@ -81,6 +84,22 @@ class InvalidUsername(Exception):
         return msg
 
 
+class InvalidName(Exception):
+    """
+    Name doesn't comply with the name syntax rules.
+    """
+    description = "Invalid username"
+
+    def __init__(self, name: str = None):
+        self.name = name
+
+    def __str__(self):
+        msg = "Invalid name"
+        if self.name:
+            msg += f" (name : {self.name})"
+        return msg
+
+
 class MissingInformation(Exception):
     """
     Request made without all required information.
@@ -92,6 +111,7 @@ class UsernameNotExisting(Exception):
     """
     This username is not registered in the database.
     """
+
     def __init__(self, username: str = None):
         self.username = username
 

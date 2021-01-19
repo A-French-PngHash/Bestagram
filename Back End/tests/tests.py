@@ -10,6 +10,7 @@ import errors
 import main
 from PIL import Image
 import json
+import random
 
 
 class TestsVTwo(unittest.TestCase):
@@ -18,12 +19,29 @@ class TestsVTwo(unittest.TestCase):
     Rather than testing the class methods independently, this will actually reproduce requests to the api endpoints
     leading to more accurate tests on customer expectation.
     """
-    image_square = ('test_image.png', open('test_image.png'), 'image/png')
-    image_portrait = ('1280-1920.png', open('1280-1920.png'), 'image/png')
-    image_landscape_big = ("3840-2160.png", open("3840-2160.png"), "image/png")
-    image_landscape_small = ("474-266.png", open("474-266.png"), "image/png")
+    @property
+    def image_square(self):
+        with open('test_image.png') as file:
+            return ('test_image.png', file, 'image/png')
+
+    @property
+    def image_portrait(self):
+        with open('1280-1920.png') as file:
+            return ('1280-1920.png', file, 'image/png')
+
+    @property
+    def image_landscape_big(self):
+        with open("3840-2160.png") as file:
+            return ("3840-2160.png", file, "image/png")
+
+    @property
+    def image_landscape_small(self):
+        with open("474-266.png") as file:
+            return ("474-266.png", file, "image/png")
+
     default_hash = "hash"
     default_username = "test_username"
+    default_name = "test_name"
     default_email = "test.test@bestagram.com"
     default_tags = {"tags": {"0": {"pos_x": 0.43, "pos_y": 0.87, "username": "john.fries"},
                              "1": {"pos_x": 0.29, "pos_y": 0.44, "username": "titouan"}}}
@@ -44,26 +62,45 @@ class TestsVTwo(unittest.TestCase):
             return False, None
         return True, result[0]
 
-    def add_user(self, fields: dict):
+    def random_string(self, length: int) -> str:
+        """
+        Generate a random string of length length.
+        :param length: Length of the string.
+        :return:
+        """
+        letters = "abcdefghijklmnopqrstuvwxyz1234567890"
+        output = ""
+        for _ in range(length):
+            output += random.choice(letters)
+        return output
+
+    def add_user(self, username: str = None, email: str = None, name: str = None, hash: str = None):
         """
         Add a user in the test database.
-        :param fields: Dictionary of the field for the user. Key is the field and value is the value.
+        :param username: Username of the user to add. Optional.
+        :param email: Email of the user. Optional.
+        :param name: Name of the user. Optional.
+        :param hash: Hash of the user. Optional.
+
+        If the email, name or hash is not provided, they will be generated randomly.
 
         :return:
         """
-        add_user_query = """
-            INSERT INTO UserTable (
-            """
-        # Adding columns name.
-        for i in fields.keys():
-            add_user_query += i + ","
-        # Removing unwanted comma.
-        add_user_query = add_user_query[:-1] + ") VALUES ("
-        # Adding values name.
-        for i in fields.values():
-            add_user_query += "\"" + str(i) + "\","
-        # Removing unwanted comma.
-        add_user_query = add_user_query[:-1] + ");"
+        if not username:
+            username = self.random_string(config.MAX_USERNAME_LENGTH)
+        if not email:
+            email = self.random_string(8) + "." + self.random_string(8) + "@" + self.random_string(
+                5) + "." + self.random_string(4)
+        if not name:
+            name = self.random_string(config.MAX_NAME_LENGTH)
+        if not hash:
+            #  TODO: When implementing hash verification change this value.
+            hash = self.random_string(50)
+
+        add_user_query = f"""
+        INSERT INTO UserTable (username, name, email, hash)
+        VALUES ("{username}", "{name}", "{email}", "{hash}");
+        """
         self.cursor.execute(add_user_query)
 
     def create_db(self):
@@ -73,8 +110,10 @@ class TestsVTwo(unittest.TestCase):
         os.system(command)
 
     def add_default_user(self):
-        self.add_user(
-            fields={"username": self.default_username, "hash": self.default_hash, "email": self.default_email})
+        self.add_user(username=self.default_username,
+                      name=self.default_name,
+                      hash=self.default_hash,
+                      email=self.default_email)
 
     def ex_request(self, method: str, route: str, params: dict = None, headers: dict = None, file=None,
                    json: dict = None) -> (int, dict):
@@ -129,7 +168,7 @@ class TestsVTwo(unittest.TestCase):
         else:
             return False, ""
 
-    def post(self, default: bool, file: tuple, caption=None, tag: dict = None, username: str = None,
+    def post(self, default: bool, file: tuple, caption=None, tag: dict = None,
              token: str = None) -> tuple:
         """
         Post a picture.
@@ -139,21 +178,16 @@ class TestsVTwo(unittest.TestCase):
         :param file: Image file to post.
         :param caption: Caption to the image.
         :param tag: Tag to register with the picture.
-        :param username: If the default option is set to false then this is the username of the account to use for
-        posting.
         :param token: If the default option is set to false then this is the token that goes with the username of the
         account to use for posting.
         :return:
         """
 
-        name = username
         authorization = token
         if default:
             if not self.user_in_db(self.default_username)[0]:
                 self.add_default_user()
             _, authorization = self.login(self.default_username, self.default_hash)
-
-            name = self.default_username
 
         # When posting with valid credentials.
 
@@ -161,10 +195,55 @@ class TestsVTwo(unittest.TestCase):
             method="PUT",
             route="/post",
             params={"caption": caption, "tag": json.dumps(tag)},
-            headers={"Authorization": authorization, "Username": name},
+            headers={"Authorization": authorization},
             file=file
         )
         return code, content
+
+    def search(self, default: bool, search: str, offset: int, row_count: int, token: str = None) -> tuple:
+        authorization = token
+        if default:
+            if not self.user_in_db(self.default_username)[0]:
+                self.add_default_user()
+            _, authorization = self.login(self.default_username, self.default_hash)
+
+        code, content = self.ex_request(
+            method="GET",
+            route="/search",
+            params={"rowCount": row_count, "search": search, "offset": offset},
+            headers={"Authorization": authorization}
+        )
+        return code, content
+
+    def follow(self, default: bool, user_id_followed: int = None, username_followed : str = None, user_id: int = None, username: str = None):
+        """
+        Add follow relation from one user to another.
+        :param default: Use the default account as the following acccount.
+        :param user_id_followed: Id of the followed account.
+        :param username_followed: Username of the followed account. Necessary if the user_id_followed is not provided.
+        :param user_id: If default is set to false then this is the id of the user following.
+        :param username: If default is set to false and user_id is not provided then that is the username of the user following.
+        :return:
+        """
+        user_id_followed = user_id_followed
+        user_id = user_id
+        if default:
+            if not self.user_in_db(self.default_username)[0]:
+                self.add_default_user()
+            query = f"""SELECT id FROM UserTable WHERE username = "{self.default_username}";"""
+            self.cursor.execute(query)
+            user_id = self.cursor.fetchall()[0]["id"]
+        if username_followed:
+            query = f"""SELECT id FROM UserTable WHERE username = "{username_followed}";"""
+            self.cursor.execute(query)
+            user_id_followed = self.cursor.fetchall()[0]["id"]
+        if username:
+            query = f"""SELECT id FROM UserTable WHERE username = "{username}" """
+            self.cursor.execute(query)
+            user_id = self.cursor.fetchall()[0]["id"]
+
+        add_follow_query = f"""INSERT INTO Follow VALUES ({user_id}, {user_id_followed});"""
+        self.cursor.execute(add_follow_query)
 
     def setUp(self) -> None:
         self.create_db()
@@ -213,7 +292,7 @@ class TestsVTwo(unittest.TestCase):
                                         params={"username": self.default_username, "hash": incorrect_hash})
 
         # Then raise invalid credentials.
-        self.assertEqual(code, 401)
+        self.assertEqual(401, code)
         self.assertEqual(content["error"], InvalidCredentials.description)
 
     def test_GivenUserInDatabaseWhenLoginWithCorrectDataThenSuccessfulLogin(self):
@@ -261,6 +340,7 @@ class TestsVTwo(unittest.TestCase):
         # When registering.
         code, content = self.ex_request("PUT", route="login", params={
             "username": self.default_username,
+            "name": self.default_name,
             "hash": self.default_hash,
             "email": self.default_email})
 
@@ -280,13 +360,14 @@ class TestsVTwo(unittest.TestCase):
         invalid_email = "invalid.email.@"
         code, content = self.ex_request("PUT", route="login", params={
             "username": self.default_username,
+            "name": self.default_name,
             "hash": self.default_hash,
             "email": invalid_email
         })
 
         # Then is not created and raise invalid email.
         success, i = self.user_in_db(self.default_username)
-        self.assertEqual(code, 406)
+        self.assertEqual(406, code)
         self.assertEqual(content["error"], InvalidEmail.description)
         self.assertFalse(success)
 
@@ -297,6 +378,7 @@ class TestsVTwo(unittest.TestCase):
         # When registering with same username.
         code, content = self.ex_request("PUT", route="login", params={
             "username": self.default_username,
+            "name": self.default_name,
             "hash": self.default_hash,
             "email": "random.email@bestagram.com"
         })
@@ -320,6 +402,7 @@ class TestsVTwo(unittest.TestCase):
         # When registering with same email.
         code, content = self.ex_request("PUT", route="login", params={
             "username": "random_username",
+            "name": self.default_name,
             "hash": self.default_hash,
             "email": self.default_email
         })
@@ -343,6 +426,7 @@ class TestsVTwo(unittest.TestCase):
         username = "a" * (config.MAX_USERNAME_LENGTH + 5)
         code, content = self.ex_request("PUT", route="login", params={
             "username": username,
+            "name": self.default_name,
             "hash": self.default_hash,
             "email": self.default_email
         })
@@ -390,7 +474,7 @@ class TestsVTwo(unittest.TestCase):
         # Given no user.
 
         # When posting with invalid credentials.
-        code, content = self.post(default=False, file=self.image_square, username=self.default_username,
+        code, content = self.post(default=False, file=self.image_square,
                                   token="invalid_token")
 
         # Then raise invalid credentials.
@@ -403,7 +487,7 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.post(default=True, file=self.image_square)
 
         # Then is successful.
-        self.assertEqual(201, code)
+        self.assertEqual(201, code, content)
 
     def test_GivenImageIsInPortraitModeWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
         # Given image is in portrait mode.
@@ -481,8 +565,8 @@ class TestsVTwo(unittest.TestCase):
 
     def test_GivenHavingTagLinkingExistingUserWhenPostingThenAddTags(self):
         # Given having tag with linking existing user.
-        self.add_user(fields={"username": "john.fries", "hash": "test", "email": "test.test@bestagram"})
-        self.add_user(fields={"username": "titouan", "hash": "test", "email": "test@bestagram"})
+        self.add_user(username="john.fries")
+        self.add_user(username="titouan")
         tags = self.default_tags
 
         # When posting.
@@ -499,7 +583,7 @@ class TestsVTwo(unittest.TestCase):
 
     def test_GivenTagLinkingToTheSameUserWhenPostingThenAddOnlyOne(self):
         # Given tag linking to the same user.
-        self.add_user(fields={"username": "john.fries", "hash": "test", "email": "test.test@bestagram"})
+        self.add_user(username="john.fries")
         tags = {"tags": {"0": {"pos_x": 0.5, "pos_y": 0.3, "username": "john.fries"},
                          "1": {"pos_x": 0.3, "pos_y": 0.5, "username": "john.fries"}}}
 
@@ -515,11 +599,136 @@ class TestsVTwo(unittest.TestCase):
         self.assertEqual(201, code)
         self.assertEqual(1, len(result))
 
+    """    
+    --------------------------
+    Search test
+    --------------------------
+    """
+
+    def test_GivenNoUserWhenSearchingWithEmptyStringThenReturnsNothing(self):
+        code, content = self.search(default=True, search="", offset=0, row_count=100)
+
+        self.assertEqual(200, code)
+        self.assertEqual(content, {})
+
+    def test_GivenUsersWhenSearchingWithEmptyStringThenReturnsAllOfThem(self):
+        for i in range(10):
+            self.add_user()
+
+        code, content = self.search(default=True, search="",  offset=0, row_count=100)
+        self.assertEqual(200, code)
+        self.assertNotEqual({}, content)
+        self.assertEqual(10, len(content))
+
+    def test_GivenUsersWhenSearchingThenReturnsOnlyMatchingOnes(self):
+        search = "abc"
+        matching_list = [
+            "ABRACADABRA",
+            "gluta frisBee count",
+            "abcpopo",
+            "_ab_c_",
+            "peopalebfjskchdy"
+        ]
+        non_matching_list = [
+            "cba",
+            "ab",
+            "nonmatching",
+            "should not match",
+            "amazing bullet"
+        ]
+        for name in matching_list:
+            self.add_user(username=name, name=name)
+        for name in non_matching_list:
+            self.add_user(username=name, name=name)
+
+        code, content = self.search(default=True, search=search, offset=0, row_count=100)
+
+        self.assertEqual(200, code)
+        self.assertEqual(len(matching_list), len(content))
+
+    def test_GivenRowCountIs200WhenHavingResultsOver100MatchThenOnlyReturn100(self):
+        for i in range(150):
+            self.add_user()
+
+        code, content = self.search(default=True, search="", offset=0, row_count=200)
+
+        self.assertEqual(200, code)
+        self.assertEqual(100, len(content))
+
+    def test_GivenOffsetIsLessThan0WhenHavingResultsThenReturnTheResults(self):
+        for i in range(10):
+            self.add_user()
+
+        code, content = self.search(default=True, search="", offset=-20, row_count=100)
+
+        self.assertEqual(200, code)
+        self.assertEqual(10, len(content))
+
+    def test_GivenSearchingWhenHavingNumberOfResultsOverRowCountThenOnlyReturnRowCountResults(self):
+        for i in range(10):
+            self.add_user()
+        row_count = 7
+
+        code, content = self.search(default=True, search="", offset=0, row_count=row_count)
+
+        self.assertEqual(200, code)
+        self.assertEqual(len(content), row_count)
+
+    def test_GivenUserFollowOtherUsersWhenSearchingThenReturnResultsWithFollowedUserFirst(self):
+        followed = ["atrick", "btruck", "ctrack", "dtrock"]
+        for i in followed:
+            self.add_user(username=i, name=i)
+            self.follow(default=True, username_followed=i)
+        for i in range(4):
+            self.add_user()
+
+        code, content = self.search(default=True, search="", offset=0, row_count=100)
+
+        self.assertEqual(200, code)
+        self.assertEqual(8, len(content))
+        for (index, element) in enumerate(followed):
+            self.assertEqual(element, content[str(index)])
+
+    def test_GivenUsersFollowingOtherUsersWhenSearchingThenReturnResultsSortedByNumberOfFollower(self):
+        people = ["test1", "test2", "test3", "test4"]
+        for i in people:
+            self.add_user(username=i, name=i)
+
+        for (index, element) in enumerate(people):
+            for i in range(len(people) - index):
+                self.follow(default=False, username=element, username_followed=people[index+i])
+
+        code, content = self.search(default=True, search="", offset=0, row_count=100)
+
+        self.assertEqual(200, code)
+        self.assertEqual(len(people), len(content))
+
+    def test_GivenUsersFollowingOtherUsersAndBeenFollowedByUserSearchingWhenSearchingThenResultsSortedByNumberOfFollowThenPeopleNotFollowed(self):
+        people_followed = ["test1", "test2", "test3", "test4"]
+        people_not_followed = ["frenchfries", "belgiumfries"]
+
+        for i in people_followed:
+            self.add_user(username=i, name=i)
+        for i in people_not_followed:
+            self.add_user(username=i, name=i)
+
+        for (index, element) in enumerate(people_followed):
+            for i in range(len(people_followed) - index):
+                self.follow(default=False, username=people_followed[index + i], username_followed=element)
+            self.follow(default=True, username_followed=element)
+        self.follow(default=False, username=people_not_followed[1], username_followed=people_not_followed[0])
+
+        code, content = self.search(default=True, search="", offset=0, row_count=100)
+
+        self.assertEqual(200, code)
+        self.assertEqual(len(people_followed) + len(people_not_followed), len(content))
+        for i in range(len(people_followed)):
+            # Follows have been made so that the first user of the list has the most follow and so on.
+            self.assertEqual(people_followed[i], content[str(i)])
+        for i in range(len(people_not_followed)):
+            self.assertEqual(people_not_followed[i], content[str(i + len(people_followed))])
+
     def tearDown(self) -> None:
-        self.image_landscape_small[1].close()
-        self.image_portrait[1].close()
-        self.image_landscape_big[1].close()
-        self.image_square[1].close()
         try:
             shutil.rmtree("Posts")
         except:

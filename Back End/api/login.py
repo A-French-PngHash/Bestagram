@@ -41,13 +41,14 @@ class Login(Resource):
         parser.add_argument("username")
         parser.add_argument("hash")
         parser.add_argument("email")
+        parser.add_argument("name")
         params = parser.parse_args()
 
-        if not (params["username"] and params["hash"] and params["email"]):
+        if not (params["username"] and params["hash"] and params["email"] and params["name"]):
             return {"error": MissingInformation.description}, 400
 
         try:
-            user = User.create(params["username"], hash=params["hash"], email=params["email"])
+            user = User.create(params["username"], params["name"], hash=params["hash"], email=params["email"])
         except UsernameTaken:
             return {"error": UsernameTaken.description}, 409
         except EmailTaken:
@@ -56,5 +57,7 @@ class Login(Resource):
             return {"error": InvalidEmail.description}, 406
         except InvalidUsername:
             return {"error": InvalidUsername.description}, 406
+        except InvalidName:
+            return {"error": InvalidName.description}, 406
 
         return {"token": user.token}, 201

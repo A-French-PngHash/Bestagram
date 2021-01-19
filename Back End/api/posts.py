@@ -7,6 +7,7 @@ from errors import *
 from tag import *
 from json import loads
 
+
 class Post(Resource):
     """
     Retrieve or put posts using this endpoint.
@@ -49,8 +50,6 @@ class Post(Resource):
         parser.add_argument("image", type=werkzeug.datastructures.FileStorage, location="files")
         # Token.
         parser.add_argument("Authorization", location="headers")
-        # Username associated with token.
-        parser.add_argument("Username", location="headers")
         # Caption of the image.
         parser.add_argument("caption")
         # Tag included with the image.
@@ -60,11 +59,19 @@ class Post(Resource):
         tags = params["tag"]
         tags = loads(tags)
 
+        if params["image"] == "":  # Caption is not mandatory.
+            return {"error": MissingInformation.description}, 400
+
+        try:
+            user = User(token=params["Authorization"])
+        except InvalidCredentials:
+            return {"error": InvalidCredentials.description}, 401
+
         # This part is where we retrieve tags.
         tags_list = []
 
-        json = tags["tags"]
         try:
+            json = tags["tags"]
             for i in json:
                 tag = json[i]
                 try:
@@ -81,14 +88,6 @@ class Post(Resource):
             # This code is executed if there is an error while parsing the json, we just keep the already registered
             # tags in this case.
             print("Error while parsing json : ", e)
-
-        if params["image"] == "":  # Caption is not mandatory.
-            return {"error": MissingInformation.description}, 400
-
-        try:
-            user = User(username=params["Username"], token=params["Authorization"])
-        except InvalidCredentials:
-            return {"error": InvalidCredentials.description}, 401
 
         img = params["image"]
         user.create_post(img, caption=params["caption"], tags=tags_list)

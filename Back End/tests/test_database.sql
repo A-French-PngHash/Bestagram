@@ -5,8 +5,10 @@ USE BestagramTest;
 CREATE TABLE UserTable(
     id BIGINT NOT NULL AUTO_INCREMENT,
     username VARCHAR(30) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     hash VARCHAR(128) NOT NULL,
     email VARCHAR(150) NOT NULL,
+    public_profile BOOLEAN DEFAULT TRUE,
     token VARCHAR(200),
     token_registration_date DATETIME,
     caption VARCHAR(1000),
@@ -47,16 +49,22 @@ ENGINE=INNODB;
 
 -- Indexes
 ALTER TABLE UserTable
-ADD UNIQUE ind_name (username);
+ADD UNIQUE ind_username (username);
 
 ALTER TABLE UserTable
 ADD UNIQUE ind_email (email);
+
+ALTER TABLE UserTable
+ADD INDEX ind_name (name);
 
 ALTER TABLE LikeTable
 ADD INDEX ind_user_id (user_id);
 
 ALTER TABLE LikeTable
 ADD INDEX ind_post_id (post_id);
+
+ALTER TABLE Follow
+ADD UNIQUE ind_user_id_user_id_followed (user_id, user_id_followed);
 
 ALTER TABLE Follow
 ADD INDEX ind_user_id (user_id);

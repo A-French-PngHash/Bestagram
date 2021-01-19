@@ -10,15 +10,16 @@ from errors import *
 from tag import *
 from PIL import Image
 
+
 def generate_token() -> str:
     """
-    Generate a random 30 characters long token.
+    Generate a random x characters long token.
     :return: The token.
     """
     # This are the character used in the token.
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     token = ""
-    for i in range(200):
+    for i in range(config.TOKEN_LENGTH):
         token += random.choice(letters)
     return token
 
@@ -29,7 +30,7 @@ def email_is_valid(email: str) -> bool:
     :param email: The email.
     :return:
     """
-    email_valid_regex = r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$"
+    email_valid_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     result = re.findall(email_valid_regex, string=email)
     return len(result) == 1
 
@@ -40,15 +41,20 @@ def username_is_valid(username: str) -> bool:
     return len(re.findall(regex, username)) == 1
 
 
+def name_is_valid(name: str) -> bool:
+    regex = r"^[a-z0-9_.? ]{" + str(config.MIN_NAME_LENGTH) + "," + str(config.MAX_NAME_LENGTH) + "}$"
+    return len(re.findall(regex, name)) == 1
+
+
 class User:
     """
     User of Bestagram.
     """
 
-    def __init__(self, username: str, hash: str = None, token: str = None):
+    def __init__(self, username: str = None, hash: str = None, token: str = None):
         """
         Initialize the user object. This is the login, if a user need to be registered, the static function create must
-        be called. Note that either the hash parameter OR the token is required.
+        be called. There is two different way of login the user : using username and hash or using the token only.
 
         :param username: Username of the user.
         :param hash: Hash of the user.
@@ -56,29 +62,37 @@ class User:
 
         :raise InvalidCredentials: When the username and hash don't both correspond to the data of a user.
         """
-        self.username = username
 
-        # This query fetch all the user data of this user in the table UserTable
-        user_query = f"""
-        SELECT *
-        FROM UserTable
-        WHERE UserTable.username = "{username}";
-        """
+        if username:
+            # This query fetch all the user data of this user in the table UserTable.
+            user_query = f"""
+            SELECT *
+            FROM UserTable
+            WHERE UserTable.username = "{username}" AND UserTable.hash = "{hash}";
+            """
+        else:
+            user_query = f"""
+            SELECT * 
+            FROM UserTable
+            WHERE UserTable.token = "{token}";
+            """
         self.cursor = database.mysql_connection.cnx.cursor(dictionary=True)
         self.cursor.execute(user_query)
         result = self.cursor.fetchall()
 
         if len(result) == 0:
-            raise InvalidCredentials(username=username, hash=hash)
+            if token:
+                # Token authentication
+                raise InvalidCredentials(token=token)
+            else:
+                raise InvalidCredentials(username=username, hash=hash)
 
         result = result[0]
+        self.username = result["username"]
+        self.name = result["name"]
         self._token = result["token"]
         self._token_registration_date = result["token_registration_date"]
         self.id = result["id"]
-
-        # Checking if given credentials are correct.
-        if not (result["hash"] == hash or self.token == token):
-            raise InvalidCredentials(username=username, hash=hash)
 
         self.hash = hash
         self._caption = result["caption"]
@@ -108,7 +122,7 @@ class User:
 
         # Token is expired or has never been created.
         # generating new token.
-        new_token = generate_token()
+        new_token = self.username + generate_token()
         self.token = new_token
         return new_token
 
@@ -182,7 +196,6 @@ class User:
         :param length: Width and height of the output image.
         :return: Return the resized image.
         """
-
 
         """
         Resizing strategy : 
@@ -285,7 +298,7 @@ class User:
             os.makedirs(dir)
 
     @staticmethod
-    def create(username: str, hash: str, email: str):
+    def create(username: str, name: str, hash: str, email: str):
         """
         Add a user in the database and return the User object associated. Also check if the username is not already
         taken.
@@ -306,7 +319,8 @@ class User:
         if not username_is_valid(username):
             raise InvalidUsername(username=username)
 
-        re.findall("string", "test")
+        if not name_is_valid(name):
+            raise InvalidName(name=name)
 
         if value_in_database("UserTable", "username", username):
             # Username is taken.
@@ -317,10 +331,59 @@ class User:
             raise EmailTaken(email=email)
 
         add_user_query = f"""
-        INSERT INTO UserTable (username, hash, email) VALUES
-        ("{username}", "{hash}", "{email}");
+        INSERT INTO UserTable (username, name, hash, email) VALUES
+        ("{username}", "{name}", "{hash}", "{email}");
         """
         cursor = database.mysql_connection.cnx.cursor()
         cursor.execute(add_user_query)
         cursor.close()
         return User(username, hash=hash)
+
+    def search_for(self, search: str, offset: int, row_count: int) -> list:
+        """
+        This function execute a search for user on the database using the search string. It is not a static method as
+        the search result depends on the user searching.
+
+        :param search: Search string.
+        :param offset: Offset to begin at. Begins at 0.
+        :param row_count: Number of results to have. Must be less
+        :return: Returns the list of username matching the search.
+        """
+
+        search_str = "%" + "%".join(search) + "%"
+        """
+        If the string is abc it transforms it to %a%b%c% which allow us to match suggestions for string like : 
+        
+         - ABraCadabra
+         - ABC
+         - hellow A B hellow C
+         
+        It allows for matches even if the charaters doesn't touch each other as long as they appear in the same order
+        """
+        if offset < 0:
+            offset = 0
+        if row_count > 100:
+            row_count = 100
+
+        # This query select user matching the search query which the current user follow.
+        followed_search_query = f"""
+        SELECT name, username, id, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS followers FROM UserTable 
+        JOIN Follow ON Follow.user_id_followed = UserTable.id 
+        WHERE UserTable.name LIKE "{search_str}" AND Follow.user_id = {self.id}
+        ORDER BY followers DESC, name ASC
+        LIMIT {offset}, {row_count};
+        """
+        self.cursor.execute(followed_search_query)
+        results = self.cursor.fetchall()
+        if len(results) < row_count:
+            # Not enough results in the first query targetting followed user. Executing search on not followed user.
+            not_followed_search_query = f"""
+            SELECT name, username, id, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS followers FROM UserTable
+            WHERE UserTable.name LIKE "{search_str}" AND id NOT IN (SELECT user_id_followed FROM Follow WHERE user_id = {self.id}) AND id != {self.id}
+            ORDER BY followers DESC, name ASC
+            LIMIT {offset}, {row_count - len(results)};
+            """
+            self.cursor.execute(not_followed_search_query)
+            results += self.cursor.fetchall()
+        usernames = [i["username"] for i in results]
+        return usernames
