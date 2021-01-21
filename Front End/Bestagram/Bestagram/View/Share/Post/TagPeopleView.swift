@@ -42,6 +42,6 @@ struct TagPeopleView: View {
 
 struct TagPeopleView_Previews: PreviewProvider {
     static var previews: some View {
-        TagPeopleView(image: UIImage(systemName: "photo")!)
+        TagPeopleView(image: BestagramApp.defaultPostPicture)
     }
 }

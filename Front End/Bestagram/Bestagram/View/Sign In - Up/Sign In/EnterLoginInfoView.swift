@@ -72,7 +72,7 @@ struct EnterLoginInfoView: View {
                     let queue = DispatchQueue(label: "connect-user")
                     queue.async {
                         // Creating the user object will automatically start the hashing process and the fetch of the token.
-                        self.user = User(username: self.nameEntered.lowercased(), password: self.passwordEntered, name: nil, loadingFinished: { (success, error) in
+                        self.user = User(username: self.nameEntered.lowercased(), password: self.passwordEntered, loadingFinished: { (success, error) in
                             userFinishedLoading(success: success, error: error)
                         })
                     }

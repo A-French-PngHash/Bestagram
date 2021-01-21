@@ -11,6 +11,7 @@ struct SearchBar: View {
 
     var placeholder: String = ""
     var onEdit : ((String) -> Void)? = nil
+    var height: CGFloat = 40
 
     /// Input of the search bar.
     @Binding var input: String
@@ -40,7 +41,7 @@ struct SearchBar: View {
             Spacer()
                 .frame(width: 10)
         }
-        .frame(height: 40.0)
+        .frame(height: height)
         .background(BestagramApp.backgroundGray)
         .cornerRadius(10)
     }

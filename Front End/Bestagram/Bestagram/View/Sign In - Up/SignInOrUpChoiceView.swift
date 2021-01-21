@@ -45,6 +45,7 @@ struct SignInOrUpChoiceView: View {
                         .font(ProximaNova.bodyBold)
                 }
             }
+            .navigationBarHidden(true)
             .navigationBarBackButtonHidden(false)
         }
     }

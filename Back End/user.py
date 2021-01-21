@@ -326,7 +326,8 @@ class User:
         :return: User object created.
         """
         username = username.lower()
-
+        name = name.lower()
+        # TODO: update requirements for parameters in documentation.
         if not email_is_valid(email):
             raise InvalidEmail(email=email)
 

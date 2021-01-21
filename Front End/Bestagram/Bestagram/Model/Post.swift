@@ -34,11 +34,11 @@ class Post {
     }
 
     // MARK: - Functions
+    /// Return a string like "32 minutes ago" that is shown to the user to inform him of when this was posted.
+    ///
+    /// Always floor the result, for example if it's been 1 month and a half or even 1 month
+    /// and three quarters it will return "1 month ago".
     func getDisplayPostDateInformation() -> String {
-        /// Return a string like "32 minutes ago" that is shown to the user to inform him of when this was posted.
-        ///
-        /// Always floor the result, for example if it's been 1 month and a half or even 1 month
-        /// and three quarters it will return "1 month ago".
 
         let calendar = Calendar.current
         let components = calendar.dateComponents(
@@ -62,14 +62,14 @@ class Post {
         }
     }
 
+    /// Return a string like "3 months ago".
+    ///
+    /// - Parameter value: The number that need to precid the unit.
+    /// Will also be use to calculate if an s need to be added at the end.
+    ///
+    /// - Parameter unit: The unit (can be year, month, second...).
+    /// IMPORTANT : don't put this unit to plural, this function will set it to plural if necessary.
     private func makeString(value: Int, unit: String) -> String {
-        /// Return a string like "3 months ago".
-        ///
-        /// - Parameter value: The number that need to precid the unit.
-        /// Will also be use to calculate if an s need to be added at the end.
-        ///
-        /// - Parameter unit: The unit (can be year, month, second...).
-        /// IMPORTANT : don't put this unit to plural, this function will set it to plural if necessary.
         if value > 1 {
             return "\(value) \(unit)s ago"
         } else {

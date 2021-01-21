@@ -23,6 +23,9 @@
 		5B1D1FF625727420006B5073 /* BestagramPostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FF525727420006B5073 /* BestagramPostTests.swift */; };
 		5B1D200F2572DF2A006B5073 /* DescriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D200E2572DF2A006B5073 /* DescriptionView.swift */; };
 		5B1D20142572DF81006B5073 /* Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D20132572DF81006B5073 /* Description.swift */; };
+		5B21218E25B9B6050055C2C6 /* PickUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21218D25B9B6050055C2C6 /* PickUsernameView.swift */; };
+		5B21219325B9B9E60055C2C6 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21219225B9B9E60055C2C6 /* SearchService.swift */; };
+		5B21219825B9BC450055C2C6 /* errorParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21219725B9BC450055C2C6 /* errorParsing.swift */; };
 		5B4A619025852E9C008FDED5 /* EnterConfirmationCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A618F25852E9C008FDED5 /* EnterConfirmationCodeView.swift */; };
 		5B5DF1ED2581887400A756D9 /* BigBlueButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5DF1EC2581887400A756D9 /* BigBlueButton.swift */; };
 		5B5DF1F225818AD700A756D9 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5DF1F125818AD700A756D9 /* CustomTextField.swift */; };
@@ -93,6 +96,9 @@
 		5B1D1FF525727420006B5073 /* BestagramPostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramPostTests.swift; sourceTree = "<group>"; wrapsLines = 1; };
 		5B1D200E2572DF2A006B5073 /* DescriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionView.swift; sourceTree = "<group>"; };
 		5B1D20132572DF81006B5073 /* Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Description.swift; sourceTree = "<group>"; };
+		5B21218D25B9B6050055C2C6 /* PickUsernameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickUsernameView.swift; sourceTree = "<group>"; };
+		5B21219225B9B9E60055C2C6 /* SearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
+		5B21219725B9BC450055C2C6 /* errorParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = errorParsing.swift; sourceTree = "<group>"; };
 		5B4A618F25852E9C008FDED5 /* EnterConfirmationCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterConfirmationCodeView.swift; sourceTree = "<group>"; };
 		5B5DF1EC2581887400A756D9 /* BigBlueButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigBlueButton.swift; sourceTree = "<group>"; };
 		5B5DF1F125818AD700A756D9 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
@@ -311,6 +317,7 @@
 				5BA7A0EF2571BE5300993718 /* PostView.swift */,
 				5B1D200E2572DF2A006B5073 /* DescriptionView.swift */,
 				5BCDF4C7259FE3F4001B851F /* SearchPeopleView.swift */,
+				5B21218D25B9B6050055C2C6 /* PickUsernameView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -344,6 +351,8 @@
 			children = (
 				5BDCB8F32586B34C00056B2B /* LoginService.swift */,
 				5BDCB8FB2586B77F00056B2B /* Api.swift */,
+				5B21219225B9B9E60055C2C6 /* SearchService.swift */,
+				5B21219725B9BC450055C2C6 /* errorParsing.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -652,7 +661,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B21219325B9B9E60055C2C6 /* SearchService.swift in Sources */,
 				5BCDF4D0259FE466001B851F /* SearchBar.swift in Sources */,
+				5B21218E25B9B6050055C2C6 /* PickUsernameView.swift in Sources */,
 				5B1D20142572DF81006B5073 /* Description.swift in Sources */,
 				5BF0BAE725865DAB00C3B9FB /* EnterLoginInfoView.swift in Sources */,
 				5B7DC98D2599E2C300F928EA /* testView.swift in Sources */,
@@ -685,6 +696,7 @@
 				5B1D1FF125727291006B5073 /* StringProtocolExtension.swift in Sources */,
 				5BDCB8F42586B34C00056B2B /* LoginService.swift in Sources */,
 				5BF3006525962794000E4DA1 /* CreatePasswordView.swift in Sources */,
+				5B21219825B9BC450055C2C6 /* errorParsing.swift in Sources */,
 				5BF3006A25964A25000E4DA1 /* WelcomeToBestagramView.swift in Sources */,
 				5B02904C2597EF15004E03EF /* DontHaveAccountView.swift in Sources */,
 				5B1D1FCD257260E0006B5073 /* Post.swift in Sources */,

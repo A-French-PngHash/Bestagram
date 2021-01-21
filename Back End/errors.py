@@ -88,7 +88,7 @@ class InvalidName(Exception):
     """
     Name doesn't comply with the name syntax rules.
     """
-    description = "Invalid username"
+    description = "Invalid name"
 
     def __init__(self, name: str = None):
         self.name = name

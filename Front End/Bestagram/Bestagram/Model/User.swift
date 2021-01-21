@@ -47,12 +47,10 @@ class User {
     ///     - loadingFinished: Closure called when the token has finished being loaded from the API.
     ///     - success: Wether the fetch succeeded or not.
     ///     - error: If the request was not succesful then this is the error corresponding to the fail.
-    init(username: String, password: String, email: String = "", register: Bool = false, name: String?, loadingFinished : @escaping (_ success: Bool, _ error: BestagramError?) -> Void) {
+    init(username: String, password: String, email: String = "", register: Bool = false, name: String = "", loadingFinished : @escaping (_ success: Bool, _ error: BestagramError?) -> Void) {
         self.username = username
         self.email = email
-        if let n = name {
-            self.name = n
-        }
+        self.name = email
 
         // Hashing the password as described in the global readme.
         let salt = username.data(using: .utf8)!
@@ -61,7 +59,7 @@ class User {
         self.token = ""
 
         if register {
-            LoginService.shared.fetchToken(username: self.username, password: hash, email : email, register: true) { (success, content, code) in
+            LoginService.shared.fetchToken(username: self.username, password: hash, email : email, register: true, name: name) { (success, content, code) in
                 if success {
                     self.token = content!
                 }
@@ -85,6 +83,7 @@ class User {
     /// - parameter code: HHTPStatusCode of the request.
     /// - parameter content: Answer of the querry. Is used to provide more information in case of an unknown error.
     static func interpretResponse(success: Bool, code : Int?, content: String?) -> (Bool, BestagramError?) {
+        print(content)
         guard success && (code == 200 || code == 201) else{
             if code == 401 {
                 // Invalid credentials.

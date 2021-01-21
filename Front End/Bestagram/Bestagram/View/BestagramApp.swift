@@ -13,12 +13,17 @@ struct BestagramApp: App {
     static public var backgroundGray = Color(red: 93/255, green: 92/255, blue: 93/255, opacity: 1)
     /// Text color to use when on dark mode.
     static public var textGray = Color(red: 127/255, green: 126/255, blue: 128/255, opacity: 1)
+    /// Post picture to show in previews.
+    static public var defaultPostPicture = UIImage(named: "DefaultPostPicture")!
     
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                PictureSelectionView()
+                SignInOrUpChoiceView()
             }
+            .font(ProximaNova.body)
+            .colorScheme(.dark)
+            .navigationBarHidden(true)
         }
     }
 }

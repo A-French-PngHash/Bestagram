@@ -7,8 +7,8 @@
 
 import Foundation
 
+/// This class contain static functions which proceeds to checks on given inputs.
 class Checks {
-    /// This class contain static functions which proceeds to checks on given inputs.
 
     static func isEmailValid(email: String) -> Bool {
         let pattern = """
