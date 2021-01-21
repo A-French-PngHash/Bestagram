@@ -19,12 +19,12 @@ class Login(Resource):
         params = parser.parse_args()
 
         if not (params["username"] and params["hash"]):
-            return {"error": "Missing information"}, 400
+            return {"error": MissingInformation.description}, 400
 
         try:
-            user = User(params["username"], cnx=database.mysql_connection.cnx, hash=params["hash"])
-        except InvalidCredentials as e:
-            return {"error": "Invalid Credentials"}, 401
+            user = User(params["username"], hash=params["hash"])
+        except InvalidCredentials:
+            return {"error": InvalidCredentials.description}, 401
 
         return {"token": user.token}, 200
 
@@ -41,14 +41,23 @@ class Login(Resource):
         parser.add_argument("username")
         parser.add_argument("hash")
         parser.add_argument("email")
+        parser.add_argument("name")
         params = parser.parse_args()
 
-        if not (params["username"] and params["hash"] and params["email"]):
-            return {"error": "Missing information"}, 400
+        if not (params["username"] and params["hash"] and params["email"] and params["name"]):
+            return {"error": MissingInformation.description}, 400
 
         try:
-            user = User.create(params["username"], cnx=database.mysql_connection.cnx, hash=params["hash"], email=params["email"])
-        except UsernameTaken as e:
-            return {"error": "Username already taken"}, 409
+            user = User.create(params["username"], params["name"], hash=params["hash"], email=params["email"])
+        except UsernameTaken:
+            return {"error": UsernameTaken.description}, 409
+        except EmailTaken:
+            return {"error": EmailTaken.description}, 409
+        except InvalidEmail:
+            return {"error": InvalidEmail.description}, 406
+        except InvalidUsername:
+            return {"error": InvalidUsername.description}, 406
+        except InvalidName:
+            return {"error": InvalidName.description}, 406
 
         return {"token": user.token}, 201

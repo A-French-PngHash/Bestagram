@@ -54,8 +54,8 @@ class User {
             self.name = n
         }
 
-        // Hashing the password as described in the API documentation.
-        let salt = password.data(using: .utf8)!
+        // Hashing the password as described in the global readme.
+        let salt = username.data(using: .utf8)!
         let hash = Hashing.shared.toHex(Hashing.shared.pbkdf2(hash: CCPBKDFAlgorithm(kCCPRFHmacAlgSHA256), password: password, saltData: salt, keyByteCount: 32, rounds: 1000000)!)
         self.hash = hash
         self.token = ""
