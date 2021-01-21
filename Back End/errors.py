@@ -1,10 +1,29 @@
-class InvalidCredentials(Exception):
+class BestagramException(Exception):
+    success = False
+    description = "Error"
+    errorCode = -1
+
+    @classmethod
+    def get_dictionary(cls) -> dict:
+        """
+        Return a dictionary describing the error that happened.
+        :return: Dictionary
+        """
+        return {"success": cls.success, "errorCode": cls.errorCode, "message": cls.description}
+
+    def __str__(self):
+        return self.description
+
+
+class InvalidCredentials(BestagramException):
     """
     Connection credentials are invalid.
     """
+    success = False
+    errorCode = 1
     description = "Invalid credentials"
 
-    def __init__(self, username: str = None, hash: str = None, token : str = None):
+    def __init__(self, username: str = None, hash: str = None, token: str = None):
         self.username = username
         self.hash = hash
         self.token = token
@@ -20,10 +39,12 @@ class InvalidCredentials(Exception):
         return msg
 
 
-class UsernameTaken(Exception):
+class UsernameTaken(BestagramException):
     """
     Called when a user try to register but the username he want is already taken.
     """
+    success = False
+    errorCode = 2
     description = "Username already taken"
 
     def __init__(self, username: str = None):
@@ -36,10 +57,12 @@ class UsernameTaken(Exception):
         return msg
 
 
-class EmailTaken(Exception):
+class EmailTaken(BestagramException):
     """
     Email adress already exists in database.
     """
+    success = False
+    errorCode = 3
     description = "Email already taken"
 
     def __init__(self, email: str = None):
@@ -52,10 +75,12 @@ class EmailTaken(Exception):
         return msg
 
 
-class InvalidEmail(Exception):
+class InvalidEmail(BestagramException):
     """
     Email doesn't comply with the normal syntax of email addresses.
     """
+    success = False
+    errorCode = 4
     description = "Invalid email"
 
     def __init__(self, email: str = None):
@@ -68,10 +93,12 @@ class InvalidEmail(Exception):
         return msg
 
 
-class InvalidUsername(Exception):
+class InvalidUsername(BestagramException):
     """
     Username doesn't comply with the username syntax rules.
     """
+    success = False
+    errorCode = 5
     description = "Invalid username"
 
     def __init__(self, username: str = None):
@@ -84,10 +111,12 @@ class InvalidUsername(Exception):
         return msg
 
 
-class InvalidName(Exception):
+class InvalidName(BestagramException):
     """
     Name doesn't comply with the name syntax rules.
     """
+    success = False
+    errorCode = 6
     description = "Invalid name"
 
     def __init__(self, name: str = None):
@@ -100,17 +129,22 @@ class InvalidName(Exception):
         return msg
 
 
-class MissingInformation(Exception):
+class MissingInformation(BestagramException):
     """
     Request made without all required information.
     """
+    success = False
+    errorCode = 7
     description = "Missing information"
 
 
-class UsernameNotExisting(Exception):
+class UsernameNotExisting(BestagramException):
     """
     This username is not registered in the database.
     """
+    success = False
+    errorCode = 8
+    description = "Username not existing"
 
     def __init__(self, username: str = None):
         self.username = username

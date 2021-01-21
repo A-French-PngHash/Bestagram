@@ -60,12 +60,12 @@ class Post(Resource):
         tags = loads(tags)
 
         if params["image"] == "":  # Caption is not mandatory.
-            return {"error": MissingInformation.description}, 400
+            return MissingInformation.get_dictionary(), 400
 
         try:
             user = User(token=params["Authorization"])
-        except InvalidCredentials:
-            return {"error": InvalidCredentials.description}, 401
+        except BestagramException as e:
+            return e.get_dictionary(), 400
 
         # This part is where we retrieve tags.
         tags_list = []
@@ -91,4 +91,4 @@ class Post(Resource):
 
         img = params["image"]
         user.create_post(img, caption=params["caption"], tags=tags_list)
-        return {"status": "Image Received"}, 201
+        return {"success": True}, 200
