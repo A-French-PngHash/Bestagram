@@ -13,11 +13,9 @@ import json
 import random
 
 
-class TestsVTwo(unittest.TestCase):
+class Tests(unittest.TestCase):
     """
-    This is a new test class featuring the new version of testing the backend.
-    Rather than testing the class methods independently, this will actually reproduce requests to the api endpoints
-    leading to more accurate tests on customer expectation.
+    Test class executing requests to the api endpoints.
     """
     @property
     def image_square(self):
@@ -283,10 +281,11 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.ex_request("GET", route="login", params=parameters)
 
         # Then return invalid credentials.
-        self.assertEqual(code, 401)
-        self.assertEqual(errors.InvalidCredentials.description, content["error"])
+        self.assertEqual(400, code)
+        self.assertEqual(False, content["success"])
+        self.assertEqual(errors.InvalidCredentials.description, content["message"])
 
-    def test_GivenUserInDatabaseWhenLoginWithIncorrectPasswordThenRaiseInvalidCredentials(self):
+    def test_GivenUserInDatabaseWhenLoginWithIncorrectPasswordThenReturnInvalidCredentials(self):
         # Given user in database.
         self.add_default_user()
         incorrect_hash = "incorrect"
@@ -296,8 +295,9 @@ class TestsVTwo(unittest.TestCase):
                                         params={"username": self.default_username, "hash": incorrect_hash})
 
         # Then raise invalid credentials.
-        self.assertEqual(401, code)
-        self.assertEqual(content["error"], InvalidCredentials.description)
+        self.assertEqual(400, code)
+        self.assertEqual(False, content["success"])
+        self.assertEqual(content["message"], InvalidCredentials.description)
 
     def test_GivenUserInDatabaseWhenLoginWithCorrectDataThenSuccessfulLogin(self):
         # Given user in database.
@@ -308,6 +308,7 @@ class TestsVTwo(unittest.TestCase):
                                         params={"username": self.default_username, "hash": self.default_hash})
 
         # Then successful login.
+        self.assertEqual(True, content["success"])
         self.assertEqual(code, 200)
 
     def test_GivenUserInDatabaseWhenLoginWithoutProvidingPasswordThenRaiseMissingInformation(self):
@@ -318,8 +319,9 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.ex_request("GET", "login", params={"username": self.default_username})
 
         # Then raise missing information.
-        self.assertEqual(code, 400)
-        self.assertEqual(MissingInformation.description, content["error"])
+        self.assertEqual(400, code)
+        self.assertEqual(False, content["success"])
+        self.assertEqual(MissingInformation.description, content["message"])
 
     def test_GivenUserInDatabaseWhenLoginWithoutProvidingUsernameThenRaiseMissingInformation(self):
         # Given user in database.
@@ -329,8 +331,9 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.ex_request("GET", "login", params={"hash": self.default_hash})
 
         # Then raise missing information.
-        self.assertEqual(code, 400)
-        self.assertEqual(MissingInformation.description, content["error"])
+        self.assertEqual(400, code)
+        self.assertEqual(False, content["success"])
+        self.assertEqual(MissingInformation.description, content["message"])
 
     """
     --------------------------
@@ -353,7 +356,8 @@ class TestsVTwo(unittest.TestCase):
         token = content["token"]
         success, user_data = self.user_in_db(username=self.default_username)
         self.assertTrue(success)  # If this is false then there war no user created.
-        self.assertEqual(code, 201)
+        self.assertEqual(code, 200)
+        self.assertEqual(True, content["success"])
         self.assertEqual(token, user_data["token"])
         self.assertNotEqual(self.default_hash, user_data["hash"])
         self.assertEqual(self.default_email, user_data["email"])
@@ -372,8 +376,9 @@ class TestsVTwo(unittest.TestCase):
 
         # Then is not created and raise invalid email.
         success, i = self.user_in_db(self.default_username)
-        self.assertEqual(406, code)
-        self.assertEqual(content["error"], InvalidEmail.description)
+        self.assertEqual(400, code)
+        self.assertEqual(False, content["success"])
+        self.assertEqual(content["message"], InvalidEmail.description)
         self.assertFalse(success)
 
     def test_GivenUserWhenRegisteringWithSameUsernameThenIsNotCreatedAndRaiseUsernameTaken(self):
@@ -396,9 +401,10 @@ class TestsVTwo(unittest.TestCase):
         self.cursor.execute(query)
         result = self.cursor.fetchall()
 
-        self.assertEqual(len(result), 1)  # If two then another user has been created in db.
-        self.assertEqual(code, 409)
-        self.assertEqual(content["error"], UsernameTaken.description)
+        self.assertEqual(len(result), 1)  # If equals two then another user has been created in db.
+        self.assertEqual(400, code)
+        self.assertEqual(False, content["success"])
+        self.assertEqual(content["message"], UsernameTaken.description)
 
     def test_GivenUserWhenRegisteringWithSameEmailThenIsNotCreatedAndRaiseEmailTaken(self):
         # Given user.
@@ -420,9 +426,10 @@ class TestsVTwo(unittest.TestCase):
         self.cursor.execute(query)
         result = self.cursor.fetchall()
 
-        self.assertEqual(len(result), 1)  # If two then another user has been created in db.
-        self.assertEqual(code, 409)
-        self.assertEqual(content["error"], EmailTaken.description)
+        self.assertEqual(len(result), 1)  # If equals two then another user has been created in db.
+        self.assertEqual(400, code)
+        self.assertEqual(False, content["success"])
+        self.assertEqual(content["message"], EmailTaken.description)
 
     def test_GivenNoUserWhenRegisteringWithTooLongUsernameThenIsNotCreatedAndRaiseInvalidUsername(self):
         # Given no user.
@@ -439,8 +446,9 @@ class TestsVTwo(unittest.TestCase):
         # Then is not created and raise invalid username.
         success, i = self.user_in_db(username)
         self.assertFalse(success)
-        self.assertEqual(code, 406)
-        self.assertEqual(content["error"], InvalidUsername.description)
+        self.assertEqual(400, code)
+        self.assertEqual(False, content["success"])
+        self.assertEqual(content["message"], InvalidUsername.description)
 
     """
     --------------------------
@@ -456,6 +464,7 @@ class TestsVTwo(unittest.TestCase):
 
         # Then is not.
         self.assertEqual(code, 200)
+        self.assertEqual(True, content["success"])
         self.assertFalse(content["taken"])
 
     def test_GivenEmailTakenWhenCheckingIfEmailIsTakenThenIs(self):
@@ -467,6 +476,7 @@ class TestsVTwo(unittest.TestCase):
 
         # Then is.
         self.assertEqual(code, 200)
+        self.assertEqual(True, content["success"])
         self.assertTrue(content["taken"])
 
     """
@@ -483,8 +493,9 @@ class TestsVTwo(unittest.TestCase):
                                   token="invalid_token")
 
         # Then raise invalid credentials.
-        self.assertEqual(code, 401)
-        self.assertEqual(content["error"], InvalidCredentials.description)
+        self.assertEqual(400, code)
+        self.assertEqual(False, content["success"])
+        self.assertEqual(content["message"], InvalidCredentials.description)
 
     def test_GivenUserWhenPostingWithValidCredentialsThenIsSuccessful(self):
         # Given user.
@@ -492,7 +503,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.post(default=True, file=self.image_square)
 
         # Then is successful.
-        self.assertEqual(201, code, content)
+        self.assertEqual(200, code)
+        self.assertEqual(True, content["success"])
 
     def test_GivenImageIsInPortraitModeWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
         # Given image is in portrait mode.
@@ -502,7 +514,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
-        self.assertEqual(code, 201)
+        self.assertEqual(code, 200)
+        self.assertEqual(True, content["success"])
         new_im = Image.open(f"Posts/{self.default_username}/0.png")
         self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
         new_im.close()
@@ -515,7 +528,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
-        self.assertEqual(code, 201)
+        self.assertEqual(code, 200)
+        self.assertEqual(True, content["success"])
         new_im = Image.open(f"Posts/{self.default_username}/0.png")
         self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
         new_im.close()
@@ -528,7 +542,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
-        self.assertEqual(code, 201)
+        self.assertEqual(code, 200)
+        self.assertEqual(True, content["success"])
         new_im = Image.open(f"Posts/{self.default_username}/0.png")
         self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
         new_im.close()
@@ -565,7 +580,8 @@ class TestsVTwo(unittest.TestCase):
         """
         self.cursor.execute(query)
         result = self.cursor.fetchall()
-        self.assertEqual(201, code)
+        self.assertEqual(200, code)
+        self.assertEqual(True, content["success"])
         self.assertEqual(0, len(result))
 
     def test_GivenHavingTagLinkingExistingUserWhenPostingThenAddTags(self):
@@ -583,7 +599,8 @@ class TestsVTwo(unittest.TestCase):
                 """
         self.cursor.execute(query)
         result = self.cursor.fetchall()
-        self.assertEqual(201, code)
+        self.assertEqual(200, code)
+        self.assertEqual(True, content["success"])
         self.assertEqual(2, len(result))
 
     def test_GivenTagLinkingToTheSameUserWhenPostingThenAddOnlyOne(self):
@@ -601,7 +618,8 @@ class TestsVTwo(unittest.TestCase):
                 """
         self.cursor.execute(query)
         result = self.cursor.fetchall()
-        self.assertEqual(201, code)
+        self.assertEqual(200, code)
+        self.assertEqual(True, content["success"])
         self.assertEqual(1, len(result))
 
     """    
@@ -614,7 +632,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.search(default=True, search="", offset=0, row_count=100)
 
         self.assertEqual(200, code)
-        self.assertEqual(content, {})
+        self.assertEqual(True, content["success"])
+        self.assertEqual({}, content["result"])
 
     def test_GivenUsersWhenSearchingWithEmptyStringThenReturnsAllOfThem(self):
         for i in range(10):
@@ -622,8 +641,8 @@ class TestsVTwo(unittest.TestCase):
 
         code, content = self.search(default=True, search="",  offset=0, row_count=100)
         self.assertEqual(200, code)
-        self.assertNotEqual({}, content)
-        self.assertEqual(10, len(content))
+        self.assertEqual(True, content["success"])
+        self.assertEqual(10, len(content["result"]))
 
     def test_GivenUsersWhenSearchingThenReturnsOnlyMatchingOnes(self):
         search = "abc"
@@ -649,7 +668,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.search(default=True, search=search, offset=0, row_count=100)
 
         self.assertEqual(200, code)
-        self.assertEqual(len(matching_list), len(content))
+        self.assertEqual(True, content["success"])
+        self.assertEqual(len(matching_list), len(content["result"]))
 
     def test_GivenRowCountIs200WhenHavingResultsOver100MatchThenOnlyReturn100(self):
         for i in range(150):
@@ -658,7 +678,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.search(default=True, search="", offset=0, row_count=200)
 
         self.assertEqual(200, code)
-        self.assertEqual(100, len(content))
+        self.assertEqual(True, content["success"])
+        self.assertEqual(100, len(content["result"]))
 
     def test_GivenOffsetIsLessThan0WhenHavingResultsThenReturnTheResults(self):
         for i in range(10):
@@ -667,7 +688,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.search(default=True, search="", offset=-20, row_count=100)
 
         self.assertEqual(200, code)
-        self.assertEqual(10, len(content))
+        self.assertEqual(True, content["success"])
+        self.assertEqual(10, len(content["result"]))
 
     def test_GivenSearchingWhenHavingNumberOfResultsOverRowCountThenOnlyReturnRowCountResults(self):
         for i in range(10):
@@ -677,7 +699,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.search(default=True, search="", offset=0, row_count=row_count)
 
         self.assertEqual(200, code)
-        self.assertEqual(len(content), row_count)
+        self.assertEqual(True, content["success"])
+        self.assertEqual(len(content["result"]), row_count)
 
     def test_GivenUserFollowOtherUsersWhenSearchingThenReturnResultsWithFollowedUserFirst(self):
         followed = ["atrick", "btruck", "ctrack", "dtrock"]
@@ -690,9 +713,10 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.search(default=True, search="", offset=0, row_count=100)
 
         self.assertEqual(200, code)
-        self.assertEqual(8, len(content))
+        self.assertEqual(True, content["success"])
+        self.assertEqual(8, len(content["result"]))
         for (index, element) in enumerate(followed):
-            self.assertEqual(element, content[str(index)])
+            self.assertEqual(element, content["result"][str(index)])
 
     def test_GivenUsersFollowingOtherUsersWhenSearchingThenReturnResultsSortedByNumberOfFollower(self):
         people = ["test1", "test2", "test3", "test4"]
@@ -706,7 +730,8 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.search(default=True, search="", offset=0, row_count=100)
 
         self.assertEqual(200, code)
-        self.assertEqual(len(people), len(content))
+        self.assertEqual(True, content["success"])
+        self.assertEqual(len(people), len(content["result"]))
 
     def test_GivenUsersFollowingOtherUsersAndBeenFollowedByUserSearchingWhenSearchingThenResultsSortedByNumberOfFollowThenPeopleNotFollowed(self):
         people_followed = ["test1", "test2", "test3", "test4"]
@@ -726,12 +751,13 @@ class TestsVTwo(unittest.TestCase):
         code, content = self.search(default=True, search="", offset=0, row_count=100)
 
         self.assertEqual(200, code)
-        self.assertEqual(len(people_followed) + len(people_not_followed), len(content))
+        self.assertEqual(True, content["success"])
+        self.assertEqual(len(people_followed) + len(people_not_followed), len(content["result"]))
         for i in range(len(people_followed)):
             # Follows have been made so that the first user of the list has the most follow and so on.
-            self.assertEqual(people_followed[i], content[str(i)])
+            self.assertEqual(people_followed[i], content["result"][str(i)])
         for i in range(len(people_not_followed)):
-            self.assertEqual(people_not_followed[i], content[str(i + len(people_followed))])
+            self.assertEqual(people_not_followed[i], content["result"][str(i + len(people_followed))])
 
     def tearDown(self) -> None:
         try:

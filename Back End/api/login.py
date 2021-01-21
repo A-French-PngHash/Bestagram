@@ -19,14 +19,14 @@ class Login(Resource):
         params = parser.parse_args()
 
         if not (params["username"] and params["hash"]):
-            return {"error": MissingInformation.description}, 400
+            return MissingInformation.get_dictionary(), 400
 
         try:
             user = User(params["username"], hash=params["hash"])
-        except InvalidCredentials:
-            return {"error": InvalidCredentials.description}, 401
+        except BestagramException as e:
+            return e.get_dictionary(), 400
 
-        return {"token": user.token}, 200
+        return {"success": True, "token": user.token}, 200
 
     def put(self) -> (dict, int):
         """
@@ -49,15 +49,6 @@ class Login(Resource):
 
         try:
             user = User.create(params["username"], params["name"], hash=params["hash"], email=params["email"])
-        except UsernameTaken:
-            return {"error": UsernameTaken.description}, 409
-        except EmailTaken:
-            return {"error": EmailTaken.description}, 409
-        except InvalidEmail:
-            return {"error": InvalidEmail.description}, 406
-        except InvalidUsername:
-            return {"error": InvalidUsername.description}, 406
-        except InvalidName:
-            return {"error": InvalidName.description}, 406
-
-        return {"token": user.token}, 201
+        except BestagramException as e:
+            return e.get_dictionary(), 400
+        return {"success": True, "token": user.token}, 200
