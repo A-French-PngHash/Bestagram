@@ -23,8 +23,8 @@ class Search(Resource):
         try:
             user = User(token=params["Authorization"])
         except InvalidCredentials:
-            return {"error": InvalidCredentials.description},
+            return {"error": InvalidCredentials.description}, 401
 
         results = user.search_for(params["search"], offset=int(params["offset"]), row_count=int(params["rowCount"]))
-        dictionary = {index:element for (index, element) in enumerate(results)}
+        dictionary = {index+int(params["offset"]):element for (index, element) in enumerate(results)}
         return dictionary, 200

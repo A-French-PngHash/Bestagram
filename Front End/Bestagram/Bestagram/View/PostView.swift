@@ -107,6 +107,6 @@ let defaultPost = Post(
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         PostView(post: defaultPost)
-            .previewDevice("iPhone 12 mini")
+        
     }
 }

@@ -9,6 +9,7 @@ from database.request_utils import value_in_database
 from errors import *
 from tag import *
 from PIL import Image
+import hashlib
 
 
 def generate_token() -> str:
@@ -46,6 +47,17 @@ def name_is_valid(name: str) -> bool:
     return len(re.findall(regex, name)) == 1
 
 
+def make_server_side_hash(old_hash: str, username:str) -> str:
+    """
+    Calculate the hash for a given password. This hashing process is described in the global readme.
+    :param old_hash:
+    :param username:
+    :return: The new hash.
+    """
+    new_hash = hashlib.pbkdf2_hmac("sha256", password=old_hash.encode("utf-8"), salt=username.encode("utf-8"), iterations=10000, dklen=32).hex()
+    return new_hash
+
+
 class User:
     """
     User of Bestagram.
@@ -62,6 +74,8 @@ class User:
 
         :raise InvalidCredentials: When the username and hash don't both correspond to the data of a user.
         """
+        if hash:
+            hash = make_server_side_hash(old_hash=hash, username=username)
 
         if username:
             # This query fetch all the user data of this user in the table UserTable.
@@ -330,9 +344,13 @@ class User:
             # Email is taken.
             raise EmailTaken(email=email)
 
+        # Account can be created, server-side hashing can now take place following the protocol described in the global
+        # readme.
+        new_hash = make_server_side_hash(old_hash=hash, username=username)
+
         add_user_query = f"""
         INSERT INTO UserTable (username, name, hash, email) VALUES
-        ("{username}", "{name}", "{hash}", "{email}");
+        ("{username}", "{name}", "{new_hash}", "{email}");
         """
         cursor = database.mysql_connection.cnx.cursor()
         cursor.execute(add_user_query)

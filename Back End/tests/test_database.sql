@@ -6,7 +6,7 @@ CREATE TABLE UserTable(
     id BIGINT NOT NULL AUTO_INCREMENT,
     username VARCHAR(30) NOT NULL,
     name VARCHAR(50) NOT NULL,
-    hash VARCHAR(128) NOT NULL,
+    hash VARCHAR(64) NOT NULL,
     email VARCHAR(150) NOT NULL,
     public_profile BOOLEAN DEFAULT TRUE,
     token VARCHAR(200),

@@ -94,8 +94,12 @@ class TestsVTwo(unittest.TestCase):
         if not name:
             name = self.random_string(config.MAX_NAME_LENGTH)
         if not hash:
-            #  TODO: When implementing hash verification change this value.
             hash = self.random_string(50)
+
+        if hash:
+            # When the hash get to the server there is suppose to be some hashing on it. Because we don't go through
+            # the endpoint in this method we need to simulate this hashing.
+            hash = make_server_side_hash(old_hash=hash, username=username)
 
         add_user_query = f"""
         INSERT INTO UserTable (username, name, email, hash)
@@ -342,7 +346,8 @@ class TestsVTwo(unittest.TestCase):
             "username": self.default_username,
             "name": self.default_name,
             "hash": self.default_hash,
-            "email": self.default_email})
+            "email": self.default_email}
+        )
 
         # Then is created with correct data and return no error.
         token = content["token"]
@@ -350,7 +355,7 @@ class TestsVTwo(unittest.TestCase):
         self.assertTrue(success)  # If this is false then there war no user created.
         self.assertEqual(code, 201)
         self.assertEqual(token, user_data["token"])
-        self.assertEqual(self.default_hash, user_data["hash"])
+        self.assertNotEqual(self.default_hash, user_data["hash"])
         self.assertEqual(self.default_email, user_data["email"])
 
     def test_GivenNoUserWhenRegisteringWithInvalidEmailThenIsNotCreatedAndRaiseInvalidEmail(self):
