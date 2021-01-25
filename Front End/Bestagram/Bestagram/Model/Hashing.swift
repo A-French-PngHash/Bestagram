@@ -44,4 +44,8 @@ class Hashing {
     func pbkdf2sha256(password: String, salt: String, keyByteCount: Int, rounds: Int) -> Data {
         return pbkdf2(hash: CCPBKDFAlgorithm(kCCPRFHmacAlgSHA256), password: password, saltData: salt.data(using: .utf8)!, keyByteCount: keyByteCount, rounds: rounds)!
     }
+
+    func hash(password: String, salt: String) -> String{
+        return self.toHex(self.pbkdf2(hash: CCPBKDFAlgorithm(kCCPRFHmacAlgSHA256), password: password, saltData: salt.data(using: .utf8)!, keyByteCount: 32, rounds: 1000000)!)
+    }
 }

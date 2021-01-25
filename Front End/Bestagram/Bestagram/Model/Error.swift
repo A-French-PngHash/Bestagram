@@ -23,7 +23,11 @@ struct UnknownError : BestagramError {
 
     var description: String {
         get {
-            "An unknown error happenned - \(String(describing: documentation))"
+            if let doc = documentation {
+                return "An unknown error happenned - \(String(describing: doc))"
+            } else {
+                return "An unknown error happenned"
+            }
         }
     }
 }
@@ -38,9 +42,29 @@ struct MissingInformations : BestagramError {
 }
 
 struct UsernameAlreadyTaken : BestagramError {
-    var description: String = "Sorry this username is already taken... Try a different one."
+    var description: String = "This username is already taken... Try a different one."
+}
+
+struct EmailAlreadyTaken : BestagramError {
+    var description: String = "This email is already taken..."
 }
 
 struct InvalidEmailAdress : BestagramError {
     var description: String = "The email adress provided is invalid."
+}
+
+struct InvalidUsername : BestagramError {
+    var description: String = "This username is not valid."
+}
+
+struct InvalidEmail : BestagramError {
+    var description: String = "This email is not valid."
+}
+
+struct InvalidName : BestagramError {
+    var description: String = "Your name is not valid... Try removing special characters you may have put inside."
+}
+
+struct ConnectionError : BestagramError {
+    var description: String = "Connection error, please check your connection and try again later."
 }

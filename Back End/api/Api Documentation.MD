@@ -40,7 +40,7 @@ Query Parameters :
   
 Response if operation successful :  
   
-	{"token" : "x"} - 200  
+	{"token" : "x", "token_expiration_date": "2021-01-25 00:21:00"} - 200  
 ## PUT  
  PUT /login  Register a user into the database and return the token.   
   
@@ -51,7 +51,7 @@ Query parameters :
   
 Response if operation successful :  
   
-	{"token" : "x"} - 201  
+	{"token" : "x", "token_expiration_date": "2021-01-25 16:00:01"} - 201  
 # Email  
 ## Get  
   

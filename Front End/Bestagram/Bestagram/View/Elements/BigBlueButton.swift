@@ -21,16 +21,18 @@ struct BigBlueButton: View {
         Button(action: {
             onPress()
         }, label: {
-            if style == .loading {
-                ProgressView()
-            } else {
-                Text(self.text)
-                    .font(ProximaNova.body)
+            Group {
+                if style == .loading {
+                    ProgressView()
+                } else {
+                    Text(self.text)
+                        .font(ProximaNova.body)
+                }
             }
+            .padding()
+            .frame(height: 37)
+            .frame(maxWidth: .infinity)
         })
-        .padding()
-        .frame(height: 37)
-        .frame(maxWidth: .infinity)
         .background(Color.blue)
         .foregroundColor(.white)
         .cornerRadius(4)

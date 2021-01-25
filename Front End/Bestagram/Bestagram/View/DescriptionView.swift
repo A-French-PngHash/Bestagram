@@ -16,7 +16,7 @@ struct DescriptionView: View {
 
     var body: some View {
         if showFullDescription {
-            (Text(post.user.username)
+            (Text(post.user.username!)
                 .font(ProximaNova.bodyBold)
             + Text(" " + post.description.fullDescription)
                 .font(ProximaNova.body))
@@ -27,7 +27,7 @@ struct DescriptionView: View {
                     showFullDescription = true
                 })
             }, label: {
-                Text(post.user.username)
+                Text(post.user.username!)
                     .font(ProximaNova.bodyBold)
                 + Text(" " + post.description.reducedDescription)
                 + Text("... ")

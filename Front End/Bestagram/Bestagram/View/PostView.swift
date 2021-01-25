@@ -25,7 +25,7 @@ struct PostView: View {
                     .clipShape(Circle())
                     .frame(width: 30.0, height: 30.0)
 
-                Text(post.user.username)
+                Text(post.user.username!)
                     .foregroundColor(.black)
                     .font(ProximaNova.bodyBold)
 

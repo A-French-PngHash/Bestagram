@@ -10,8 +10,8 @@ import SwiftUI
 struct EnterLoginInfoView: View {
     @Environment(\.presentationMode) var presentationMode
 
-    /// Text entered bu user in the username/email field.
-    @State var nameEntered : String = ""
+    /// Text entered bu user in the username field.
+    @State var usernameEntered : String = ""
     /// Text entered by user in the password field.
     @State var passwordEntered : String = ""
     /// Style the next button should have.
@@ -37,9 +37,9 @@ struct EnterLoginInfoView: View {
 
                 CustomTextField(
                     displayCross: true,
-                    placeholder: "Username or email",
+                    placeholder: "Username",
                     contentType: .username,
-                    input: $nameEntered,
+                    input: $usernameEntered,
                     error: $textFieldErrorStyle) { (value) in
                     checkIfButtonShouldBeDisabled()
                 }
@@ -72,8 +72,9 @@ struct EnterLoginInfoView: View {
                     let queue = DispatchQueue(label: "connect-user")
                     queue.async {
                         // Creating the user object will automatically start the hashing process and the fetch of the token.
-                        self.user = User(username: self.nameEntered.lowercased(), password: self.passwordEntered, loadingFinished: { (success, error) in
-                            userFinishedLoading(success: success, error: error)
+                        self.user = User(credentialsSaved: false, username: self.usernameEntered, password: self.passwordEntered, saveCredentials: true)
+                        self.user?.getToken(callback: { (success, token, error) in
+                            userFinishedLoading(success: true, error: error)
                         })
                     }
                 }
@@ -94,7 +95,7 @@ struct EnterLoginInfoView: View {
 
     /// Update the style of the login button.
     func checkIfButtonShouldBeDisabled() {
-        if passwordEntered.count > 0 && nameEntered.count > 0 {
+        if passwordEntered.count > 0 && usernameEntered.count > 0 {
             self.buttonStyle = .normal
         } else {
             self.buttonStyle = .disabled

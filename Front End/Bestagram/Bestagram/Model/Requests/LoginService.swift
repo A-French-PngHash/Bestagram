@@ -31,10 +31,20 @@ class LoginService {
     /// - Parameters:
     ///     - callback: Closure called when the API sent back the response.
     ///     - success : Wether the request succeeded or not.
-    ///     - content: If the request succeeded then this contain the token. If the request failed then this contain the error documentation provided by the API.
-    ///     - code: HTTPStatusCode describing the operation.
+    ///     - token: Token of the user.
+    ///     - expirationDate: Date at which the token will be expired and a new one will be needed.
+    ///     - error: If the request did not suceed then this the error corresponding.
     ///
-    func fetchToken(username: String, password : String, email : String = "", register : Bool, name: String = "", callback : @escaping (_ success: Bool, _ content: String?, _ code: Int?) -> Void) {
+    func fetchToken(
+        username: String,
+        password : String,
+        email : String = "",
+        register : Bool,
+        name: String = "",
+        callback : @escaping (_ success: Bool,
+                              _ token: String?,
+                              _ expirationDate: Date?,
+                              _ error: BestagramError?) -> Void) {
         var parameters = ["username": username, "hash": password]
 
         // The main difference between the user being logged in/registered is the method used.
@@ -51,27 +61,32 @@ class LoginService {
             switch response.result{
             case .failure(_):
                 // Error happened BEFORE the request. In this case the request never reached the server.
-                callback(false, nil, response.response?.statusCode)
+                callback(false, nil, nil,  ConnectionError())
                 return
 
             case .success(let data):
-                // If the REGISTER was succesful then 201 is sent back but if the LOGIN was succesful then 200 is set back.
-                guard response.error == nil && (response.response?.statusCode == 200 || response.response?.statusCode == 201)  else {
-                    // Error happened DURING the request.
-                    let error = parseErrorDescription(data: data)
-                    callback(false, error, response.response?.statusCode)
+                guard let json = data as? Dictionary<String, Any>,
+                      let success = json["success"] as? Bool,
+                      let strDate = json["date"] as? String,
+                      let expirationDate = self.getDateFromString(strDate: strDate) else {
+                    callback(false, nil, nil,  UnknownError(documentation: "Invalid json response."))
                     return
                 }
-
-                guard let json = data as? Dictionary<String, String>,
-                      let token = json["token"] else {
-                    // Error while parsing json.
-                    callback(false, nil, response.response?.statusCode)
+                guard let token = json["token"] as? String, success else {
+                    callback(false, nil, nil, parseError(data: data))
                     return
                 }
-                callback(true, token, response.response?.statusCode)
+                callback(true, token, expirationDate, nil)
             }
         }
+    }
+
+    /// When the token is sent from the api, its expiration date is sent along as a string. This method allow us to parse this string to a date again.
+    func getDateFromString(strDate: String) -> Date?{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "y-M-d HH:mm:ss"
+        let date = dateFormatter.date(from: strDate)
+        return date
     }
 
     /// Check if a given email is already registered with a user.

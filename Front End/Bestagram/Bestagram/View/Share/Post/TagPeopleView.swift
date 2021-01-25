@@ -19,6 +19,7 @@ struct TagPeopleView: View {
             .onEnded { (value) in
                 // User has tapped the picture.
                 let location = value.location
+
             }
     }
 

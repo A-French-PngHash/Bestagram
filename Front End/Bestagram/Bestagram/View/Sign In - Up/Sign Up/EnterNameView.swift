@@ -13,6 +13,8 @@ struct EnterNameView: View {
 
     /// Email entered by the user on previous views.
     var email : String
+    /// Username entered by the user on previous views.
+    var username : String
 
     @State var name : String = ""
     @State var textFieldErrorStyle : Bool = false
@@ -40,7 +42,7 @@ struct EnterNameView: View {
                     goToNextView = true
                 }
                 NavigationLink(
-                    destination: CreatePasswordView(email: email, name: name),
+                    destination: CreatePasswordView(email: email, name: name, username: username),
                     isActive: $goToNextView,
                     label: {
                         EmptyView()
@@ -55,7 +57,7 @@ struct EnterNameView: View {
 struct EnterNameView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            EnterNameView(email: "email@gmail.com")
+            EnterNameView(email: "email@bestagram.com", username: "username")
                 .preferredColorScheme(.dark)
                 .font(ProximaNova.body)
         }

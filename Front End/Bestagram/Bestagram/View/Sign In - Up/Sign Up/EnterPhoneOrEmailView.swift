@@ -83,7 +83,7 @@ struct EnterPhoneOrEmailView: View {
                 }
 
                 NavigationLink(
-                    destination: EnterNameView(email: emailEntered),
+                    destination: EnterUsernameView(email: emailEntered),
                     isActive: $goToNextView,
                     label: {
                         Text("")

@@ -105,7 +105,7 @@ class User:
         self.username = result["username"]
         self.name = result["name"]
         self._token = result["token"]
-        self._token_registration_date = result["token_registration_date"]
+        self._token_registration_date : datetime.datetime = result["token_registration_date"]
         self.id = result["id"]
 
         self.hash = hash
@@ -137,6 +137,13 @@ class User:
         # Token is expired or has never been created.
         # generating new token.
         new_token = self.username + generate_token()
+        self._token_registration_date = (datetime.datetime.today() + datetime.timedelta(seconds=config.TOKEN_EXPIRATION)).replace(microsecond=0)
+        update_token_registration_query = f"""
+        UPDATE UserTable
+        SET token_registration_date = "{self._token_registration_date}"
+        WHERE username = "{self.username}";
+        """
+        self.cursor.execute(update_token_registration_query)
         self.token = new_token
         return new_token
 
@@ -147,6 +154,10 @@ class User:
             "token": value,
             "token_registration_date": datetime.datetime.today().replace(microsecond=0)
         })
+
+    @property
+    def token_expiration_date(self):
+        return (self._token_registration_date + datetime.timedelta(seconds=config.TOKEN_EXPIRATION))
 
     @property
     def directory(self) -> str:
@@ -327,6 +338,7 @@ class User:
         """
         username = username.lower()
         name = name.lower()
+        print(hash)
         # TODO: update requirements for parameters in documentation.
         if not email_is_valid(email):
             raise InvalidEmail(email=email)

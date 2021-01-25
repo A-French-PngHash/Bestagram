@@ -52,6 +52,8 @@ struct CustomTextField: View {
                         })
                         .textContentType(contentType == nil ? .none : contentType)
                         .disableAutocorrection(true)
+                        .frame(height: 5)
+                        .padding()
                 } else {
                     TextField(self.placeholder, text: $input)
                         .onChange(of: input, perform: { value in
@@ -61,6 +63,8 @@ struct CustomTextField: View {
                         })
                         .textContentType(contentType == nil ? .none : contentType)
                         .disableAutocorrection(true)
+                        .frame(height: 5)
+                        .padding()
                 }
                 // Shows the cross or not.
                 if displayCross && input != ""{
@@ -71,8 +75,6 @@ struct CustomTextField: View {
                     })
                 }
             }
-            .frame(height: 5)
-            .padding()
             .background(self.colorScheme == ColorScheme.dark ? backgroundColorDarkMode : backgroundColorLightMode)
             .overlay(
                 RoundedRectangle(cornerRadius: 4)

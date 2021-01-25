@@ -15,15 +15,15 @@ class User {
     /// Name of the user. e.g. "Jon Appleseed"
     var name: String?
     /// Username of the user. e.g. "jon.apple"
-    var username: String = ""
+    var username: String?
     /// Number of followers of this users.
     var followers: Int = -1
     var numberOfPosts: Int = -1
     var profilePicture: UIImage! = nil
-    /// Actual token for this user.
-    var token: String
-    var email : String
-    var hash: String
+    var email : String?
+    var hash: String?
+    /// Wether or not the credentials have previously been saved in user default and can be accessible at any time.
+    var credentialsSaved: Bool?
 
     /// Temporary init. No api call is done at the moment (as there is no api implemented) so for testing purposes,
     /// data is created manually.
@@ -32,87 +32,81 @@ class User {
         self.followers = followers
         self.numberOfPosts = numberOfPosts
         self.profilePicture = profilePicture
-        self.token = ""
         self.email = ""
         self.hash = ""
     }
 
-    /// This init will login/register the user with the provided data. It will load the token for further request.
+    /// This init login a user. It fill this class credentials variable to allow this class to be used in different actions after that can only be done by this user.
+    ///
+    /// - parameter credentialsSaved: Wether or not the credentials have been saved in the CredentialService
+    /// - parameter username: If the credentials are not saved, this is the username.
+    /// - parameter password: If the credentials are not saved this is the password **non hashed**.
+    /// - parameter saveCredentials: If the credentials are not saved yet this init can save them in the CredentialService for easier and persistent access.
+    init(credentialsSaved: Bool, username: String?, password: String?, saveCredentials: Bool) {
+        if credentialsSaved {
+            self.credentialsSaved = true
+            let credentials = CredentialService.shared.get()
+            if let username = credentials["username"], let hash = credentials["password"] {
+                self.username = username
+                self.hash = hash
+            }
+        } else {
+            if let username = username, let password = password{
+                let hash = Hashing.shared.hash(password: password, salt: username)
+                self.username = username
+                self.hash = hash
+                if saveCredentials {
+                    CredentialService.shared.store(password: hash, username: username)
+                }
+            }
+        }
+    }
+
+    /// Retrieve token for this user. This method only works if the credentials variable have been filled.
+    func getToken(callback: @escaping (_ success: Bool, _ token: String?, _ error: BestagramError?) -> Void) {
+        let token = try? CacheStorage.shared.storage.object(forKey: "token")
+        if token == nil {
+            // Token has never been retrieved.
+            if let username = self.username, let hash = self.hash {
+                LoginService.shared.fetchToken(username: username, password: hash, register: false) { (success, token, expirationDate, error) in
+                    guard let token = token, let expirationDate = expirationDate, success else {
+                        callback(false, nil, error)
+                        return
+                    }
+                    do{
+                        try CacheStorage.shared.storage.setObject(token, forKey: "token", expiry: .date(expirationDate))
+                    } catch {
+                        print(error)
+                    }
+                    callback(success, token, error)
+                }
+            } else {
+                callback(false, nil, InvalidCredentials())
+            }
+        } else {
+            // Token has been retrieved.
+            callback(true, token, nil)
+        }
+    }
+
+    /// This static function create a user.
     ///
     /// - parameter username: Username or email used for connection.
     /// - parameter password: The unencrypted password used to connect.
     /// - parameter email: Email of the user. Required only in case of a sign up.
-    /// - parameter register: If this parameter is set to true then the programm will send a register querry.
+    /// - parameter save: Save credentials in local storage. By default set to true.
     /// - Parameters:
-    ///     - loadingFinished: Closure called when the token has finished being loaded from the API.
+    ///     - callback: Closure called when the token has finished being loaded from the API.
     ///     - success: Wether the fetch succeeded or not.
     ///     - error: If the request was not succesful then this is the error corresponding to the fail.
-    init(username: String, password: String, email: String = "", register: Bool = false, name: String = "", loadingFinished : @escaping (_ success: Bool, _ error: BestagramError?) -> Void) {
-        self.username = username
-        self.email = email
-        self.name = email
+    static func create(username: String, password: String, email: String, name: String, save: Bool = true, callback: @escaping (_ success: Bool, _ error: BestagramError?) -> Void){
+        let hash = Hashing.shared.hash(password: password, salt: username)
 
-        // Hashing the password as described in the global readme.
-        let salt = username.data(using: .utf8)!
-        let hash = Hashing.shared.toHex(Hashing.shared.pbkdf2(hash: CCPBKDFAlgorithm(kCCPRFHmacAlgSHA256), password: password, saltData: salt, keyByteCount: 32, rounds: 1000000)!)
-        self.hash = hash
-        self.token = ""
-
-        if register {
-            LoginService.shared.fetchToken(username: self.username, password: hash, email : email, register: true, name: name) { (success, content, code) in
-                if success {
-                    self.token = content!
-                }
-                let errorResponse = User.interpretResponse(success: success, code: code, content: content)
-                loadingFinished(errorResponse.0, errorResponse.1)
+        LoginService.shared.fetchToken(username: username, password: hash, email : email, register: true, name: name) { (success, token, tokenExpirationDate, error) in
+            if success, save {
+                CredentialService.shared.store(password: hash, username: username)
             }
-        } else {
-            LoginService.shared.fetchToken(username: username, password: hash, register: false) { (success, content, code) in
-                if success {
-                    self.token = content!
-                }
-                let errorResponse = User.interpretResponse(success: success, code: code, content: content)
-                loadingFinished(errorResponse.0, errorResponse.1)
-            }
+            callback(success, error)
         }
-    }
-
-    /// Interpret an API error by getting the error that is associated with it if there is one.
-    ///
-    /// - parameter success: Wether the request succeeded or not.
-    /// - parameter code: HHTPStatusCode of the request.
-    /// - parameter content: Answer of the querry. Is used to provide more information in case of an unknown error.
-    static func interpretResponse(success: Bool, code : Int?, content: String?) -> (Bool, BestagramError?) {
-        print(content)
-        guard success && (code == 200 || code == 201) else{
-            if code == 401 {
-                // Invalid credentials.
-                return (false, InvalidCredentials())
-            } else if code == 400 {
-                // Missing informations.
-                return (false, MissingInformations())
-            } else if code == 409 {
-                return (false, UsernameAlreadyTaken())
-            } else{
-                // Unknown error.
-                return (false, UnknownError(documentation: content))
-            }
-        }
-        // Load of the token was succesfull.
-        return (true, nil)
-    }
-
-    /// The default username is everything that precede the "@" in the user's email adress.
-    /// This function retrieve the username. Note that the email adress must be valid and contain one @ sign.
-    ///
-    /// - Throws : InvalidEmailAdress
-    /// - Returns : Username from the email adress.
-    static func usernameFromEmail(email: String) throws -> String {
-        // There should only be one @ in the email adress.
-        guard let atIndex = email.firstIndex(of: "@") else {
-            throw InvalidEmailAdress()
-        }
-        let username = email.prefix(upTo: atIndex)
-        return String(username)
     }
 }

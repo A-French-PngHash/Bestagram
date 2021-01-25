@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Cache
 
 @main
 struct BestagramApp: App {
@@ -15,15 +16,17 @@ struct BestagramApp: App {
     static public var textGray = Color(red: 127/255, green: 126/255, blue: 128/255, opacity: 1)
     /// Post picture to show in previews.
     static public var defaultPostPicture = UIImage(named: "DefaultPostPicture")!
+
+    static public var allowedUsernameCharacters = "abcdefghijklmnopqrstuvwxyz0123456789_."
     
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                SignInOrUpChoiceView()
-            }
-            .font(ProximaNova.body)
-            .colorScheme(.dark)
-            .navigationBarHidden(true)
+            EnterUsernameView(email: "")
+            /*
+            SignInOrUpChoiceView()
+                .font(ProximaNova.body)
+                .colorScheme(.dark)
+ */
         }
     }
 }

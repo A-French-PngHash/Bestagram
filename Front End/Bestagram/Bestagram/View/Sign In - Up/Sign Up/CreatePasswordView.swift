@@ -11,14 +11,7 @@ struct CreatePasswordView: View {
 
     var email : String
     var name : String
-    var username : String{
-        do {
-            return try User.usernameFromEmail(email: email)
-        } catch {
-            print(error)
-        }
-        return ""
-    }
+    var username : String
 
     @State var user : User?
     
@@ -36,7 +29,7 @@ struct CreatePasswordView: View {
             VStack(spacing: 20){
                 Text("Create a password")
                     .font(ProximaNova(size: 30, bold: false).font)
-                Text("We can remember the password, so you won't need to enter it on your Icloud")
+                Text("We can remember the password, so you won't need to enter it on your Icloud devices")
                     .multilineTextAlignment(.center)
                     .foregroundColor(.gray)
                 CustomTextField(
@@ -67,16 +60,17 @@ struct CreatePasswordView: View {
                     let queue = DispatchQueue(label: "signup")
                     buttonStyle = .loading
                     queue.async {
-                        user = User(username: username, password: password, email: email, register: true, name: name) { (success, error) in
-                            if success {
-                                goNextView = true
-                            } else {
-                                if let err = error?.description {
-                                    displayedError = err
+                        // We create the user here. If the operation is successful, the credentials are saved.
+                        User.create(username: username.lowercased(), password: password, email: email, name: name, save: true, callback: { (success, error) in
+                                if success {
+                                    goNextView = true
+                                } else {
+                                    if let err = error?.description {
+                                        displayedError = err
+                                    }
                                 }
-                            }
-                            buttonStyle = .normal
-                        }
+                                buttonStyle = .normal
+                        })
                     }
                 }
                 if displayedError != "" {
@@ -100,7 +94,7 @@ struct CreatePasswordView: View {
 struct CreatePasswordView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            CreatePasswordView(email: "email@bestagram", name: "name")
+            CreatePasswordView(email: "email@bestagram", name: "name", username: "username")
                 .font(ProximaNova.body)
                 .preferredColorScheme(.dark)
         }

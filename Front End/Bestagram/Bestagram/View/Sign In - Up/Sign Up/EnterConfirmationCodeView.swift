@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// THIS VIEW IS NOT IMPLEMENTED FOR THE MOMENT AS THE API IS CURRENTLY NOT SENDING ANY EMAIL.
-
+///
 /// Display a text field to the user asking him to validate the confirmation code that was sent to his email.
 struct EnterConfirmationCodeView: View {
 
