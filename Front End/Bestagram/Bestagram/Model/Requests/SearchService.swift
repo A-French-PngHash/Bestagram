@@ -28,7 +28,7 @@ class SearchService {
     /// - Parameters:
     ///     - callback : Closure called when the response was sent.
     ///     - success: Wether or not the request reached the server. **Does not mean that the server accepted the request** (invalid credentials can still happen for example).
-    ///     - usernames: If the operation was successful then this is the list of usernames the api sent.
+    ///     - usernames: If the operation was successful then this is the list of usernames the api sent. Note that this list is order from most probable result to most unprobable.
     ///     - error: If the operation was **not** successful this is the error message included in the response.
     ///
     func searchUser(
@@ -37,7 +37,7 @@ class SearchService {
         rowCount: Int,
         token: String,
         callback : @escaping (_ success: Bool, _ usernames: Array<String>?,_ error: BestagramError?) -> Void) {
-        let parameters = ["search" : searchString]
+        let parameters = ["search" : searchString, "offset": offset, "rowCount": rowCount] as [String : Any]
         let headers: HTTPHeaders = ["Authorization" : token]
         let method : HTTPMethod = .get
 
@@ -45,21 +45,21 @@ class SearchService {
             switch response.result {
             case .failure(_):
                 // Error happened BEFORE the request. In this case the request never reached the server.
-                callback(false, nil, ConnectionError())
+                callback(false, nil, BestagramError.ConnectionError)
                 return
             case .success(let data):
                 guard let json = data as? NSDictionary,
                       let success = json["success"] as? Bool else {
-                    callback(false, nil, UnknownError(documentation: "Invalid json response."))
+                    callback(false, nil, BestagramError.InvalidJson)
                     return
                 }
-                guard success else {
+                guard success, let result = json["result"] as? Dictionary<String, String> else {
                     callback(false, nil, parseError(data: data))
                     return
                 }
                 var usernames : Array<String> = []
                 for i in offset...rowCount {
-                    if let username = json[i] as? String {
+                    if let username = result[String(i)] {
                         usernames.append(username)
                     }
                 }

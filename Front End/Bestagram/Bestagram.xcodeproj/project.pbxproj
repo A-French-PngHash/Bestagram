@@ -25,7 +25,7 @@
 		5B1D20142572DF81006B5073 /* Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D20132572DF81006B5073 /* Description.swift */; };
 		5B21218E25B9B6050055C2C6 /* PickUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21218D25B9B6050055C2C6 /* PickUsernameView.swift */; };
 		5B21219325B9B9E60055C2C6 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21219225B9B9E60055C2C6 /* SearchService.swift */; };
-		5B21219825B9BC450055C2C6 /* errorParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21219725B9BC450055C2C6 /* errorParsing.swift */; };
+		5B21219825B9BC450055C2C6 /* ErrorParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21219725B9BC450055C2C6 /* ErrorParsing.swift */; };
 		5B4A619025852E9C008FDED5 /* EnterConfirmationCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A618F25852E9C008FDED5 /* EnterConfirmationCodeView.swift */; };
 		5B5DF1ED2581887400A756D9 /* BigBlueButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5DF1EC2581887400A756D9 /* BigBlueButton.swift */; };
 		5B5DF1F225818AD700A756D9 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5DF1F125818AD700A756D9 /* CustomTextField.swift */; };
@@ -101,7 +101,7 @@
 		5B1D20132572DF81006B5073 /* Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Description.swift; sourceTree = "<group>"; };
 		5B21218D25B9B6050055C2C6 /* PickUsernameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickUsernameView.swift; sourceTree = "<group>"; };
 		5B21219225B9B9E60055C2C6 /* SearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
-		5B21219725B9BC450055C2C6 /* errorParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = errorParsing.swift; sourceTree = "<group>"; };
+		5B21219725B9BC450055C2C6 /* ErrorParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorParsing.swift; sourceTree = "<group>"; };
 		5B4A618F25852E9C008FDED5 /* EnterConfirmationCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterConfirmationCodeView.swift; sourceTree = "<group>"; };
 		5B5DF1EC2581887400A756D9 /* BigBlueButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigBlueButton.swift; sourceTree = "<group>"; };
 		5B5DF1F125818AD700A756D9 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
@@ -298,16 +298,15 @@
 		5BA7A11B2571BF5E00993718 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				5BCD740D25C2064400D3489E /* System Extensions */,
 				5BDCB8F22586B32100056B2B /* Requests */,
 				5BF0BAF025865E8700C3B9FB /* Fonts */,
 				5BE70E032571C43300187FF1 /* User.swift */,
 				5B1D20132572DF81006B5073 /* Description.swift */,
 				5B1D1FCC257260E0006B5073 /* Post.swift */,
-				5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */,
 				5B70B670258412F1004221D5 /* Checks.swift */,
 				5BB3770D258E4F41003559DE /* Hashing.swift */,
 				5BB37713258E73D0003559DE /* Error.swift */,
-				5B02908025995E1D004E03EF /* UIScreenExtension.swift */,
 				5BCDF4BA259FE1A4001B851F /* Tag.swift */,
 				5BF4759825BC7DBB00DC5FCA /* CredentialService.swift */,
 				5BAA5A2F25BEDFA600327674 /* CacheStorage.swift */,
@@ -355,13 +354,22 @@
 			path = "Sign Up";
 			sourceTree = "<group>";
 		};
+		5BCD740D25C2064400D3489E /* System Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				5B02908025995E1D004E03EF /* UIScreenExtension.swift */,
+				5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */,
+			);
+			path = "System Extensions";
+			sourceTree = "<group>";
+		};
 		5BDCB8F22586B32100056B2B /* Requests */ = {
 			isa = PBXGroup;
 			children = (
 				5BDCB8F32586B34C00056B2B /* LoginService.swift */,
 				5BDCB8FB2586B77F00056B2B /* Api.swift */,
 				5B21219225B9B9E60055C2C6 /* SearchService.swift */,
-				5B21219725B9BC450055C2C6 /* errorParsing.swift */,
+				5B21219725B9BC450055C2C6 /* ErrorParsing.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -708,7 +716,7 @@
 				5B1D1FF125727291006B5073 /* StringProtocolExtension.swift in Sources */,
 				5BDCB8F42586B34C00056B2B /* LoginService.swift in Sources */,
 				5BF3006525962794000E4DA1 /* CreatePasswordView.swift in Sources */,
-				5B21219825B9BC450055C2C6 /* errorParsing.swift in Sources */,
+				5B21219825B9BC450055C2C6 /* ErrorParsing.swift in Sources */,
 				5BF3006A25964A25000E4DA1 /* WelcomeToBestagramView.swift in Sources */,
 				5B02904C2597EF15004E03EF /* DontHaveAccountView.swift in Sources */,
 				5B1D1FCD257260E0006B5073 /* Post.swift in Sources */,

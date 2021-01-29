@@ -42,7 +42,7 @@ class User {
     /// - parameter username: If the credentials are not saved, this is the username.
     /// - parameter password: If the credentials are not saved this is the password **non hashed**.
     /// - parameter saveCredentials: If the credentials are not saved yet this init can save them in the CredentialService for easier and persistent access.
-    init(credentialsSaved: Bool, username: String?, password: String?, saveCredentials: Bool) {
+    init(credentialsSaved: Bool, username: String?, password: String?, saveCredentials: Bool?) {
         if credentialsSaved {
             self.credentialsSaved = true
             let credentials = CredentialService.shared.get()
@@ -55,7 +55,7 @@ class User {
                 let hash = Hashing.shared.hash(password: password, salt: username)
                 self.username = username
                 self.hash = hash
-                if saveCredentials {
+                if let save = saveCredentials, save {
                     CredentialService.shared.store(password: hash, username: username)
                 }
             }
@@ -81,7 +81,7 @@ class User {
                     callback(success, token, error)
                 }
             } else {
-                callback(false, nil, InvalidCredentials())
+                callback(false, nil, BestagramError.InvalidCredentials)
             }
         } else {
             // Token has been retrieved.

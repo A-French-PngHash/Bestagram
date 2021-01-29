@@ -21,7 +21,7 @@ struct BestagramApp: App {
     
     var body: some Scene {
         WindowGroup {
-            EnterUsernameView(email: "")
+            SearchPeopleView()
             /*
             SignInOrUpChoiceView()
                 .font(ProximaNova.body)

@@ -16,5 +16,15 @@ class Api {
     /// This manager is used to allow connection to self signed certificates.
     static let manager = ServerTrustManager(evaluators: ["0.0.0.0": DisabledTrustEvaluator()])
     /// Session used to make requests.
-    static let session = Session(serverTrustManager: manager)
+    static var session = Session(serverTrustManager: manager)
+
+    static let errorCodes : [Int:BestagramError] = [
+        1: BestagramError.InvalidCredentials,
+        2: BestagramError.UsernameAlreadyTaken,
+        3: BestagramError.EmailAlreadyTaken,
+        4: BestagramError.InvalidEmail,
+        5: BestagramError.InvalidUsername,
+        6: BestagramError.InvalidName,
+        7: BestagramError.MissingInformations
+    ]
 }

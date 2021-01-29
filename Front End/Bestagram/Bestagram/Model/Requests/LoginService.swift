@@ -55,24 +55,23 @@ class LoginService {
             parameters["name"] = name
             // These two parameters are required in case of a sign up.
         }
-
         Api.session.request(path + loginUrl, method: method, parameters: parameters).responseJSON { (response) in
 
             switch response.result{
             case .failure(_):
                 // Error happened BEFORE the request. In this case the request never reached the server.
-                callback(false, nil, nil,  ConnectionError())
+                callback(false, nil, nil, BestagramError.ConnectionError)
                 return
 
             case .success(let data):
                 guard let json = data as? Dictionary<String, Any>,
-                      let success = json["success"] as? Bool,
-                      let strDate = json["date"] as? String,
-                      let expirationDate = self.getDateFromString(strDate: strDate) else {
-                    callback(false, nil, nil,  UnknownError(documentation: "Invalid json response."))
+                      let success = json["success"] as? Bool else {
+                    callback(false, nil, nil,  BestagramError.InvalidJson)
                     return
                 }
-                guard let token = json["token"] as? String, success else {
+                guard let token = json["token"] as? String,
+                      let strDate = json["token_expiration_date"] as? String,
+                      let expirationDate = self.getDateFromString(strDate: strDate), success else {
                     callback(false, nil, nil, parseError(data: data))
                     return
                 }
@@ -81,7 +80,8 @@ class LoginService {
         }
     }
 
-    /// When the token is sent from the api, its expiration date is sent along as a string. This method allow us to parse this string to a date again.
+    /// When the token is sent from the api, its expiration date is sent along as a string. This method allow us to parse this string to a date
+    /// again.
     func getDateFromString(strDate: String) -> Date?{
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "y-M-d HH:mm:ss"
