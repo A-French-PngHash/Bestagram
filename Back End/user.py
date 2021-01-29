@@ -395,7 +395,7 @@ class User:
             offset = 0
         if row_count > 100:
             row_count = 100
-
+        search_str = self.cursor._connection.converter.escape(search_str)
         # This query select user matching the search query which the current user follow.
         followed_search_query = f"""
         SELECT name, username, id, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS followers FROM UserTable 

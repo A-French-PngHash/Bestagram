@@ -45,7 +45,6 @@
 		5BB7D82E25815399001AE07C /* SignInOrUpChoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */; };
 		5BB7D837258154D9001AE07C /* EnterPhoneOrEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */; };
 		5BCDF4BB259FE1A4001B851F /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCDF4BA259FE1A4001B851F /* Tag.swift */; };
-		5BCDF4C8259FE3F4001B851F /* SearchPeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCDF4C7259FE3F4001B851F /* SearchPeopleView.swift */; };
 		5BCDF4D0259FE466001B851F /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCDF4CF259FE466001B851F /* SearchBar.swift */; };
 		5BDCB8F42586B34C00056B2B /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDCB8F32586B34C00056B2B /* LoginService.swift */; };
 		5BDCB8FC2586B77F00056B2B /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDCB8FB2586B77F00056B2B /* Api.swift */; };
@@ -62,6 +61,7 @@
 		5BF3006A25964A25000E4DA1 /* WelcomeToBestagramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3006925964A25000E4DA1 /* WelcomeToBestagramView.swift */; };
 		5BF3006F25964CBB000E4DA1 /* InterfacePositioningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3006E25964CBB000E4DA1 /* InterfacePositioningView.swift */; };
 		5BF4759925BC7DBB00DC5FCA /* CredentialService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF4759825BC7DBB00DC5FCA /* CredentialService.swift */; };
+		5BFAE5B625C4C4A700AA3AAD /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFAE5B525C4C4A700AA3AAD /* ErrorView.swift */; };
 		E8C1AF7FB85A9D82857B218B /* Pods_Bestagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2FE10F21ADC5EB9CA01ADBC /* Pods_Bestagram.framework */; };
 /* End PBXBuildFile section */
 
@@ -127,7 +127,6 @@
 		5BB7D82D25815399001AE07C /* SignInOrUpChoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInOrUpChoiceView.swift; sourceTree = "<group>"; };
 		5BB7D836258154D9001AE07C /* EnterPhoneOrEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPhoneOrEmailView.swift; sourceTree = "<group>"; };
 		5BCDF4BA259FE1A4001B851F /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
-		5BCDF4C7259FE3F4001B851F /* SearchPeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPeopleView.swift; sourceTree = "<group>"; };
 		5BCDF4CF259FE466001B851F /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		5BDCB8F32586B34C00056B2B /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		5BDCB8FB2586B77F00056B2B /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
@@ -144,6 +143,7 @@
 		5BF3006925964A25000E4DA1 /* WelcomeToBestagramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeToBestagramView.swift; sourceTree = "<group>"; };
 		5BF3006E25964CBB000E4DA1 /* InterfacePositioningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfacePositioningView.swift; sourceTree = "<group>"; };
 		5BF4759825BC7DBB00DC5FCA /* CredentialService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialService.swift; sourceTree = "<group>"; };
+		5BFAE5B525C4C4A700AA3AAD /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		6708ED6011F9118EB53F4B60 /* Pods-Bestagram-BestagramUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram-BestagramUITests.release.xcconfig"; path = "Target Support Files/Pods-Bestagram-BestagramUITests/Pods-Bestagram-BestagramUITests.release.xcconfig"; sourceTree = "<group>"; };
 		6CBAF8711BA4DEC12E4FE49A /* Pods-BestagramTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BestagramTests.debug.xcconfig"; path = "Target Support Files/Pods-BestagramTests/Pods-BestagramTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A9FA6428F46D234D921F1DA8 /* Pods-Bestagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram.release.xcconfig"; path = "Target Support Files/Pods-Bestagram/Pods-Bestagram.release.xcconfig"; sourceTree = "<group>"; };
@@ -226,6 +226,7 @@
 		5B5DF1EB2581886500A756D9 /* Elements */ = {
 			isa = PBXGroup;
 			children = (
+				5BFAE5B525C4C4A700AA3AAD /* ErrorView.swift */,
 				5B5DF1EC2581887400A756D9 /* BigBlueButton.swift */,
 				5B5DF1F125818AD700A756D9 /* CustomTextField.swift */,
 				5B70B66525840FE3004221D5 /* BackButton.swift */,
@@ -323,7 +324,6 @@
 				5BA7A0ED2571BE5300993718 /* BestagramApp.swift */,
 				5BA7A0EF2571BE5300993718 /* PostView.swift */,
 				5B1D200E2572DF2A006B5073 /* DescriptionView.swift */,
-				5BCDF4C7259FE3F4001B851F /* SearchPeopleView.swift */,
 				5B21218D25B9B6050055C2C6 /* PickUsernameView.swift */,
 			);
 			path = View;
@@ -706,9 +706,9 @@
 				5BB3770E258E4F41003559DE /* Hashing.swift in Sources */,
 				5B02907725995BD1004E03EF /* TagPeopleView.swift in Sources */,
 				5BA7A0EE2571BE5300993718 /* BestagramApp.swift in Sources */,
-				5BCDF4C8259FE3F4001B851F /* SearchPeopleView.swift in Sources */,
 				5B02906C2599507F004E03EF /* PostSettingView.swift in Sources */,
 				5B0290672598EC0E004E03EF /* ImagePicker.swift in Sources */,
+				5BFAE5B625C4C4A700AA3AAD /* ErrorView.swift in Sources */,
 				5B70B671258412F1004221D5 /* Checks.swift in Sources */,
 				5BE70E042571C43300187FF1 /* User.swift in Sources */,
 				5BB7D837258154D9001AE07C /* EnterPhoneOrEmailView.swift in Sources */,

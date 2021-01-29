@@ -18,15 +18,16 @@ struct BestagramApp: App {
     static public var defaultPostPicture = UIImage(named: "DefaultPostPicture")!
 
     static public var allowedUsernameCharacters = "abcdefghijklmnopqrstuvwxyz0123456789_."
+
     
     var body: some Scene {
         WindowGroup {
-            SearchPeopleView()
-            /*
-            SignInOrUpChoiceView()
-                .font(ProximaNova.body)
-                .colorScheme(.dark)
- */
+            PickUsernameView(onUsernamePicked: { (username) in
+                print("username picked : \(username)")
+            }, onCancelButtonPressed: {
+                print("cancel pressed")
+            }, user: user)
+            .preferredColorScheme(.dark)
         }
     }
 }
