@@ -8,7 +8,10 @@
 import UIKit
 
 /// Represent one tag on a post.
+///
+/// Conforl to hashable in order to iterate over list of tags in a ForEach loop.
 class Tag {
+
     /// Username fo the user's tagged.
     var userTagged: String
     /// Position of the tag on the picture. Two numbers between 1 and 0.
@@ -29,5 +32,10 @@ class Tag {
     init(userTagged: String, position: Array<Float>) {
         self.userTagged = userTagged
         self.position = position
+    }
+
+    /// Returns json representation of this tag.
+    func encodeJson() -> Dictionary<String, Any> {
+        return ["username" : userTagged, "pos_x" : position[0], "pos_y" : position[1]]
     }
 }

@@ -44,7 +44,7 @@ class BestagramPostTests: XCTestCase {
         )
 
         // When initializing.
-        let descriptionObj = Description(text: description)
+        let descriptionObj = Caption(text: description)
 
         // Then reduced description same as full.
         XCTAssertEqual(descriptionObj.fullDescription, descriptionObj.reducedDescription)
@@ -59,7 +59,7 @@ class BestagramPostTests: XCTestCase {
 
         // When initializing.
 
-        let descriptionObj = Description(text: description)
+        let descriptionObj = Caption(text: description)
 
         // Then reduced description not same and less than full.
         XCTAssertLessThan(descriptionObj.reducedDescription.count, descriptionObj.fullDescription.count)
@@ -72,7 +72,7 @@ class BestagramPostTests: XCTestCase {
             maxLength: Post.minimumCharacterReducedDescription + 20)
 
         // When initializing.
-        let descriptionObj = Description(text: description)
+        let descriptionObj = Caption(text: description)
 
         // Then reduced description not cut in word.
         XCTAssertEqual(description[descriptionObj.reducedDescription.count], " ")

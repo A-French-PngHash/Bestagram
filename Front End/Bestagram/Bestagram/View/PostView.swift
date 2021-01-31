@@ -67,7 +67,7 @@ struct PostView: View {
             HStack {
                 Spacer()
                     .frame(width: minSpaceFromEdge)
-                DescriptionView(post: post)
+                CaptionView(post: post)
                     .animation(.default)
                 Spacer()
             }
@@ -85,7 +85,7 @@ struct PostView: View {
 }
 
 // swiftlint:disable line_length
-let defaultDescription = """
+let defaultCaption = """
 Twenty-five years ago, I published my first book, The Road Ahead. At the time, people were wondering where digital technology was headed and how it would affect our lives, and I wanted to share my thoughts—and my enthusiasm.
 """
 // swiftlint:enable line_length
@@ -100,7 +100,7 @@ let defaultPost = Post(
     user: defaultUser,
     image: UIImage(named: "DefaultPostPicture")!,
     numberOfLikes: 326,
-    description: defaultDescription,
+    caption: defaultCaption,
     postTime: Date(timeIntervalSinceNow: TimeInterval(-27653))
 )
 

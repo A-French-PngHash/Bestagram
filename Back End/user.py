@@ -407,7 +407,7 @@ class User:
         self.cursor.execute(followed_search_query)
         results = self.cursor.fetchall()
         if len(results) < row_count:
-            # Not enough results in the first query targetting followed user. Executing search on not followed user.
+            # Not enough results in the first query targeting followed user. Executing search on not followed user.
             not_followed_search_query = f"""
             SELECT name, username, id, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS followers FROM UserTable
             WHERE UserTable.name LIKE "{search_str}" AND id NOT IN (SELECT user_id_followed FROM Follow WHERE user_id = {self.id}) AND id != {self.id}

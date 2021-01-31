@@ -15,14 +15,19 @@ struct TopBarView: View {
     /// Called when trailing button is pressed.
     var onTrailingButtonPress: () -> Void
 
+    /// Wheter or not to show the arrow pointing back.
+    var shouldShowBackButton : Bool = true
+
     var body: some View {
         HStack {
             ZStack {
                 HStack {
                     Spacer()
                         .frame(width: 10)
-                    BackButton(presentationMode: presentationMode)
-                        .font(ProximaNova(size: 14, bold: true).font)
+                    if shouldShowBackButton {
+                        BackButton(presentationMode: presentationMode)
+                            .font(ProximaNova(size: 14, bold: true).font)
+                    }
                     Spacer()
                     Button(action : {
                         onTrailingButtonPress()

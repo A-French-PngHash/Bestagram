@@ -65,7 +65,8 @@ class User {
     /// Retrieve token for this user. This method only works if the credentials variable have been filled.
     func getToken(callback: @escaping (_ success: Bool, _ token: String?, _ error: BestagramError?) -> Void) {
         let token = try? CacheStorage.shared.storage.object(forKey: "token")
-        if token == nil {
+
+        if token == nil || ((try? CacheStorage.shared.storage.isExpiredObject(forKey: "token")) == true){
             // Token has never been retrieved.
             if let username = self.username, let hash = self.hash {
                 LoginService.shared.fetchToken(username: username, password: hash, register: false) { (success, token, expirationDate, error) in

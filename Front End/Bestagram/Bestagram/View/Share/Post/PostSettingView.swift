@@ -13,12 +13,17 @@ struct PostSettingView: View {
 
     /// Image chosen by the user to be the content of what will be posted.
     let postImage : UIImage
-    /// Description going with the post.
-    @State var description: String = "Write a caption..."
+    /// Caption going with the post.
+    @State var caption: String = "Write a caption..."
     let placeholderString: String = "Write a caption..."
 
     /// Display the view where the user can tag people on the photos.
     @State var displayTagView: Bool = false
+    /// Tag the user want to set with the post.
+    @State var tags : Array<Tag> = []
+
+    /// User currently connected.
+    var user : User
 
     var enterCaption: some View {
         HStack {
@@ -27,12 +32,12 @@ struct PostSettingView: View {
                 .resizable()
                 .frame(width: 50, height: 50, alignment: .leading)
                 .padding(10)
-            TextEditor(text: $description)
+            TextEditor(text: $caption)
                 .frame(height: 60)
-                .foregroundColor(description == placeholderString ? .gray : .primary)
+                .foregroundColor(caption == placeholderString ? .gray : .primary)
                 .onTapGesture(perform: {
-                    if description == placeholderString {
-                        description = ""
+                    if caption == placeholderString {
+                        self.caption = ""
                     }
                 })
         }
@@ -47,16 +52,20 @@ struct PostSettingView: View {
                     Spacer()
                         .frame(width: 10)
                     Text("Tag people")
-                        .foregroundColor(.black)
+                        .foregroundColor(.white)
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .foregroundColor(.black)
+                        .foregroundColor(.white)
                     Spacer()
                         .frame(width: 10)
                 }
             })
             NavigationLink(
-                destination: TagPeopleView(image: postImage),
+                destination:
+                    TagPeopleView(image: postImage, tags: tags, user: user, onUserIsDone : { (tags) in
+                        self.displayTagView = false
+                        self.tags = tags
+                    }),
                 isActive: $displayTagView,
                 label: {
                     EmptyView()
@@ -82,8 +91,21 @@ struct PostSettingView: View {
 
     var body: some View {
         VStack {
-            TopBarView(trailingButtonText: "Next", titleText: "Create post") {
-                print("button press")
+            TopBarView(trailingButtonText: "Share", titleText: "Create post") {
+                //TODO: - When creating home view then link the press of this button to the view.
+                user.getToken { (success, token, error) in
+                    if let token = token, success {
+
+                        ShareService.shared.createPost(token: token, image: self.postImage, caption: self.caption, tags: tags) { (success, error) in
+                            if let err = error, success {
+                                print("post did not suceeded")
+                                print(err)
+                            } else {
+                                print("post suceeded")
+                            }
+                        }
+                    }
+                }
             }
             Divider()
             enterCaption
@@ -101,7 +123,7 @@ struct PostSettingView: View {
 struct PostSettingView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            PostSettingView(postImage: UIImage(systemName: "photo")!)
+            PostSettingView(postImage: BestagramApp.defaultPostPicture, user : testUser)
                 .font(ProximaNova.body)
         }
     }

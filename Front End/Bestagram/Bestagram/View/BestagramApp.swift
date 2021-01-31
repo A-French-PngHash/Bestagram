@@ -22,12 +22,10 @@ struct BestagramApp: App {
     
     var body: some Scene {
         WindowGroup {
-            PickUsernameView(onUsernamePicked: { (username) in
-                print("username picked : \(username)")
-            }, onCancelButtonPressed: {
-                print("cancel pressed")
-            }, user: user)
-            .preferredColorScheme(.dark)
+            NavigationView {
+                PictureSelectionView(user: testUser)
+                .preferredColorScheme(.dark)
+            }
         }
     }
 }

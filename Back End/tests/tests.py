@@ -41,8 +41,8 @@ class Tests(unittest.TestCase):
     default_username = "test_username"
     default_name = "test_name"
     default_email = "test.test@bestagram.com"
-    default_tags = {"tags": {"0": {"pos_x": 0.43, "pos_y": 0.87, "username": "john.fries"},
-                             "1": {"pos_x": 0.29, "pos_y": 0.44, "username": "titouan"}}}
+    default_tags = {"0": {"pos_x": 0.43, "pos_y": 0.87, "username": "john.fries"},
+                    "1": {"pos_x": 0.29, "pos_y": 0.44, "username": "titouan"}}
 
     def user_in_db(self, username: str) -> (bool, dict):
         """
@@ -606,8 +606,8 @@ class Tests(unittest.TestCase):
     def test_GivenTagLinkingToTheSameUserWhenPostingThenAddOnlyOne(self):
         # Given tag linking to the same user.
         self.add_user(username="john.fries")
-        tags = {"tags": {"0": {"pos_x": 0.5, "pos_y": 0.3, "username": "john.fries"},
-                         "1": {"pos_x": 0.3, "pos_y": 0.5, "username": "john.fries"}}}
+        tags = {"0": {"pos_x": 0.5, "pos_y": 0.3, "username": "john.fries"},
+                "1": {"pos_x": 0.3, "pos_y": 0.5, "username": "john.fries"}}
 
         # When posting.
         code, content = self.post(default=True, file=self.image_square, tag=tags)

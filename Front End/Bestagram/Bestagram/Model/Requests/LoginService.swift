@@ -66,7 +66,7 @@ class LoginService {
             case .success(let data):
                 guard let json = data as? Dictionary<String, Any>,
                       let success = json["success"] as? Bool else {
-                    callback(false, nil, nil,  BestagramError.InvalidJson)
+                    callback(false, nil, nil, BestagramError.InvalidJson)
                     return
                 }
                 guard let token = json["token"] as? String,

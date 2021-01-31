@@ -20,7 +20,7 @@ Consult that file to get information on how to contact these endpoints to get ac
 
 app = Flask(__name__)
 
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Limit contents upload to 5 megabytes.
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # Limit contents upload to 5 megabytes.
 
 api = Api(app)
 

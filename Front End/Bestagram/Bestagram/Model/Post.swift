@@ -10,7 +10,7 @@ import UIKit
 /// Represent a post made by a user of the app.
 class Post {
     // MARK: - Static variables
-    static let minimumCharacterReducedDescription: Int = 30
+    static let minimumCharacterReducedCaption: Int = 30
 
     // MARK: - Other variables
     /// The user who posted the image.
@@ -20,16 +20,17 @@ class Post {
     /// For the moment posts only consist of one image.
     let image: UIImage
     let numberOfLikes: Int
-    let description: Description
+    let caption: Caption
     /// The date when the post was finished being uploaded to the server.
     let postTime: Date
 
     // MARK: - Initialization
-    init(user: User, image: UIImage, numberOfLikes: Int, description: String, postTime: Date) {
+    /// Init for debug only for now.
+    init(user: User, image: UIImage, numberOfLikes: Int, caption: String, postTime: Date) {
         self.user = user
         self.image = image
         self.numberOfLikes = numberOfLikes
-        self.description = Description(text: description)
+        self.caption = Caption(text: caption)
         self.postTime = postTime
     }
 

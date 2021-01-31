@@ -28,6 +28,9 @@ struct PictureSelectionView: View {
     /// In this case the image currently selected is not displayed fully, it is shifted to the top.
     @State var displayFullImage: Bool = true
 
+    /// User currently connected.
+    var user : User
+
     var dragGesture: some Gesture {
         return DragGesture(minimumDistance: 80, coordinateSpace: .local)
             .onEnded { (gesture) in
@@ -128,7 +131,7 @@ struct PictureSelectionView: View {
 
             imageScrollView
             NavigationLink(
-                destination: PostSettingView(postImage: selectedImage),
+                destination: PostSettingView(postImage: loadedImage, user: self.user),
                 isActive: $goNextView,
                 label: {
                     EmptyView()
@@ -236,28 +239,8 @@ class PhotosModel: ObservableObject {
 struct PictureSelectionView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            PictureSelectionView(selectedImage: UIImage(systemName: "photo")!)
+            PictureSelectionView(selectedImage: UIImage(systemName: "photo")!, user: testUser)
                 .font(ProximaNova.body)
         }
     }
 }
-
-/*
-Button(action: {
-    self.presentImagePicker = true
-}, label: {
-    HStack {
-        Image(systemName: "photo")
-        Text("Photo Library")
-    }
-    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 50, alignment: .center)
-    .foregroundColor(.white)
-    .background(LinearGradient(gradient:
-        Gradient(colors: [
-            Color(red: 244/256, green: 99/256, blue: 49/256),
-            Color(red: 150/256, green: 73/256, blue: 187/256)]),
-                               startPoint: .bottomLeading, endPoint: .topTrailing))
-    .cornerRadius(20)
-    .padding(.horizontal)
-})
-*/

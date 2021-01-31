@@ -57,7 +57,8 @@ class Post(Resource):
 
         params = parser.parse_args()
         tags = params["tag"]
-        tags = loads(tags)
+        if tags:
+            tags = loads(tags)
 
         if params["image"] == "":  # Caption is not mandatory.
             return MissingInformation.get_dictionary(), 400
@@ -71,9 +72,8 @@ class Post(Resource):
         tags_list = []
 
         try:
-            json = tags["tags"]
-            for i in json:
-                tag = json[i]
+            for i in tags:
+                tag = tags[i]
                 try:
                     id = get_user_id_from_username(username=tag["username"])
                     tag = Tag(user_id=id, pos_x=tag["pos_x"], pos_y=tag["pos_y"])

@@ -79,6 +79,7 @@ struct PickUsernameView: View {
             Spacer()
                 .frame(height: 15)
         }
+        .navigationBarHidden(true)
         .onAppear(perform: {
             search()
         })
@@ -123,15 +124,17 @@ struct PickUsernameView: View {
 }
 
 // Note that if you want to run search on your computer with xcode preview you will need to change this line to reference the credentials of an account already existing in your local database.
-let user = User(credentialsSaved: false, username: "titouana", password: "password", saveCredentials: false)
+let testUser = User(credentialsSaved: false, username: "titouana", password: "password", saveCredentials: true)
 
 struct PickUsernameView_Previews: PreviewProvider {
     static var previews: some View {
-        PickUsernameView(
-            onUsernamePicked: {(_) in },
-            onCancelButtonPressed: { },
-            user: user
-        )
+        NavigationView {
+            PickUsernameView(
+                onUsernamePicked: {(_) in },
+                onCancelButtonPressed: { },
+                user: testUser
+            )
+        }
         .colorScheme(.dark)
         .preferredColorScheme(.dark)
         .font(ProximaNova.body)

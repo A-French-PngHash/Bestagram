@@ -1,5 +1,5 @@
 
-  
+
 # Bestagram API Documentation  
 This document provides a **full documentation** of the API used in the *Bestagram* project. It is updated as soon as new functionality are added.  
   
@@ -25,7 +25,6 @@ The following table maps each error code the API can possibly raise.
 | 5 | Invalid username |
 | 6 | Invalid name |
 | 7 | Missing information |
-| 8 | Username not existing |
 
 
   
@@ -40,7 +39,7 @@ Query Parameters :
   
 Response if operation successful :  
   
-	{"token" : "x", "token_expiration_date": "2021-01-25 00:21:00"} - 200  
+    {"token" : "x"} - 200  
 ## PUT  
  PUT /login  Register a user into the database and return the token.   
   
@@ -51,7 +50,7 @@ Query parameters :
   
 Response if operation successful :  
   
-	{"token" : "x", "token_expiration_date": "2021-01-25 16:00:01"} - 201  
+    {"token" : "x"} - 201  
 # Email  
 ## Get  
   
@@ -62,7 +61,7 @@ Query parameters :
   
 Response if operation successful :  
   
-	{"taken" : true} - 200  
+    {"taken" : true} - 200  
 # Post  
 ## Post  
   
@@ -74,31 +73,30 @@ Headers :
 Query parameters :  
  - caption : Caption of the post.  
  - tag : The tag parameters is **not mandatory**. It contains the tags for this post in a json string.   
-The tag information include the username of the tagged user. It also includes the position of the tag **relative to the bottom left corner of the image**. The position is stored into two float element, pos_x and pos_y. Both are numbers between 1 and 0. To get the true coordinate multiply pos_x by width and pos_y by height. Note that if multiple tags are sent with the same person tagged, the api will only store one of them and discard the others.  
+The tag information include the username of the tagged user. It also includes the position of the tag **relative to the top left corner of the image**. The position is stored into two float element, pos_x and pos_y. Both are numbers between 1 and 0. To get the true coordinate multiply pos_x by width and pos_y by height. Note that if multiple tags are sent with the same person tagged, the api will only store one of them and discard the others.  
   
 An example of a valid json body is :   
      
-	 {      "tags" :   
-	      {   
-	         "0" :   
-	         {   
-	            "pos_x" : 0.43,   
-	            "pox_y" : 0.87,   
-	            "username" : "john.fries"  
-	 },         "1" :   
-	         {    
-	            "pos_x" : 0.29,   
-	            "pos_y" : 0.44,   
-	            "username" : "titouan"   
-	         }  
-	 } }  
+    { "0" :   
+             {   
+                "pos_x" : 0.43,   
+                "pox_y" : 0.87,   
+                "username" : "john.fries"  
+         },         
+     "1" :   
+             {    
+                "pos_x" : 0.29,   
+                "pos_y" : 0.44,   
+                "username" : "titouan"   
+             }  
+     } 
   
 Files :   
  - image : The image of the post.  
   
 Response if operation successful :  
   
-	{"status": "Image Received"}, 201  
+    {"success": True}, 200 
 # Search  
 ## Get  
   
@@ -116,5 +114,5 @@ Query parameters :
   
 Response if operation successful :  
   
-	 {3: "usernamematched", 4: "anotherusername", 5: "athirdusername"}  
+     {3: "usernamematched", 4: "anotherusername", 5: "athirdusername"}  
 This is an example response when offset is set to 3 and row_count to 3.

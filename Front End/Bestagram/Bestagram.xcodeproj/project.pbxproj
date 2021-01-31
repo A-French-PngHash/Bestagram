@@ -21,8 +21,8 @@
 		5B1D1FD225726629006B5073 /* ProximaNova.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FD125726629006B5073 /* ProximaNova.swift */; };
 		5B1D1FF125727291006B5073 /* StringProtocolExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */; };
 		5B1D1FF625727420006B5073 /* BestagramPostTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D1FF525727420006B5073 /* BestagramPostTests.swift */; };
-		5B1D200F2572DF2A006B5073 /* DescriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D200E2572DF2A006B5073 /* DescriptionView.swift */; };
-		5B1D20142572DF81006B5073 /* Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D20132572DF81006B5073 /* Description.swift */; };
+		5B1D200F2572DF2A006B5073 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D200E2572DF2A006B5073 /* CaptionView.swift */; };
+		5B1D20142572DF81006B5073 /* Caption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1D20132572DF81006B5073 /* Caption.swift */; };
 		5B21218E25B9B6050055C2C6 /* PickUsernameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21218D25B9B6050055C2C6 /* PickUsernameView.swift */; };
 		5B21219325B9B9E60055C2C6 /* SearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21219225B9B9E60055C2C6 /* SearchService.swift */; };
 		5B21219825B9BC450055C2C6 /* ErrorParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B21219725B9BC450055C2C6 /* ErrorParsing.swift */; };
@@ -61,7 +61,10 @@
 		5BF3006A25964A25000E4DA1 /* WelcomeToBestagramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3006925964A25000E4DA1 /* WelcomeToBestagramView.swift */; };
 		5BF3006F25964CBB000E4DA1 /* InterfacePositioningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3006E25964CBB000E4DA1 /* InterfacePositioningView.swift */; };
 		5BF4759925BC7DBB00DC5FCA /* CredentialService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF4759825BC7DBB00DC5FCA /* CredentialService.swift */; };
+		5BF64C2825C5CAB7008249C3 /* ShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF64C2725C5CAB7008249C3 /* ShareService.swift */; };
 		5BFAE5B625C4C4A700AA3AAD /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFAE5B525C4C4A700AA3AAD /* ErrorView.swift */; };
+		5BFAE5CF25C55F6400AA3AAD /* TapLocationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFAE5CE25C55F6400AA3AAD /* TapLocationExtension.swift */; };
+		5BFAE5D425C5629E00AA3AAD /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BFAE5D325C5629E00AA3AAD /* TagView.swift */; };
 		E8C1AF7FB85A9D82857B218B /* Pods_Bestagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2FE10F21ADC5EB9CA01ADBC /* Pods_Bestagram.framework */; };
 /* End PBXBuildFile section */
 
@@ -97,8 +100,8 @@
 		5B1D1FD125726629006B5073 /* ProximaNova.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximaNova.swift; sourceTree = "<group>"; };
 		5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringProtocolExtension.swift; sourceTree = "<group>"; };
 		5B1D1FF525727420006B5073 /* BestagramPostTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestagramPostTests.swift; sourceTree = "<group>"; wrapsLines = 1; };
-		5B1D200E2572DF2A006B5073 /* DescriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionView.swift; sourceTree = "<group>"; };
-		5B1D20132572DF81006B5073 /* Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Description.swift; sourceTree = "<group>"; };
+		5B1D200E2572DF2A006B5073 /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
+		5B1D20132572DF81006B5073 /* Caption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Caption.swift; sourceTree = "<group>"; };
 		5B21218D25B9B6050055C2C6 /* PickUsernameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickUsernameView.swift; sourceTree = "<group>"; };
 		5B21219225B9B9E60055C2C6 /* SearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchService.swift; sourceTree = "<group>"; };
 		5B21219725B9BC450055C2C6 /* ErrorParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorParsing.swift; sourceTree = "<group>"; };
@@ -143,7 +146,10 @@
 		5BF3006925964A25000E4DA1 /* WelcomeToBestagramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeToBestagramView.swift; sourceTree = "<group>"; };
 		5BF3006E25964CBB000E4DA1 /* InterfacePositioningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfacePositioningView.swift; sourceTree = "<group>"; };
 		5BF4759825BC7DBB00DC5FCA /* CredentialService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialService.swift; sourceTree = "<group>"; };
+		5BF64C2725C5CAB7008249C3 /* ShareService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareService.swift; sourceTree = "<group>"; };
 		5BFAE5B525C4C4A700AA3AAD /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
+		5BFAE5CE25C55F6400AA3AAD /* TapLocationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapLocationExtension.swift; sourceTree = "<group>"; };
+		5BFAE5D325C5629E00AA3AAD /* TagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagView.swift; sourceTree = "<group>"; };
 		6708ED6011F9118EB53F4B60 /* Pods-Bestagram-BestagramUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram-BestagramUITests.release.xcconfig"; path = "Target Support Files/Pods-Bestagram-BestagramUITests/Pods-Bestagram-BestagramUITests.release.xcconfig"; sourceTree = "<group>"; };
 		6CBAF8711BA4DEC12E4FE49A /* Pods-BestagramTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BestagramTests.debug.xcconfig"; path = "Target Support Files/Pods-BestagramTests/Pods-BestagramTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A9FA6428F46D234D921F1DA8 /* Pods-Bestagram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bestagram.release.xcconfig"; path = "Target Support Files/Pods-Bestagram/Pods-Bestagram.release.xcconfig"; sourceTree = "<group>"; };
@@ -232,6 +238,7 @@
 				5B70B66525840FE3004221D5 /* BackButton.swift */,
 				5B0290662598EC0E004E03EF /* ImagePicker.swift */,
 				5BCDF4CF259FE466001B851F /* SearchBar.swift */,
+				5BFAE5D325C5629E00AA3AAD /* TagView.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -303,7 +310,7 @@
 				5BDCB8F22586B32100056B2B /* Requests */,
 				5BF0BAF025865E8700C3B9FB /* Fonts */,
 				5BE70E032571C43300187FF1 /* User.swift */,
-				5B1D20132572DF81006B5073 /* Description.swift */,
+				5B1D20132572DF81006B5073 /* Caption.swift */,
 				5B1D1FCC257260E0006B5073 /* Post.swift */,
 				5B70B670258412F1004221D5 /* Checks.swift */,
 				5BB3770D258E4F41003559DE /* Hashing.swift */,
@@ -323,7 +330,7 @@
 				5B02905C2598E80A004E03EF /* Share */,
 				5BA7A0ED2571BE5300993718 /* BestagramApp.swift */,
 				5BA7A0EF2571BE5300993718 /* PostView.swift */,
-				5B1D200E2572DF2A006B5073 /* DescriptionView.swift */,
+				5B1D200E2572DF2A006B5073 /* CaptionView.swift */,
 				5B21218D25B9B6050055C2C6 /* PickUsernameView.swift */,
 			);
 			path = View;
@@ -359,6 +366,7 @@
 			children = (
 				5B02908025995E1D004E03EF /* UIScreenExtension.swift */,
 				5B1D1FF025727290006B5073 /* StringProtocolExtension.swift */,
+				5BFAE5CE25C55F6400AA3AAD /* TapLocationExtension.swift */,
 			);
 			path = "System Extensions";
 			sourceTree = "<group>";
@@ -370,6 +378,7 @@
 				5BDCB8FB2586B77F00056B2B /* Api.swift */,
 				5B21219225B9B9E60055C2C6 /* SearchService.swift */,
 				5B21219725B9BC450055C2C6 /* ErrorParsing.swift */,
+				5BF64C2725C5CAB7008249C3 /* ShareService.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -681,7 +690,7 @@
 				5B21219325B9B9E60055C2C6 /* SearchService.swift in Sources */,
 				5BCDF4D0259FE466001B851F /* SearchBar.swift in Sources */,
 				5B21218E25B9B6050055C2C6 /* PickUsernameView.swift in Sources */,
-				5B1D20142572DF81006B5073 /* Description.swift in Sources */,
+				5B1D20142572DF81006B5073 /* Caption.swift in Sources */,
 				5BF0BAE725865DAB00C3B9FB /* EnterLoginInfoView.swift in Sources */,
 				5BA8950425BACFBD00D72CEC /* EnterUsernameView.swift in Sources */,
 				5B7DC98D2599E2C300F928EA /* testView.swift in Sources */,
@@ -693,16 +702,19 @@
 				5BA7A0F02571BE5300993718 /* PostView.swift in Sources */,
 				5B4A619025852E9C008FDED5 /* EnterConfirmationCodeView.swift in Sources */,
 				5BB37714258E73D0003559DE /* Error.swift in Sources */,
-				5B1D200F2572DF2A006B5073 /* DescriptionView.swift in Sources */,
+				5B1D200F2572DF2A006B5073 /* CaptionView.swift in Sources */,
 				5B5DF1ED2581887400A756D9 /* BigBlueButton.swift in Sources */,
 				5BDCB8FC2586B77F00056B2B /* Api.swift in Sources */,
 				5BF300262595362B000E4DA1 /* EnterNameView.swift in Sources */,
 				5B02908125995E1D004E03EF /* UIScreenExtension.swift in Sources */,
+				5BFAE5CF25C55F6400AA3AAD /* TapLocationExtension.swift in Sources */,
 				5BF3006F25964CBB000E4DA1 /* InterfacePositioningView.swift in Sources */,
 				5B02907C25995C3D004E03EF /* TopBarView.swift in Sources */,
 				5BCDF4BB259FE1A4001B851F /* Tag.swift in Sources */,
 				5B5DF1F225818AD700A756D9 /* CustomTextField.swift in Sources */,
+				5BF64C2825C5CAB7008249C3 /* ShareService.swift in Sources */,
 				5BAA5A3025BEDFA600327674 /* CacheStorage.swift in Sources */,
+				5BFAE5D425C5629E00AA3AAD /* TagView.swift in Sources */,
 				5BB3770E258E4F41003559DE /* Hashing.swift in Sources */,
 				5B02907725995BD1004E03EF /* TagPeopleView.swift in Sources */,
 				5BA7A0EE2571BE5300993718 /* BestagramApp.swift in Sources */,
