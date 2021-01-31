@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import Alamofire
+import AlamofireImage
 
 /// This service provide tools to post a post to the api.
 class ShareService {
@@ -58,7 +59,7 @@ class ShareService {
                 multipartFormData.append("\(value)".data(using: .utf8)!, withName: key as String)
             }
         }
-        let resizedImage = resizeImage(image: image, targetSize: CGSize(width: 1080, height: 1080))
+        let resizedImage = resizeImage(image: image, sideLength: BestagramApp.defaultImageSideLength)
         multipartFormData.append(jsonTagData, withName: "tag")
         multipartFormData.append(resizedImage.pngData()!, withName: "image", fileName: "file.png", mimeType: "image/png")
 
@@ -83,5 +84,10 @@ class ShareService {
                 callback(true, nil)
             }
         }
+    }
+
+    func resizeImage(image: UIImage, sideLength : CGFloat) -> UIImage {
+        let newImage = image.af.imageAspectScaled(toFill: CGSize(width: sideLength, height: sideLength))
+        return newImage
     }
 }

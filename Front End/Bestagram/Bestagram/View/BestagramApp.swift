@@ -16,9 +16,8 @@ struct BestagramApp: App {
     static public var textGray = Color(red: 127/255, green: 126/255, blue: 128/255, opacity: 1)
     /// Post picture to show in previews.
     static public var defaultPostPicture = UIImage(named: "DefaultPostPicture")!
-
-    static public var allowedUsernameCharacters = "abcdefghijklmnopqrstuvwxyz0123456789_."
-
+    /// Length of the side of an image being posted.
+    static public var defaultImageSideLength : CGFloat = 1080
     
     var body: some Scene {
         WindowGroup {
