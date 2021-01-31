@@ -18,6 +18,8 @@ struct BestagramApp: App {
     static public var defaultPostPicture = UIImage(named: "DefaultPostPicture")!
     /// Length of the side of an image being posted.
     static public var defaultImageSideLength : CGFloat = 1080
+
+    static public var allowedUsernameCharacters = "abcdefghijklmnopqrstuvwxyz0123456789_."
     
     var body: some Scene {
         WindowGroup {
