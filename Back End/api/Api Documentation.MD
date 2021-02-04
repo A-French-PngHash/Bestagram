@@ -25,13 +25,17 @@ The following table maps each error code the API can possibly raise.
 | 5 | Invalid username |
 | 6 | Invalid name |
 | 7 | Missing information |
+| 8 | Username not existing |
+| 9 | User already followed |
 
 
   
 # Login  
 ## GET  
   
- GET /login  Return the token of a user.   
+> GET /login  
+
+Return the token of a user.   
   
 Query Parameters :   
  - username : name the user want to have.  
@@ -39,9 +43,11 @@ Query Parameters :
   
 Response if operation successful :  
   
-    {"token" : "x"} - 200  
+	{"success" : true, "token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
 ## PUT  
- PUT /login  Register a user into the database and return the token.   
+ > PUT /login  
+
+Register a user into the database and return the token.   
   
 Query parameters :  
  - username : name the user want to have.  
@@ -50,22 +56,24 @@ Query parameters :
   
 Response if operation successful :  
   
-    {"token" : "x"} - 201  
+	{"success" : true, "token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
 # Email  
 ## Get  
   
- GET /email  Check if an email is already taken by someone.   
+ > GET /email  
+
+Check if an email is already taken by someone.   
   
 Query parameters :  
  - email : The email to check for.  
   
 Response if operation successful :  
   
-    {"taken" : true} - 200  
+	{"success" : true, "taken" : true} - 200  
 # Post  
 ## Post  
   
- POST /post  Create a post with an image, caption...  
+>POST /post  Create a post with an image, caption...  
   
 Headers :  
  - Authorization : Token of the user.  
@@ -77,30 +85,31 @@ The tag information include the username of the tagged user. It also includes th
   
 An example of a valid json body is :   
      
-    { "0" :   
-             {   
-                "pos_x" : 0.43,   
-                "pox_y" : 0.87,   
-                "username" : "john.fries"  
-         },         
-     "1" :   
-             {    
-                "pos_x" : 0.29,   
-                "pos_y" : 0.44,   
-                "username" : "titouan"   
-             }  
-     } 
+	{ "0" :   
+	         {   
+	            "pos_x" : 0.43,   
+	            "pox_y" : 0.87,   
+	            "username" : "john.fries"  
+		 },         
+	 "1" :   
+	         {    
+	            "pos_x" : 0.29,   
+	            "pos_y" : 0.44,   
+	            "username" : "titouan"   
+	         }  
+	 } 
   
 Files :   
  - image : The image of the post.  
   
 Response if operation successful :  
   
-    {"success": True}, 200 
+	{"success": True} - 200 
 # Search  
 ## Get  
   
- GET /search  
+>GET /search  
+
 Search for a user using a string. Note that the string will be matched against user's **names** and not user's username. Authentication is required as the results may vary depending on the user's searching. Returns **usernames** of the user matching the search.  
   
 Headers :  
@@ -114,5 +123,21 @@ Query parameters :
   
 Response if operation successful :  
   
-     {3: "usernamematched", 4: "anotherusername", 5: "athirdusername"}  
+	 {"success" : true, 3: "usernamematched", 4: "anotherusername", 5: "athirdusername"} - 200
 This is an example response when offset is set to 3 and row_count to 3.
+
+# Follow
+## Post
+> POST /follow
+
+Follow an other user.
+
+Headers :  
+- Authorization : Token of the user.  
+  
+Query parameters :
+- id : Id of the user to follow.
+
+Response if operation successful :  
+
+    {"success": True} - 200

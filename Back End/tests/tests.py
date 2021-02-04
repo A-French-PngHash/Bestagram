@@ -44,6 +44,22 @@ class Tests(unittest.TestCase):
     default_tags = {"0": {"pos_x": 0.43, "pos_y": 0.87, "username": "john.fries"},
                     "1": {"pos_x": 0.29, "pos_y": 0.44, "username": "titouan"}}
 
+    def get_token(self, default: bool, token : str = None) -> str:
+        """
+        Many tests function have a signature with default present which allows for the use of the default user.
+        This simplify testing but it also means additional db query in each function. This function does that.
+        :param default:
+        :param token:
+        :return: The token.
+        """
+
+        authorization = token
+        if default:
+            if not self.user_in_db(self.default_username)[0]:
+                self.add_default_user()
+            _, authorization = self.login(self.default_username, self.default_hash)
+        return authorization
+
     def user_in_db(self, username: str) -> (bool, dict):
         """
         Fetch a user's data from the db if exists.
@@ -72,7 +88,7 @@ class Tests(unittest.TestCase):
             output += random.choice(letters)
         return output
 
-    def add_user(self, username: str = None, email: str = None, name: str = None, hash: str = None):
+    def add_user(self, username: str = None, email: str = None, name: str = None, hash: str = None) -> int:
         """
         Add a user in the test database.
         :param username: Username of the user to add. Optional.
@@ -80,9 +96,9 @@ class Tests(unittest.TestCase):
         :param name: Name of the user. Optional.
         :param hash: Hash of the user. Optional.
 
-        If the email, name or hash is not provided, they will be generated randomly.
+        If the username, email, name or hash is not provided, they will be generated randomly.
 
-        :return:
+        :return: The id of the newly created user.
         """
         if not username:
             username = self.random_string(config.MAX_USERNAME_LENGTH)
@@ -104,6 +120,8 @@ class Tests(unittest.TestCase):
         VALUES ("{username}", "{name}", "{email}", "{hash}");
         """
         self.cursor.execute(add_user_query)
+        id = self.user_in_db(username=username)[1]["id"]
+        return id
 
     def create_db(self):
         source_file = f"\"{os.getcwd()}/test_database.sql\""
@@ -184,15 +202,7 @@ class Tests(unittest.TestCase):
         account to use for posting.
         :return:
         """
-
-        authorization = token
-        if default:
-            if not self.user_in_db(self.default_username)[0]:
-                self.add_default_user()
-            _, authorization = self.login(self.default_username, self.default_hash)
-
-        # When posting with valid credentials.
-
+        authorization = self.get_token(default, token)
         code, content = self.ex_request(
             method="PUT",
             route="/post",
@@ -203,11 +213,7 @@ class Tests(unittest.TestCase):
         return code, content
 
     def search(self, default: bool, search: str, offset: int, row_count: int, token: str = None) -> tuple:
-        authorization = token
-        if default:
-            if not self.user_in_db(self.default_username)[0]:
-                self.add_default_user()
-            _, authorization = self.login(self.default_username, self.default_hash)
+        authorization = self.get_token(default, token)
 
         code, content = self.ex_request(
             method="GET",
@@ -217,9 +223,9 @@ class Tests(unittest.TestCase):
         )
         return code, content
 
-    def follow(self, default: bool, user_id_followed: int = None, username_followed : str = None, user_id: int = None, username: str = None):
+    def follow_db(self, default: bool, user_id_followed: int = None, username_followed : str = None, user_id: int = None, username: str = None):
         """
-        Add follow relation from one user to another.
+        Add follow relation from one user to another DIRECTLY into the database.
         :param default: Use the default account as the following acccount.
         :param user_id_followed: Id of the followed account.
         :param username_followed: Username of the followed account. Necessary if the user_id_followed is not provided.
@@ -246,6 +252,12 @@ class Tests(unittest.TestCase):
 
         add_follow_query = f"""INSERT INTO Follow VALUES ({user_id}, {user_id_followed});"""
         self.cursor.execute(add_follow_query)
+
+    def follow_api(self, default: bool, id_followed : int, token: str = None):
+        authorization = self.get_token(default, token)
+
+        code, content = self.ex_request("POST", route="/user/follow", params={"id" : id_followed}, headers={"Authorization" : authorization})
+        return code, content
 
     def setUp(self) -> None:
         self.create_db()
@@ -706,7 +718,7 @@ class Tests(unittest.TestCase):
         followed = ["atrick", "btruck", "ctrack", "dtrock"]
         for i in followed:
             self.add_user(username=i, name=i)
-            self.follow(default=True, username_followed=i)
+            self.follow_db(default=True, username_followed=i)
         for i in range(4):
             self.add_user()
 
@@ -725,7 +737,7 @@ class Tests(unittest.TestCase):
 
         for (index, element) in enumerate(people):
             for i in range(len(people) - index):
-                self.follow(default=False, username=element, username_followed=people[index+i])
+                self.follow_db(default=False, username_followed=people[index + i], username=element)
 
         code, content = self.search(default=True, search="", offset=0, row_count=100)
 
@@ -744,9 +756,9 @@ class Tests(unittest.TestCase):
 
         for (index, element) in enumerate(people_followed):
             for i in range(len(people_followed) - index):
-                self.follow(default=False, username=people_followed[index + i], username_followed=element)
-            self.follow(default=True, username_followed=element)
-        self.follow(default=False, username=people_not_followed[1], username_followed=people_not_followed[0])
+                self.follow_db(default=False, username_followed=element, username=people_followed[index + i])
+            self.follow_db(default=True, username_followed=element)
+        self.follow_db(default=False, username_followed=people_not_followed[0], username=people_not_followed[1])
 
         code, content = self.search(default=True, search="", offset=0, row_count=100)
 
@@ -758,6 +770,68 @@ class Tests(unittest.TestCase):
             self.assertEqual(people_followed[i], content["result"][str(i)])
         for i in range(len(people_not_followed)):
             self.assertEqual(people_not_followed[i], content["result"][str(i + len(people_followed))])
+
+    """
+    --------------------------
+    Follow Tests
+    --------------------------
+    """
+
+    def test_GivenNonExistingUserWhenFollowingItThenReturnNonExistingUser(self):
+        code, content = self.follow_api(default=True, id_followed=123)
+
+        self.assertFalse(content["success"])
+        self.assertEqual(400, code)
+        self.assertEqual(errors.UserNotExisting.get_response()[0], content)
+        test_query = f"""
+        SELECT * FROM Follow
+        WHERE user_id_followed = {123};"""
+        self.cursor.execute(test_query)
+        result = self.cursor.fetchall()
+        self.assertEqual(0, len(result))
+
+    def test_GivenExistingUserWhenFollowingItThenIsSuccessfulAndFollowAddedInDatabase(self):
+        id = self.add_user()
+        code, content = self.follow_api(default=True, id_followed=id)
+
+        self.assertEqual(200, code)
+        self.assertTrue(content["success"])
+        test_query = f"""
+        SELECT * FROM Follow
+        WHERE user_id_followed = {id};"""
+        self.cursor.execute(test_query)
+        result = self.cursor.fetchall()
+        self.assertEqual(1, len(result))
+
+    def test_GivenWrongTokenWhenFollowingUserThenRaiseInvalidCredentialsAndFollowNotAddedInDatabase(self):
+        id = self.add_user()
+        code, content = self.follow_api(default=False, id_followed=id, token="invalidtoken")
+
+        self.assertEqual(400, code)
+        self.assertEqual(errors.InvalidCredentials.get_response()[0], content)
+
+        test_query = f"""
+        SELECT * FROM Follow
+        WHERE user_id_followed = {id};"""
+        self.cursor.execute(test_query)
+        result = self.cursor.fetchall()
+        self.assertEqual(0, len(result))
+
+    def test_GivenUserAlreadyFollowedWhenFollowingAgainThenRaiseUserAlreadyFollowed(self):
+        id = self.add_user()
+        self.follow_api(default=True, id_followed=id)
+        code, content = self.follow_api(default=True, id_followed=id)
+
+        self.assertEqual(400, code)
+        self.assertEqual(errors.UserAlreadyFollowed.get_response()[0], content)
+
+        test_query = f"""
+                SELECT * FROM Follow
+                WHERE user_id_followed = {id};"""
+        self.cursor.execute(test_query)
+        result = self.cursor.fetchall()
+        self.assertEqual(1, len(result))
+
 
     def tearDown(self) -> None:
         try:

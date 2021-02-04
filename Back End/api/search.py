@@ -19,11 +19,11 @@ class Search(Resource):
 
         # Search string is optional. User can search with an empty string.
         if not (params["offset"] and params["rowCount"] and params["Authorization"]):
-            return MissingInformation.get_dictionary(), 400
+            return MissingInformation.get_response()
         try:
             user = User(token=params["Authorization"])
         except BestagramException as e:
-            return e.get_dictionary(), 400
+            return e.get_response()
 
         results = user.search_for(params["search"], offset=int(params["offset"]), row_count=int(params["rowCount"]))
         dictionary = {index+int(params["offset"]):element for (index, element) in enumerate(results)}

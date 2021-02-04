@@ -61,12 +61,12 @@ class Post(Resource):
             tags = loads(tags)
 
         if params["image"] == "":  # Caption is not mandatory.
-            return MissingInformation.get_dictionary(), 400
+            return MissingInformation.get_response()
 
         try:
             user = User(token=params["Authorization"])
         except BestagramException as e:
-            return e.get_dictionary(), 400
+            return e.get_response()
 
         # This part is where we retrieve tags.
         tags_list = []
@@ -79,7 +79,7 @@ class Post(Resource):
                     tag = Tag(user_id=id, pos_x=tag["pos_x"], pos_y=tag["pos_y"])
                     if tag not in tags_list:  # Prevent redundant tags_list with the same person tagged.
                         tags_list.append(tag)
-                except UsernameNotExisting:
+                except UserNotExisting:
                     pass
                 except Exception as e:
                     # Error in json. Skipping to next tag.

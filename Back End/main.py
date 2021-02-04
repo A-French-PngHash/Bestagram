@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Api
-from api import login, email, posts, search
+from api import login, email, posts, search, follow
 import database.mysql_connection
 import config
 import mysql.connector
@@ -38,6 +38,7 @@ api.add_resource(login.Login, "/login")
 api.add_resource(email.Email, "/email/taken")
 api.add_resource(posts.Post, "/post")
 api.add_resource(search.Search, "/search")
+api.add_resource(follow.Follow, "/user/follow")
 
 
 if __name__ == "__main__":

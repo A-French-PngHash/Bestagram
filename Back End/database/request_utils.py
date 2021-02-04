@@ -45,6 +45,6 @@ def get_user_id_from_username(username: str) -> int:
     cursor.execute(id_query)
     result = cursor.fetchall()
     if len(result) == 0:
-        raise UsernameNotExisting(username=username)
+        raise UserNotExisting(username=username)
     else:
         return result[0]["id"]

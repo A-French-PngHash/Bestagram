@@ -19,12 +19,12 @@ class Login(Resource):
         params = parser.parse_args()
 
         if not (params["username"] and params["hash"]):
-            return MissingInformation.get_dictionary(), 400
+            return MissingInformation.get_response()
 
         try:
             user = User(params["username"], hash=params["hash"])
         except BestagramException as e:
-            return e.get_dictionary(), 400
+            return e.get_response()
 
         return {"success": True, "token": user.token, "token_expiration_date": str(user.token_expiration_date)}, 200
 
@@ -45,11 +45,10 @@ class Login(Resource):
         params = parser.parse_args()
 
         if not (params["username"] and params["hash"] and params["email"] and params["name"]):
-            return {"error": MissingInformation.description}, 400
+            return MissingInformation.get_response()
 
         try:
             user = User.create(params["username"], params["name"], hash=params["hash"], email=params["email"])
         except BestagramException as e:
-            print(e.get_dictionary())
-            return e.get_dictionary(), 400
+            return e.get_response()
         return {"success": True, "token": user.token, "token_expiration_date": str(user.token_expiration_date)}, 200

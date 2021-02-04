@@ -16,7 +16,7 @@ class Email(Resource):
         params = parser.parse_args()
 
         if not params["email"]:
-            return MissingInformation.get_dictionary(), 400
+            return MissingInformation.get_response(), 400
 
         taken = database.request_utils.value_in_database("UserTable", "email", params["email"])
         return {"success": True, "taken": taken}, 200

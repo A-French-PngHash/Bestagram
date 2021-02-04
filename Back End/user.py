@@ -322,6 +322,35 @@ class User:
         if not os.path.exists(dir):
             os.makedirs(dir)
 
+    def follow(self, id : int):
+        """
+        Follow another user.
+        :param id: Id of the user to follow.
+        """
+        #TODO: - This function currently doesn't check if the account is private or not.
+
+        follow_query = f"""
+        INSERT INTO Follow
+        VALUES({self.id}, {id});
+        """
+        # This query check if this user is already following the other user.
+        check_if_already_follow_query = f"""
+        SELECT * FROM Follow
+        WHERE user_id = {self.id} && user_id_followed = {id};
+        """
+        self.cursor.execute(check_if_already_follow_query)
+        result = self.cursor.fetchall()
+        if len(result) > 0:
+            # This user already follow the other user.
+            raise UserAlreadyFollowed
+        try:
+            self.cursor.execute(follow_query)
+        except Exception as e:
+            raise UserNotExisting
+        return True
+
+
+
     @staticmethod
     def create(username: str, name: str, hash: str, email: str):
         """

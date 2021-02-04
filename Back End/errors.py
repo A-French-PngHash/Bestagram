@@ -4,12 +4,12 @@ class BestagramException(Exception):
     errorCode = -1
 
     @classmethod
-    def get_dictionary(cls) -> dict:
+    def get_response(cls) -> (dict, int):
         """
         Return a dictionary describing the error that happened.
         :return: Dictionary
         """
-        return {"success": cls.success, "errorCode": cls.errorCode, "message": cls.description}
+        return {"success": cls.success, "errorCode": cls.errorCode, "message": cls.description}, 400
 
     def __str__(self):
         return self.description
@@ -138,19 +138,33 @@ class MissingInformation(BestagramException):
     description = "Missing information"
 
 
-class UsernameNotExisting(BestagramException):
+class UserNotExisting(BestagramException):
     """
-    This username is not registered in the database.
+    This username is not registered in the database (happens when a tag is trying to reference a non existing user or
+    when someone try to follow someone else).
     """
     success = False
     errorCode = 8
-    description = "Username not existing"
+    description = "User not existing"
 
-    def __init__(self, username: str = None):
+    def __init__(self, username: str = None, id: int = None):
+        # There is two way of identifying a user which proves to be non existing, by username or by id.
         self.username = username
+        self.id = id
 
     def __str__(self):
-        msg = "Username not existing"
+        msg = "User not existing"
         if self.username:
             msg += f" (username : {self.username})"
+        if self.id:
+            msg += f" (id : {self.id})"
         return msg
+
+
+class UserAlreadyFollowed(BestagramException):
+    """
+    This user is already being followed by the current user.
+    """
+    success = False
+    errorCode = 9
+    description = "User already followed"
