@@ -5,18 +5,16 @@ import database.mysql_connection
 
 
 class Login(Resource):
-    def get(self) -> (dict, int):
+    def post(self, **kwargs) -> (dict, int):
         """
-        Getting the token by sending login data. Takes different required arguments in the request :
-            - username
-            - hash
+        Getting the token by sending login data.
         :return: Return a dict containing the requested data and an int which is the http status code.
         """
 
         parser = reqparse.RequestParser()
-        parser.add_argument("username")
         parser.add_argument("hash")
         params = parser.parse_args()
+        params["username"] = kwargs["username"]
 
         if not (params["username"] and params["hash"]):
             return MissingInformation.get_response()
@@ -28,21 +26,19 @@ class Login(Resource):
 
         return {"success": True, "token": user.token, "token_expiration_date": str(user.token_expiration_date)}, 200
 
-    def put(self) -> (dict, int):
+    def put(self, **kwargs) -> (dict, int):
         """
-        Register a user. Returns the token. Take the following required parameters in the request :
-            - username
-            - hash
-            - email
+        Register a user. Returns the token.
         :return: Return a dict containing the token and an int which is the http status code.
         """
 
         parser = reqparse.RequestParser()
-        parser.add_argument("username")
         parser.add_argument("hash")
         parser.add_argument("email")
         parser.add_argument("name")
+
         params = parser.parse_args()
+        params["username"] = kwargs["username"]
 
         if not (params["username"] and params["hash"] and params["email"] and params["name"]):
             return MissingInformation.get_response()

@@ -1,10 +1,10 @@
 from flask import Flask
 from flask_restful import Api
-from api import login, email, posts, search, follow
+from api import email
+from api.user import posts, login, follow, search
 import database.mysql_connection
 import config
 import mysql.connector
-import errors
 
 PORT = 5002
 HOST = "0.0.0.0"
@@ -34,11 +34,11 @@ database.mysql_connection.cnx = mysql.connector.connect(
 database.mysql_connection.cnx.autocommit = True
 
 # Defining api resources.
-api.add_resource(login.Login, "/login")
-api.add_resource(email.Email, "/email/taken")
-api.add_resource(posts.Post, "/post")
-api.add_resource(search.Search, "/search")
-api.add_resource(follow.Follow, "/user/follow")
+api.add_resource(login.Login, "/user/login/<username>") # Done
+api.add_resource(email.Email, "/email/<email>/taken") # Done
+api.add_resource(posts.Post, "/user/post") # Done
+api.add_resource(search.Search, "/user/search")
+api.add_resource(follow.Follow, "/user/<id>/follow") # Done
 
 
 if __name__ == "__main__":

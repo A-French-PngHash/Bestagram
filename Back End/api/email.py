@@ -7,13 +7,11 @@ import database.mysql_connection
 
 
 class Email(Resource):
-    def get(self) -> (dict, int):
+    def get(self, **kwargs) -> (dict, int):
         """
         Check if the given email adress is already taken by someone.
         """
-        parser = reqparse.RequestParser()
-        parser.add_argument("email")
-        params = parser.parse_args()
+        params = {"email": kwargs["email"]}
 
         if not params["email"]:
             return MissingInformation.get_response(), 400

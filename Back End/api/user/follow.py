@@ -7,19 +7,16 @@ class Follow(Resource):
     Follow a user.
     """
 
-    def post(self):
+    def post(self, **kwargs):
         """
-        Query parameters :
-            - id : If of the user
-
         Headers :
             - Authorization : Token of the current user.
         :return:
         """
         parser = reqparse.RequestParser()
-        parser.add_argument("id")
         parser.add_argument("Authorization", location="headers")
         params = parser.parse_args()
+        params["id"] = kwargs["id"]
 
         if not (params["id"] and params["Authorization"]):
             return MissingInformation.get_response()
