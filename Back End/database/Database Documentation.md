@@ -44,17 +44,17 @@ The username chosen by the user. This element is accessible by all user of the a
 ### Name
 The name is the user's name in real life. It is chosen by the user so he can theoritically put anything but it is supposed to be the user's name in real life (name + surname). When **search**  querries are made, this is what is searched for. It is not unique as multiple person can have the same name.
 ### Hash
-The hash generated with the user password and username. For more information on how it is generated see *API Documentation.md*.
+The hash generated with the user password and username. For more information on how it is generated see [*Api Documentation.md*](../api/Api\ Documentation.MD).
 ### Public_profile
 Bool column that says if the user want to set his profile as private or public. If it is private then user's not yet following won't be able to see this user's post along with more things.
 ### Token
-When the user send the correct hash as login information, a token is generated (if there is not already one and if it hasn't expired yet) and then sent back to the user. This token is then used as a key for most of the API request. For more information see *API Documentation.md*.
+When the user send the correct hash as login information, a token is generated (if there is not already one and if it hasn't expired yet) and then sent back to the user. This token is then used as a key for most of the API request. For more information see [*Api Documentation.md*](../api/Api\ Documentation.MD).
 ### Token_registration_date
 This is the date when the token was generated. To provide more security, tokens are invalidated after a certain time so the user has to send login information again to get the new token.
 ### Caption
 The profile caption set by the user on his profile. Only the user has a write access to it.
 ### Profile_image_path
-Store a path that link to an image used as a profile image. The user has no direct write access to the path but can change the image by uploading a new one. For more information see *API Documentation.md*.
+Store a path that link to an image used as a profile image. The user has no direct write access to the path but can change the image by uploading a new one. For more information see [*Api Documentation.md*](../api/Api\ Documentation.MD).
 
 ## Post
 Store a post and hit attributes.

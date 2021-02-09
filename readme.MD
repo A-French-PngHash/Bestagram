@@ -15,7 +15,10 @@ Here is what is discussed in this readme :
 
 
 ## API
-You can find the API documentation in [Back End/Api Documentation.MD](https://github.com/PngHash-Titouan/Bestagram/blob/master/Back%20End/api/Api%20Documentation.MD)"
+You can find the API documentation in [Back End/api/Api Documentation](Back\ End/api/Api\ Documentation.md)"
+
+## Database
+You can find the database documenation in [Back End/database/Database Documentation](Back\ End/database/Database\ Documentation.md)
 
 ## Dependencies
 <a name="dependencies"></a>
@@ -42,6 +45,8 @@ Backend dependencies are written in the requirements.txt files. They are :
 There is a few differences from the original Instagram app that I will explain here.
 
 There will be **no Explore tab**, as I want to make this copy more friends for friends. Moreover, to give an Explore tab, Facebook uses very complex machine learning which would take years to implement.
+
+In a first approach the posts will only consist of a single image.
 
 ## Cryptography
 <a name="cryptography"></a>
