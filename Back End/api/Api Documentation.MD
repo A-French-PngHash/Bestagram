@@ -1,10 +1,19 @@
 
-
+  
 # Bestagram API Documentation  
 This document provides a **full documentation** of the API used in the *Bestagram* project. It is updated as soon as new functionality are added.  
   
 # Metadata and Errors  
-In all responses you will find a "success" field. It is a bool which describe the success of the operation. The HTTP status code will be to 400/500 if the operation didn't succeed and it will be 200 if it did. To reduce confusion this API doesnt make use of all the HTTP status code, only these three.
+In all responses you will find a "success" field. It is a bool which describe the success of the operation. 
+
+Status code used by the api : 
+|Code|Meaning|
+|--|--|
+| 400/500 | Error while processing query |
+| 404 | Can't find resource |
+| 200 | Operation succeeded |
+
+To reduce confusion this API doesnt make use of all the HTTP status code, only these four.
 
 In **case of an error**, more information will be provided. There will be two **additional fields** : 
 
@@ -28,62 +37,72 @@ The following table maps each error code the API can possibly raise.
 | 8 | Username not existing |
 | 9 | User already followed |
 
+# Endpoints
+|Title| Path | Use |  Auth  |
+|--|--|--|--|
+|[Login](#login)|`POST /user/login/<username>`|Login a user.|NO|
+|[Register](#register)|`PUT /user/login/<username>`|Register a user.|NO|
+|[Search](#search_user)|`GET /user/search`|Search for users|YES|
+|[Follow](#follow)|`POST /user/<id>/follow`|Follow a user|YES|
+|[Post](#post)|`PUT /user/post`|Post an image|YES|
+|[Email Taken](#email_taken)|`GET /email/<email>/taken`|Check if an email is taken|NO|
+
 
   
-# Login  
-## GET  
-  
-> GET /login  
+# Login
+## POST  <a name="login"></a>
+Return the token of a user.  
 
-Return the token of a user.   
+**Path** : `POST /user/login/<username>` 
+ 
   
-Query Parameters :   
- - username : name the user want to have.  
- - hash : an encrypted password.  
-  
-Response if operation successful :  
+**Query data** : 
+|Name|Description|Location|Required
+|--|--|--|--|
+| hash | Encrypted password. Must be encrypted according to the recommendations in the global Readme for maximum security. |Parameters|YES
+
+**Success response** :  
   
 	{"success" : true, "token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
-## PUT  
- > PUT /login  
-
+	
+## PUT <a name="register">  </a>
 Register a user into the database and return the token.   
+
+**Path** : `PUT /user/login/<username>`
   
-Query parameters :  
- - username : name the user want to have.  
- - hash : an encrypted password.  
- - email : email associated to the account.   
+**Query data** : 
+|Name|Description|Location|Required
+|--|--|--|--|
+|hash| Encrypted password.|Parameters| YES
+|email| Email associated to the account.|Parameters| YES
   
-Response if operation successful :  
+**Success response** :  
   
 	{"success" : true, "token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
 # Email  
-## Get  
-  
- > GET /email  
-
+## Get  <a name="email_taken"></a>
 Check if an email is already taken by someone.   
+
+  **Path** : `GET /email/<email>/taken`
   
-Query parameters :  
- - email : The email to check for.  
-  
-Response if operation successful :  
+**Success response** :  
   
 	{"success" : true, "taken" : true} - 200  
 # Post  
-## Post  
-  
->POST /post  Create a post with an image, caption...  
-  
-Headers :  
- - Authorization : Token of the user.  
-  
-Query parameters :  
- - caption : Caption of the post.  
- - tag : The tag parameters is **not mandatory**. It contains the tags for this post in a json string.   
-The tag information include the username of the tagged user. It also includes the position of the tag **relative to the top left corner of the image**. The position is stored into two float element, pos_x and pos_y. Both are numbers between 1 and 0. To get the true coordinate multiply pos_x by width and pos_y by height. Note that if multiple tags are sent with the same person tagged, the api will only store one of them and discard the others.  
-  
-An example of a valid json body is :   
+## Post  <a name="post"></a>
+  Create a post with an image, caption, tags...
+  **Path** : `POST /user/post`
+
+**Query data** : 
+|Name|Description|Location|Required
+|--|--|--|--|
+|Authorization| Token of the user. | Headers | YES
+|image|Image of the post.|Files| YES
+|caption|Caption of the post|Parameters| YES
+|tag|Contains the tags for this post in a json string. The tag information include the username of the tagged user. It also includes the position of the tag **relative to the top left corner of the image**. The position is stored into two float element, pos_x and pos_y. Both are numbers between 1 and 0. To get the true coordinate multiply pos_x by width and pos_y by height. Note that if multiple tags are sent with the same person tagged, the api will only store one of them and discard the others.  |Parameters|NO
+
+
+An example of a **valid tag json** is :   
      
 	{ "0" :   
 	         {   
@@ -98,46 +117,40 @@ An example of a valid json body is :
 	            "username" : "titouan"   
 	         }  
 	 } 
+ 
   
-Files :   
- - image : The image of the post.  
-  
-Response if operation successful :  
+**Success response** :  
   
 	{"success": True} - 200 
 # Search  
-## Get  
-  
->GET /search  
-
+## Get  <a name="search_user"></a>
 Search for a user using a string. Note that the string will be matched against user's **names** and not user's username. Authentication is required as the results may vary depending on the user's searching. Returns **usernames** of the user matching the search.  
-  
-Headers :  
-- Authorization : Token of the user.  
-  
-Query parameters :
-- search : Search string to be matched. **Optional** parameter, if not provided then the API assume that the search is an empty string.
-- offset : Offset to get values from. Begin at 0 which is the most matching result.  
-- row_count : Number of results to retrieve. Must be **less than a 100**.  
 
-  
-Response if operation successful :  
+**Path** : `GET /user/search`
+
+ **Query data** : 
+|Name|Description|Location|Required
+|--|--|--|--|
+|Authorization|Token of the user|Header|YES
+|search|Search string to be matched. If not provided then the API assume that the search is an empty string.|Parameters|NO
+|offset|Offset to get values from. Begin at 0 which is the most matching result.|Parameters|YES
+|row_count|Number of results to retrieve. Must be **less than a 100**.|Parameters|YES
+
+**Success response** :  
   
 	 {"success" : true, 3: "usernamematched", 4: "anotherusername", 5: "athirdusername"} - 200
 This is an example response when offset is set to 3 and row_count to 3.
 
 # Follow
-## Post
-> POST /follow
-
+## Post <a name="follow"></a>
 Follow an other user.
 
-Headers :  
-- Authorization : Token of the user.  
-  
-Query parameters :
-- id : Id of the user to follow.
+**Path** : `POST /user/<id>/follow`
 
-Response if operation successful :  
+|Name|Description|Location|Required
+|--|--|--|--|
+|Authorization|Token of the user|Headers|YES
+
+**Success response** :  
 
     {"success": True} - 200
