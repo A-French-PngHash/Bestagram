@@ -57,7 +57,7 @@ class Tests(unittest.TestCase):
         if default:
             if not self.user_in_db(self.default_username)[0]:
                 self.add_default_user()
-            _, authorization = self.login(self.default_username, self.default_hash)
+            authorization = self.login(self.default_username, self.default_hash)[1]["token"]
         return authorization
 
     def user_in_db(self, username: str) -> (bool, dict):
@@ -110,18 +110,43 @@ class Tests(unittest.TestCase):
         if not hash:
             hash = self.random_string(50)
 
-        if hash:
-            # When the hash get to the server there is suppose to be some hashing on it. Because we don't go through
-            # the endpoint in this method we need to simulate this hashing.
-            hash = make_server_side_hash(old_hash=hash, username=username)
+        # When the hash get to the server there is suppose to be some hashing on it. Because we don't go through
+        # the endpoint in this method we need to simulate this hashing.
+        hash = make_server_side_hash(old_hash=hash, username=username)
 
         add_user_query = f"""
         INSERT INTO UserTable (username, name, email, hash)
         VALUES ("{username}", "{name}", "{email}", "{hash}");
         """
         self.cursor.execute(add_user_query)
-        id = self.user_in_db(username=username)[1]["id"]
-        return id
+        id_u = self.user_in_db(username=username)[1]["id"]
+        return id_u
+
+    def login(self, username : str, hash: str):
+        parameters = {"hash": hash}
+        code, content = self.ex_request("POST", route=f"user/login/{username}", params=parameters)
+        return code, content
+
+    def register(self, username: str = None, name : str = None, hash: str = None, email: str = None):
+        """
+        Register user using api.
+        All parameters are optionnal. If they are not provided the value is the default value.
+        """
+        if not username:
+            username = self.default_username
+        if not name:
+            name = self.default_name
+        if not hash:
+            hash = self.default_hash
+        if not email:
+            email = self.default_email
+        code, content = self.ex_request("PUT", route=f"user/login/{username}", params={
+            "username": username,
+            "name": name,
+            "hash": hash,
+            "email": email
+        })
+        return code, content
 
     def create_db(self):
         source_file = f"\"{os.getcwd()}/test_database.sql\""
@@ -174,20 +199,6 @@ class Tests(unittest.TestCase):
 
         return code, content
 
-    def login(self, username: str, password: str) -> (bool, str):
-        """
-        Login a user using provided credentials.
-        :param username:
-        :param password:
-        :return: Return success of operation and token if successful.
-        """
-        code, content = self.ex_request("GET", "login",
-                                        params={"username": username, "hash": password})
-        if code == 200:
-            return True, content["token"]
-        else:
-            return False, ""
-
     def post(self, default: bool, file: tuple, caption=None, tag: dict = None,
              token: str = None) -> tuple:
         """
@@ -205,7 +216,7 @@ class Tests(unittest.TestCase):
         authorization = self.get_token(default, token)
         code, content = self.ex_request(
             method="PUT",
-            route="/post",
+            route="/user/post",
             params={"caption": caption, "tag": json.dumps(tag)},
             headers={"Authorization": authorization},
             file=file
@@ -217,7 +228,7 @@ class Tests(unittest.TestCase):
 
         code, content = self.ex_request(
             method="GET",
-            route="/search",
+            route="/user/search",
             params={"rowCount": row_count, "search": search, "offset": offset},
             headers={"Authorization": authorization}
         )
@@ -256,7 +267,7 @@ class Tests(unittest.TestCase):
     def follow_api(self, default: bool, id_followed : int, token: str = None):
         authorization = self.get_token(default, token)
 
-        code, content = self.ex_request("POST", route="/user/follow", params={"id" : id_followed}, headers={"Authorization" : authorization})
+        code, content = self.ex_request("POST", route=f"/user/{id_followed}/follow", headers={"Authorization" : authorization})
         return code, content
 
     def setUp(self) -> None:
@@ -289,8 +300,7 @@ class Tests(unittest.TestCase):
         # Given no user in database.
 
         # When login with any data
-        parameters = {"username": "test", "hash": "hash", "email": "test@bestagram"}
-        code, content = self.ex_request("GET", route="login", params=parameters)
+        code, content = self.login(username="test", hash="hash")
 
         # Then return invalid credentials.
         self.assertEqual(400, code)
@@ -303,11 +313,10 @@ class Tests(unittest.TestCase):
         incorrect_hash = "incorrect"
 
         # When login with incorrect password.
-        code, content = self.ex_request("GET", "login",
-                                        params={"username": self.default_username, "hash": incorrect_hash})
+        code, content = self.login(username=self.default_username, hash=incorrect_hash)
 
         # Then raise invalid credentials.
-        self.assertEqual(400, code)
+        self.assertEqual(400, code, content)
         self.assertEqual(False, content["success"])
         self.assertEqual(content["message"], InvalidCredentials.description)
 
@@ -316,36 +325,11 @@ class Tests(unittest.TestCase):
         self.add_default_user()
 
         # When login with correct data.
-        code, content = self.ex_request("GET", "login",
-                                        params={"username": self.default_username, "hash": self.default_hash})
+        code, content = self.login(username=self.default_username, hash=self.default_hash)
 
         # Then successful login.
         self.assertEqual(True, content["success"])
         self.assertEqual(code, 200)
-
-    def test_GivenUserInDatabaseWhenLoginWithoutProvidingPasswordThenRaiseMissingInformation(self):
-        # Given user in database.
-        self.add_default_user()
-
-        # When login without providing password.
-        code, content = self.ex_request("GET", "login", params={"username": self.default_username})
-
-        # Then raise missing information.
-        self.assertEqual(400, code)
-        self.assertEqual(False, content["success"])
-        self.assertEqual(MissingInformation.description, content["message"])
-
-    def test_GivenUserInDatabaseWhenLoginWithoutProvidingUsernameThenRaiseMissingInformation(self):
-        # Given user in database.
-        self.add_default_user()
-
-        # When login without providing username.
-        code, content = self.ex_request("GET", "login", params={"hash": self.default_hash})
-
-        # Then raise missing information.
-        self.assertEqual(400, code)
-        self.assertEqual(False, content["success"])
-        self.assertEqual(MissingInformation.description, content["message"])
 
     """
     --------------------------
@@ -357,12 +341,7 @@ class Tests(unittest.TestCase):
         # Given no user.
 
         # When registering.
-        code, content = self.ex_request("PUT", route="login", params={
-            "username": self.default_username,
-            "name": self.default_name,
-            "hash": self.default_hash,
-            "email": self.default_email}
-        )
+        code, content = self.register()
 
         # Then is created with correct data and return no error.
         token = content["token"]
@@ -379,12 +358,7 @@ class Tests(unittest.TestCase):
 
         # When registering with invalid email.
         invalid_email = "invalid.email.@"
-        code, content = self.ex_request("PUT", route="login", params={
-            "username": self.default_username,
-            "name": self.default_name,
-            "hash": self.default_hash,
-            "email": invalid_email
-        })
+        code, content = self.register(email=invalid_email)
 
         # Then is not created and raise invalid email.
         success, i = self.user_in_db(self.default_username)
@@ -398,12 +372,7 @@ class Tests(unittest.TestCase):
         self.add_default_user()
 
         # When registering with same username.
-        code, content = self.ex_request("PUT", route="login", params={
-            "username": self.default_username,
-            "name": self.default_name,
-            "hash": self.default_hash,
-            "email": "random.email@bestagram.com"
-        })
+        code, content = self.register(email="random.email@bestagram.com")
 
         # Then is not created and raise username taken.
         query = f"""
@@ -423,12 +392,8 @@ class Tests(unittest.TestCase):
         self.add_default_user()
 
         # When registering with same email.
-        code, content = self.ex_request("PUT", route="login", params={
-            "username": "random_username",
-            "name": self.default_name,
-            "hash": self.default_hash,
-            "email": self.default_email
-        })
+        self.register()
+        code, content = self.register(username="random_username")
 
         # Then is not created and raise email taken.
         query = f"""
@@ -448,12 +413,7 @@ class Tests(unittest.TestCase):
 
         # When registering with too long username.
         username = "a" * (config.MAX_USERNAME_LENGTH + 5)
-        code, content = self.ex_request("PUT", route="login", params={
-            "username": username,
-            "name": self.default_name,
-            "hash": self.default_hash,
-            "email": self.default_email
-        })
+        code, content = self.register(username=username)
 
         # Then is not created and raise invalid username.
         success, i = self.user_in_db(username)
@@ -472,7 +432,7 @@ class Tests(unittest.TestCase):
         # Given email not taken.
 
         # When checking if email is taken.
-        code, content = self.ex_request(method="GET", route="/email/taken", params={"email": self.default_email})
+        code, content = self.ex_request(method="GET", route=f"/email/{self.default_email}/taken")
 
         # Then is not.
         self.assertEqual(code, 200)
@@ -484,7 +444,7 @@ class Tests(unittest.TestCase):
         self.add_default_user()
 
         # WHen checking if email is taken.
-        code, content = self.ex_request(method="GET", route="/email/taken", params={"email": self.default_email})
+        code, content = self.ex_request(method="GET", route=f"/email/{self.default_email}/taken")
 
         # Then is.
         self.assertEqual(code, 200)
@@ -794,7 +754,7 @@ class Tests(unittest.TestCase):
         id = self.add_user()
         code, content = self.follow_api(default=True, id_followed=id)
 
-        self.assertEqual(200, code)
+        self.assertEqual(200, code, content)
         self.assertTrue(content["success"])
         test_query = f"""
         SELECT * FROM Follow

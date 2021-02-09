@@ -34,11 +34,11 @@ database.mysql_connection.cnx = mysql.connector.connect(
 database.mysql_connection.cnx.autocommit = True
 
 # Defining api resources.
-api.add_resource(login.Login, "/user/login/<username>") # Done
-api.add_resource(email.Email, "/email/<email>/taken") # Done
-api.add_resource(posts.Post, "/user/post") # Done
+api.add_resource(login.Login, "/user/login/<username>")
+api.add_resource(email.Email, "/email/<email>/taken")
+api.add_resource(posts.Post, "/user/post")
 api.add_resource(search.Search, "/user/search")
-api.add_resource(follow.Follow, "/user/<id>/follow") # Done
+api.add_resource(follow.Follow, "/user/<id>/follow")
 
 
 if __name__ == "__main__":
