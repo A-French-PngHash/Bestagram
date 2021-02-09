@@ -15,7 +15,7 @@ Here is what is discussed in this readme :
 
 
 ## API
-You can find the API documentation in [Back End/api/Api Documentation](Back\ End/api/Api\ Documentation.md)"
+You can find the API documentation in [Back End/api/Api Documentation](Back End/api/Api Documentation.md)"
 
 ## Database
 You can find the database documenation in [Back End/database/Database Documentation](Back\ End/database/Database\ Documentation.md)
