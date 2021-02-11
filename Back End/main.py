@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_restful import Api
 from api import email
-from api.user import posts, login, follow, search
+from api.user import posts, follow, search
+from api.user.Login import login, refresh
 import database.mysql_connection
 import config
 import mysql.connector
@@ -35,10 +36,11 @@ database.mysql_connection.cnx.autocommit = True
 
 # Defining api resources.
 api.add_resource(login.Login, "/user/login/<username>")
-api.add_resource(email.Email, "/email/<email>/taken")
+api.add_resource(refresh.Refresh, "/user/login/refresh/<refresh_token>")
 api.add_resource(posts.Post, "/user/post")
 api.add_resource(search.Search, "/user/search")
 api.add_resource(follow.Follow, "/user/<id>/follow")
+api.add_resource(email.Email, "/email/<email>/taken")
 
 
 if __name__ == "__main__":

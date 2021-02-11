@@ -10,6 +10,7 @@ CREATE TABLE UserTable(
     email VARCHAR(150) NOT NULL,
     public_profile BOOLEAN DEFAULT TRUE,
     token VARCHAR(200),
+    refresh_token VARCHAR(200) NOT NULL,
     token_registration_date DATETIME,
     caption VARCHAR(1000),
     profile_image_path VARCHAR(30),
@@ -56,6 +57,12 @@ ADD UNIQUE ind_email (email);
 
 ALTER TABLE UserTable
 ADD INDEX ind_name (name);
+
+ALTER TABLE UserTable
+ADD UNIQUE ind_token (token);
+
+ALTER TABLE UserTable
+ADD UNIQUE ind_refresh_token (refresh_token);
 
 ALTER TABLE LikeTable
 ADD INDEX ind_user_id (user_id);

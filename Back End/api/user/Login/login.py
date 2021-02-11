@@ -24,7 +24,7 @@ class Login(Resource):
         except BestagramException as e:
             return e.get_response()
 
-        return {"success": True, "token": user.token, "token_expiration_date": str(user.token_expiration_date)}, 200
+        return {"success": True, "token": user.token, "refresh_token": user.refresh_token, "token_expiration_date": str(user.token_expiration_date)}, 200
 
     def put(self, **kwargs) -> (dict, int):
         """
@@ -47,4 +47,4 @@ class Login(Resource):
             user = User.create(params["username"], params["name"], hash=params["hash"], email=params["email"])
         except BestagramException as e:
             return e.get_response()
-        return {"success": True, "token": user.token, "token_expiration_date": str(user.token_expiration_date)}, 200
+        return {"success": True, "token": user.token, "refresh_token": user.refresh_token, "token_expiration_date": str(user.token_expiration_date)}, 200

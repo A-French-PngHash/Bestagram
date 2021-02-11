@@ -88,7 +88,7 @@ class Tests(unittest.TestCase):
             output += random.choice(letters)
         return output
 
-    def add_user(self, username: str = None, email: str = None, name: str = None, hash: str = None) -> int:
+    def add_user(self, username: str = None, email: str = None, name: str = None, hash: str = None, token: str = None, refresh_token: str = None) -> int:
         """
         Add a user in the test database.
         :param username: Username of the user to add. Optional.
@@ -109,15 +109,25 @@ class Tests(unittest.TestCase):
             name = self.random_string(config.MAX_NAME_LENGTH)
         if not hash:
             hash = self.random_string(50)
+        if not refresh_token:
+            refresh_token = generate_token()
+        registration_date = None
+        if token:
+            registration_date = datetime.datetime.today().replace(microsecond=0)
 
         # When the hash get to the server there is suppose to be some hashing on it. Because we don't go through
         # the endpoint in this method we need to simulate this hashing.
         hash = make_server_side_hash(old_hash=hash, username=username)
 
         add_user_query = f"""
-        INSERT INTO UserTable (username, name, email, hash)
-        VALUES ("{username}", "{name}", "{email}", "{hash}");
+        INSERT INTO UserTable (username, name, email, hash, refresh_token {", token" if token else ""} {",token_registration_date" if registration_date else ""})
+        VALUES ("{username}", "{name}", "{email}", "{hash}", "{refresh_token}"
         """
+        if token:
+            add_user_query += f""", "{token}" """
+        if registration_date:
+            add_user_query += f""", "{registration_date}" """
+        add_user_query += ");"
         self.cursor.execute(add_user_query)
         id_u = self.user_in_db(username=username)[1]["id"]
         return id_u
@@ -154,11 +164,13 @@ class Tests(unittest.TestCase):
             config.databaseUserName, config.password, config.host, 3306, config.databaseName, source_file)
         os.system(command)
 
-    def add_default_user(self):
+    def add_default_user(self, token: str = None, refresh_token: str = None):
         self.add_user(username=self.default_username,
                       name=self.default_name,
                       hash=self.default_hash,
-                      email=self.default_email)
+                      email=self.default_email,
+                      token=token,
+                      refresh_token=refresh_token)
 
     def ex_request(self, method: str, route: str, params: dict = None, headers: dict = None, file=None,
                    json: dict = None) -> (int, dict):
@@ -270,6 +282,14 @@ class Tests(unittest.TestCase):
         code, content = self.ex_request("POST", route=f"/user/{id_followed}/follow", headers={"Authorization" : authorization})
         return code, content
 
+    def refresh_token(self, refresh_token: str) -> (int, dict):
+        """
+        Refresh the token by using the dedicated endpoint.
+        """
+        return self.ex_request("POST", route=f"user/login/refresh/{refresh_token}")
+
+
+
     def setUp(self) -> None:
         self.create_db()
         main.app.testing = True
@@ -330,6 +350,84 @@ class Tests(unittest.TestCase):
         # Then successful login.
         self.assertEqual(True, content["success"])
         self.assertEqual(code, 200)
+
+    """
+    --------------------------
+    Token expired tests
+    --------------------------
+    """
+
+    def test_GivenTokenExpiredWhenAuthenticatingUserThenRaiseInvalidCredentials(self):
+        """
+        Exceptionally for this test we use the init of a class in the main program. This is because no endpoint checks
+        if a token is valid but rather all endpoints with token should have the verification built in. This verification
+        is present in the User class, that's why we test it directly.
+        :return:
+        """
+        expired_registration_date = (datetime.datetime.today() - datetime.timedelta(seconds=config.TOKEN_EXPIRATION + 1)).replace(microsecond=0)
+        token = "token"
+        self.add_default_user(token=token)
+
+        add_expire_token_query = f"""
+        UPDATE UserTable
+        SET token_registration_date = "{expired_registration_date}"
+        WHERE UserTable.username = "{self.default_username}";
+        """
+        self.cursor.execute(add_expire_token_query)
+
+        raised_invalid_credentials = False
+        try:
+            User(token=token)
+        except InvalidCredentials:
+            raised_invalid_credentials = True
+
+        self.assertTrue(raised_invalid_credentials)
+
+    def test_GivenTokenExpiredWhenSearchingThenRaiseInvalidCredentials(self):
+        """
+        Even though the previous test already check if the token expiration check is working, this directly checks on an
+        endpoint. You can see this test as a double check.
+        :return:
+        """
+        expired_registration_date = (
+                    datetime.datetime.today() - datetime.timedelta(seconds=config.TOKEN_EXPIRATION + 1)).replace(
+            microsecond=0)
+        token = "token"
+        self.add_default_user(token=token)
+        add_expire_token_query = f"""
+                UPDATE UserTable
+                SET token_registration_date = "{expired_registration_date}"
+                WHERE UserTable.username = "{self.default_username}";
+                """
+        self.cursor.execute(add_expire_token_query)
+
+        code, content = self.search(default=False, search="", offset=0, row_count=5, token=token)
+        expected_response = InvalidCredentials.get_response()
+        self.assertEqual(code, expected_response[1])
+        self.assertEqual(content, expected_response[0])
+
+    """
+    --------------------------
+    Refresh Token Tests
+    --------------------------
+    """
+    def test_GivenInvalidRefreshTokenWhenGettingTokenThenRaiseInvalidCredentials(self):
+        code, content = self.refresh_token("invalidtoken")
+
+        expected_response = InvalidCredentials.get_response()
+        self.assertEqual(content, expected_response[0])
+        self.assertEqual(code, expected_response[1])
+
+    def test_GivenValidRefreshTokenWhenGettingTokenThenReturnCorrectToken(self):
+        token = "mytoken"
+        refresh_token = "myrefreshtoken"
+        self.add_default_user(token=token, refresh_token=refresh_token)
+        code, content = self.refresh_token(refresh_token)
+
+        self.assertEqual(200, code)
+        self.assertTrue(content["success"])
+        self.assertEqual(token, content["token"])
+
 
     """
     --------------------------
@@ -688,7 +786,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(True, content["success"])
         self.assertEqual(8, len(content["result"]))
         for (index, element) in enumerate(followed):
-            self.assertEqual(element, content["result"][str(index)])
+            self.assertEqual(element, content["result"][str(index)]["username"])
 
     def test_GivenUsersFollowingOtherUsersWhenSearchingThenReturnResultsSortedByNumberOfFollower(self):
         people = ["test1", "test2", "test3", "test4"]
@@ -727,9 +825,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(people_followed) + len(people_not_followed), len(content["result"]))
         for i in range(len(people_followed)):
             # Follows have been made so that the first user of the list has the most follow and so on.
-            self.assertEqual(people_followed[i], content["result"][str(i)])
+            self.assertEqual(people_followed[i], content["result"][str(i)]["username"])
         for i in range(len(people_not_followed)):
-            self.assertEqual(people_not_followed[i], content["result"][str(i + len(people_followed))])
+            self.assertEqual(people_not_followed[i], content["result"][str(i + len(people_followed))]["username"])
 
     """
     --------------------------

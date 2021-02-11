@@ -64,10 +64,11 @@ class User:
     User of Bestagram.
     """
 
-    def __init__(self, username: str = None, hash: str = None, token: str = None):
+    def __init__(self, username: str = None, hash: str = None, token: str = None, refresh_token: str = None):
         """
         Initialize the user object. This is the login, if a user need to be registered, the static function create must
         be called. There is two different way of login the user : using username and hash or using the token only.
+        WARNING : refresh token should only be used to get the new token and never to do other actions.
 
         :param username: Username of the user.
         :param hash: Hash of the user.
@@ -85,12 +86,19 @@ class User:
             FROM UserTable
             WHERE UserTable.username = "{username}" AND UserTable.hash = "{hash}";
             """
+        elif refresh_token:
+            user_query = f"""
+            SELECT * 
+            FROM UserTable
+            WHERE UserTable.refresh_token = "{refresh_token}";
+            """
         else:
             user_query = f"""
             SELECT * 
             FROM UserTable
             WHERE UserTable.token = "{token}";
             """
+
         self.cursor = database.mysql_connection.cnx.cursor(dictionary=True)
         self.cursor.execute(user_query)
         result = self.cursor.fetchall()
@@ -103,11 +111,20 @@ class User:
                 raise InvalidCredentials(username=username, hash=hash)
 
         result = result[0]
-        self.username = result["username"]
-        self.name = result["name"]
         self._token = result["token"]
         self._token_registration_date: datetime.datetime = result["token_registration_date"]
         self.id = result["id"]
+
+        if token and self.token != token:
+            """
+            This may happen if the user was logged in with an expired token. The token was not yet regenerated so it was
+            successful in retrieving the data. However by calling the calculated property token, it is regenerated 
+            leading the if statement to enter as they are now different.
+            """
+            raise InvalidCredentials(token=token)
+
+        self.username = result["username"]
+        self.name = result["name"]
 
         self.hash = hash
         self._caption = result["caption"]
@@ -144,7 +161,7 @@ class User:
         update_token_registration_query = f"""
         UPDATE UserTable
         SET token_registration_date = "{self._token_registration_date}"
-        WHERE username = "{self.username}";
+        WHERE id = "{self.id}";
         """
         self.cursor.execute(update_token_registration_query)
         self.token = new_token
@@ -157,6 +174,13 @@ class User:
             "token": value,
             "token_registration_date": datetime.datetime.today().replace(microsecond=0)
         })
+
+    @property
+    def refresh_token(self):
+        get_refresh_token_query = f"""SELECT refresh_token FROM UserTable WHERE UserTable.id = {self.id}"""
+        self.cursor.execute(get_refresh_token_query)
+        result = self.cursor.fetchall()
+        return result[0]["refresh_token"]
 
     @property
     def token_expiration_date(self):
@@ -390,10 +414,11 @@ class User:
         # Account can be created, server-side hashing can now take place following the protocol described in the global
         # readme.
         new_hash = make_server_side_hash(old_hash=hash, username=username)
+        refresh_token = generate_token()
 
         add_user_query = f"""
-        INSERT INTO UserTable (username, name, hash, email) VALUES
-        ("{username}", "{name}", "{new_hash}", "{email}");
+        INSERT INTO UserTable (username, name, hash, email, refresh_token) VALUES
+        ("{username}", "{name}", "{new_hash}", "{email}", "{refresh_token}");
         """
         cursor = database.mysql_connection.cnx.cursor()
         cursor.execute(add_user_query)
@@ -448,6 +473,6 @@ class User:
             self.cursor.execute(not_followed_search_query)
             results += self.cursor.fetchall()
         usernames = [i["id"] for i in results]
-        dictionary = {index + int(offset): {"id": element["id"], "username": element["username"]} for (index, element)
+        dictionary = {index + int(offset): {"id": element["id"], "username": element["username"], "name": element["name"]} for (index, element)
                       in enumerate(results)}
         return dictionary
