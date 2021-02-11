@@ -47,14 +47,15 @@ def name_is_valid(name: str) -> bool:
     return len(re.findall(regex, name)) == 1
 
 
-def make_server_side_hash(old_hash: str, username:str) -> str:
+def make_server_side_hash(old_hash: str, username: str) -> str:
     """
     Calculate the hash for a given password. This hashing process is described in the global readme.
     :param old_hash:
     :param username:
     :return: The new hash.
     """
-    new_hash = hashlib.pbkdf2_hmac("sha256", password=old_hash.encode("utf-8"), salt=username.encode("utf-8"), iterations=10000, dklen=32).hex()
+    new_hash = hashlib.pbkdf2_hmac("sha256", password=old_hash.encode("utf-8"), salt=username.encode("utf-8"),
+                                   iterations=10000, dklen=32).hex()
     return new_hash
 
 
@@ -105,7 +106,7 @@ class User:
         self.username = result["username"]
         self.name = result["name"]
         self._token = result["token"]
-        self._token_registration_date : datetime.datetime = result["token_registration_date"]
+        self._token_registration_date: datetime.datetime = result["token_registration_date"]
         self.id = result["id"]
 
         self.hash = hash
@@ -136,8 +137,10 @@ class User:
 
         # Token is expired or has never been created.
         # generating new token.
-        new_token = self.username + generate_token()
-        self._token_registration_date = (datetime.datetime.today() + datetime.timedelta(seconds=config.TOKEN_EXPIRATION)).replace(microsecond=0)
+        new_token = generate_token()
+        self._token_registration_date = (
+                    datetime.datetime.today() + datetime.timedelta(seconds=config.TOKEN_EXPIRATION)).replace(
+            microsecond=0)
         update_token_registration_query = f"""
         UPDATE UserTable
         SET token_registration_date = "{self._token_registration_date}"
@@ -322,12 +325,12 @@ class User:
         if not os.path.exists(dir):
             os.makedirs(dir)
 
-    def follow(self, id : int):
+    def follow(self, id: int):
         """
         Follow another user.
         :param id: Id of the user to follow.
         """
-        #TODO: - This function currently doesn't check if the account is private or not.
+        # TODO: - This function currently doesn't check if the account is private or not.
 
         follow_query = f"""
         INSERT INTO Follow
@@ -348,8 +351,6 @@ class User:
         except Exception as e:
             raise UserNotExisting
         return True
-
-
 
     @staticmethod
     def create(username: str, name: str, hash: str, email: str):
@@ -399,7 +400,7 @@ class User:
         cursor.close()
         return User(username, hash=hash)
 
-    def search_for(self, search: str, offset: int, row_count: int) -> list:
+    def search_for(self, search: str, offset: int, row_count: int) -> dict:
         """
         This function execute a search for user on the database using the search string. It is not a static method as
         the search result depends on the user searching.
@@ -407,7 +408,8 @@ class User:
         :param search: Search string.
         :param offset: Offset to begin at. Begins at 0.
         :param row_count: Number of results to have. Must be less
-        :return: Returns the list of username matching the search.
+        :return: Returns a dictionary containing the id of the user whose username match the search. Dictionary key
+        begins from the offset.
         """
 
         search_str = "%" + "%".join(search) + "%"
@@ -445,5 +447,7 @@ class User:
             """
             self.cursor.execute(not_followed_search_query)
             results += self.cursor.fetchall()
-        usernames = [i["username"] for i in results]
-        return usernames
+        usernames = [i["id"] for i in results]
+        dictionary = {index + int(offset): {"id": element["id"], "username": element["username"]} for (index, element)
+                      in enumerate(results)}
+        return dictionary

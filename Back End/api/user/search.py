@@ -26,6 +26,5 @@ class Search(Resource):
             return e.get_response()
 
         results = user.search_for(params["search"], offset=int(params["offset"]), row_count=int(params["rowCount"]))
-        dictionary = {index+int(params["offset"]):element for (index, element) in enumerate(results)}
-        response = {"result": dictionary, "success": True}
+        response = {"result": results, "success": True}
         return response, 200
