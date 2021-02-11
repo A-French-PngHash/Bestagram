@@ -23,6 +23,14 @@ In **case of an error**, more information will be provided. There will be two **
 The error code is a code referencing to a **unique** error **for this api only**. You can find what code correspond to what error just below.
 The message is a little bit of text which describe the error. It can be displayed to the user or help a programmer to identify quickly an error without having to look at the error code.
 
+**Example** : 
+
+	{
+		"success": false,
+		"errorCode": 1,
+		"message": "Invalid credentials"
+	}
+
 ## Error codes
 The following table maps each error code the API can possibly raise.
 |Code| Error |
@@ -138,7 +146,25 @@ Search for a user using a string. Note that the string will be matched against u
 
 **Success response** :  
   
-	 {"success" : true, 3: "usernamematched", 4: "anotherusername", 5: "athirdusername"} - 200
+	{
+		"result": {
+			"3": {
+				"id": 18,
+				"username": "onusername"
+			},
+			"4": {
+				"id": 14,
+				"username": "anotherusername"
+			},
+			"5": {
+				"id": 9,
+				"username": "andathird"
+			}
+		},
+		"success": true
+	}
+
+
 This is an example response when offset is set to 3 and row_count to 3.
 
 # Follow
