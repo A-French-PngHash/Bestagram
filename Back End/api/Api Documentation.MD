@@ -95,7 +95,7 @@ Return the token of a user. This method is to be used when the client already po
 
 **Path** : `POST /user/login/refresh/<refresh_token>` 
 
-** Success response** : 
+**Success response** : 
 
     {"success" : true, "token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"}
 
