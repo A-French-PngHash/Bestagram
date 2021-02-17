@@ -13,6 +13,13 @@ import json
 import random
 
 
+def create_db():
+    source_file = f"\"{os.getcwd()}/test_database.sql\""
+    command = """mysql -u %s -p"%s" --host %s --port %s %s < %s""" % (
+        config.databaseUserName, config.password, config.host, 3306, config.databaseName, source_file)
+    os.system(command)
+
+
 class Tests(unittest.TestCase):
     """
     Test class executing requests to the api endpoints.
@@ -158,12 +165,6 @@ class Tests(unittest.TestCase):
         })
         return code, content
 
-    def create_db(self):
-        source_file = f"\"{os.getcwd()}/test_database.sql\""
-        command = """mysql -u %s -p"%s" --host %s --port %s %s < %s""" % (
-            config.databaseUserName, config.password, config.host, 3306, config.databaseName, source_file)
-        os.system(command)
-
     def add_default_user(self, token: str = None, refresh_token: str = None):
         self.add_user(username=self.default_username,
                       name=self.default_name,
@@ -288,10 +289,11 @@ class Tests(unittest.TestCase):
         """
         return self.ex_request("POST", route=f"user/login/refresh/{refresh_token}")
 
-
+    @classmethod
+    def setUpClass(cls):
+        create_db()
 
     def setUp(self) -> None:
-        self.create_db()
         main.app.testing = True
         self.client = main.app.test_client()
 
@@ -741,8 +743,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(True, content["success"])
         self.assertEqual(len(matching_list), len(content["result"]))
 
-    def test_GivenRowCountIs200WhenHavingResultsOver100MatchThenOnlyReturn100(self):
-        for i in range(150):
+    def test_GivenRowCountIs200WhenHavingResultsOver100MatchThenStillOnlyReturn100(self):
+        # (limitation in the max number of result sent back)
+        for i in range(110):
             self.add_user()
 
         code, content = self.search(default=True, search="", offset=0, row_count=200)
@@ -892,6 +895,16 @@ class Tests(unittest.TestCase):
 
 
     def tearDown(self) -> None:
+        delete_all_query = """
+        DELETE FROM Follow;
+        DELETE FROM Tag;
+        DELETE FROM LikeTable;
+        DELETE FROM Post;
+        DELETE FROM UserTable;
+        """
+        result = self.cursor.execute(delete_all_query, multi=True)
+        for i in result:
+            pass
         try:
             shutil.rmtree("Posts")
         except:

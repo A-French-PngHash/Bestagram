@@ -1,5 +1,5 @@
 
-  
+
 # Bestagram API Documentation  
 This document provides a **full documentation** of the API used in the *Bestagram* project. It is updated as soon as new functionality are added.  
   
@@ -25,11 +25,11 @@ The message is a little bit of text which describe the error. It can be displaye
 
 **Example** : 
 
-	{
-		"success": false,
-		"errorCode": 1,
-		"message": "Invalid credentials"
-	}
+    {
+        "success": false,
+        "errorCode": 1,
+        "message": "Invalid credentials"
+    }
 
 ## Error codes
 The following table maps each error code the API can possibly raise.
@@ -50,6 +50,7 @@ The following table maps each error code the API can possibly raise.
 |--|--|--|--|
 |[Login](#login)|`POST /user/login/<username>`|Login a user.|NO|
 |[Register](#register)|`PUT /user/login/<username>`|Register a user.|NO|
+|[Refresh Login](#refresh_login)|`POST /user/login/refresh/<refresh_token>`|Login a user.|NO
 |[Search](#search_user)|`GET /user/search`|Search for users|YES|
 |[Follow](#follow)|`POST /user/<id>/follow`|Follow a user|YES|
 |[Post](#post)|`PUT /user/post`|Post an image|YES|
@@ -59,7 +60,7 @@ The following table maps each error code the API can possibly raise.
   
 # Login
 ## POST  <a name="login"></a>
-Return the token of a user.  
+Return the token of a user and the refresh token. Must only be used when the client doesn't already have the refresh token. If it does have the refresh token, use the [refresh method](#login_refresh).
 
 **Path** : `POST /user/login/<username>` 
  
@@ -71,9 +72,9 @@ Return the token of a user.
 
 **Success response** :  
   
-	{"success" : true, "token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
-	
-## PUT <a name="register">  </a>
+    {"success" : true, "token" : "x", "refresh_token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
+    
+## PUT <a name="register"></a>
 Register a user into the database and return the token.   
 
 **Path** : `PUT /user/login/<username>`
@@ -86,7 +87,18 @@ Register a user into the database and return the token.
   
 **Success response** :  
   
-	{"success" : true, "token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
+    {"success" : true, "token" : "x", "refresh_token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
+    
+# Login - Refresh
+## Post <a name="refresh_login"></a>
+Return the token of a user. This method is to be used when the client already possess the refresh token, otherwise use [login](#login)
+
+**Path** : `POST /user/login/refresh/<refresh_token>` 
+
+** Success response** : 
+
+    {"success" : true, "token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"}
+
 # Email  
 ## Get  <a name="email_taken"></a>
 Check if an email is already taken by someone.   
@@ -95,7 +107,7 @@ Check if an email is already taken by someone.
   
 **Success response** :  
   
-	{"success" : true, "taken" : true} - 200  
+    {"success" : true, "taken" : true} - 200  
 # Post  
 ## Post  <a name="post"></a>
   Create a post with an image, caption, tags...
@@ -112,24 +124,24 @@ Check if an email is already taken by someone.
 
 An example of a **valid tag json** is :   
      
-	{ "0" :   
-	         {   
-	            "pos_x" : 0.43,   
-	            "pox_y" : 0.87,   
-	            "username" : "john.fries"  
-		 },         
-	 "1" :   
-	         {    
-	            "pos_x" : 0.29,   
-	            "pos_y" : 0.44,   
-	            "username" : "titouan"   
-	         }  
-	 } 
+    { "0" :   
+             {   
+                "pos_x" : 0.43,   
+                "pox_y" : 0.87,   
+                "username" : "john.fries"  
+         },         
+     "1" :   
+             {    
+                "pos_x" : 0.29,   
+                "pos_y" : 0.44,   
+                "username" : "titouan"   
+             }  
+     } 
  
   
 **Success response** :  
   
-	{"success": True} - 200 
+    {"success": True} - 200 
 # Search  
 ## Get  <a name="search_user"></a>
 Search for a user using a string. Note that the string will be matched against user's **names** and not user's username. Authentication is required as the results may vary depending on the user's searching. Returns **usernames** of the user matching the search.  
@@ -146,23 +158,26 @@ Search for a user using a string. Note that the string will be matched against u
 
 **Success response** :  
   
-	{
-		"result": {
-			"3": {
-				"id": 18,
-				"username": "onusername"
-			},
-			"4": {
-				"id": 14,
-				"username": "anotherusername"
-			},
-			"5": {
-				"id": 9,
-				"username": "andathird"
-			}
-		},
-		"success": true
-	}
+    {
+        "result": {
+            "3": {
+                "id": 18,
+                "username": "onusername",
+                "name": "john fries"
+            },
+            "4": {
+                "id": 14,
+                "username": "anotherusername",
+                "name" : "titouan"
+            },
+            "5": {
+                "id": 9,
+                "username": "bill.gates",
+                "name": "bill gates"
+            }
+        },
+        "success": true
+    }
 
 
 This is an example response when offset is set to 3 and row_count to 3.
