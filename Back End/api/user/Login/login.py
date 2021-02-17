@@ -1,7 +1,7 @@
-from flask import Flask, request
-from flask_restful import Resource, Api, reqparse
-from user import *
+from flask_restful import Resource, reqparse
+import user
 import database.mysql_connection
+from errors import *
 
 
 class Login(Resource):
@@ -20,11 +20,11 @@ class Login(Resource):
             return MissingInformation.get_response()
 
         try:
-            user = User(params["username"], hash=params["hash"])
+            userobj = user.User(params["username"], hash=params["hash"])
         except BestagramException as e:
             return e.get_response()
 
-        return {"success": True, "token": user.token, "refresh_token": user.refresh_token, "token_expiration_date": str(user.token_expiration_date)}, 200
+        return {"success": True, "token": userobj.token, "refresh_token": userobj.refresh_token, "token_expiration_date": str(userobj.token_expiration_date)}, 200
 
     def put(self, **kwargs) -> (dict, int):
         """
@@ -44,7 +44,7 @@ class Login(Resource):
             return MissingInformation.get_response()
 
         try:
-            user = User.create(params["username"], params["name"], hash=params["hash"], email=params["email"])
+            userobj = user.User.create(params["username"], params["name"], hash=params["hash"], email=params["email"])
         except BestagramException as e:
             return e.get_response()
-        return {"success": True, "token": user.token, "refresh_token": user.refresh_token, "token_expiration_date": str(user.token_expiration_date)}, 200
+        return {"success": True, "token": userobj.token, "refresh_token": userobj.refresh_token, "token_expiration_date": str(userobj.token_expiration_date)}, 200

@@ -1,11 +1,10 @@
-from flask import Flask, request
-from flask_restful import Resource, Api, reqparse
+from flask_restful import Resource, reqparse
 import werkzeug
-from user import User
-from database.request_utils import *
+import user
+from database import request_utils
 from errors import *
-from tag import *
-from json import loads
+import tag
+import json
 
 
 class Post(Resource):
@@ -58,13 +57,13 @@ class Post(Resource):
         params = parser.parse_args()
         tags = params["tag"]
         if tags:
-            tags = loads(tags)
+            tags = json.loads(tags)
 
         if params["image"] == "":  # Caption is not mandatory.
             return MissingInformation.get_response()
 
         try:
-            user = User(token=params["Authorization"])
+            userobj = user.User(token=params["Authorization"])
         except BestagramException as e:
             return e.get_response()
 
@@ -73,12 +72,12 @@ class Post(Resource):
 
         try:
             for i in tags:
-                tag = tags[i]
+                thistag = tags[i]
                 try:
-                    id = get_user_id_from_username(username=tag["username"])
-                    tag = Tag(user_id=id, pos_x=tag["pos_x"], pos_y=tag["pos_y"])
-                    if tag not in tags_list:  # Prevent redundant tags_list with the same person tagged.
-                        tags_list.append(tag)
+                    id = request_utils.get_user_id_from_username(username=thistag["username"])
+                    thistag = tag.Tag(user_id=id, pos_x=thistag["pos_x"], pos_y=thistag["pos_y"])
+                    if thistag not in tags_list:  # Prevent redundant tags_list with the same person tagged.
+                        tags_list.append(thistag)
                 except UserNotExisting:
                     pass
                 except Exception as e:
@@ -90,5 +89,5 @@ class Post(Resource):
             print("Error while parsing json : ", e)
 
         img = params["image"]
-        user.create_post(img, caption=params["caption"], tags=tags_list)
+        userobj.create_post(img, caption=params["caption"], tags=tags_list)
         return {"success": True}, 200

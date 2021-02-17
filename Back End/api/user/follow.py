@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
-from user import *
-
+import user
+from errors import *
 
 class Follow(Resource):
     """
@@ -22,12 +22,12 @@ class Follow(Resource):
             return MissingInformation.get_response()
 
         try:
-            user = User(token=params["Authorization"])
+            userobj = user.User(token=params["Authorization"])
         except BestagramException as e:
             return e.get_response()
 
         try:
-            user.follow(int(params["id"]))
+            userobj.follow(int(params["id"]))
         except BestagramException as e:
             return e.get_response()
         return {"success": True}, 200

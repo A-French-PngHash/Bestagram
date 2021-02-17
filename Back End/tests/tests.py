@@ -1,6 +1,6 @@
 import unittest
 import mysql.connector
-from user import *
+import user
 import os
 import config
 import database.request_utils
@@ -11,6 +11,8 @@ import main
 from PIL import Image
 import json
 import random
+import datetime
+from errors import *
 
 
 def create_db():
@@ -116,15 +118,16 @@ class Tests(unittest.TestCase):
             name = self.random_string(config.MAX_NAME_LENGTH)
         if not hash:
             hash = self.random_string(50)
+        else:
+            # When the hash get to the server there is suppose to be some hashing on it. Because we don't go through
+            # the endpoint in this method we need to simulate this hashing.
+            hash = user.make_server_side_hash(old_hash=hash, username=username)
+
         if not refresh_token:
-            refresh_token = generate_token()
+            refresh_token = user.generate_token()
         registration_date = None
         if token:
             registration_date = datetime.datetime.today().replace(microsecond=0)
-
-        # When the hash get to the server there is suppose to be some hashing on it. Because we don't go through
-        # the endpoint in this method we need to simulate this hashing.
-        hash = make_server_side_hash(old_hash=hash, username=username)
 
         add_user_query = f"""
         INSERT INTO UserTable (username, name, email, hash, refresh_token {", token" if token else ""} {",token_registration_date" if registration_date else ""})
@@ -379,7 +382,7 @@ class Tests(unittest.TestCase):
 
         raised_invalid_credentials = False
         try:
-            User(token=token)
+            user.User(token=token)
         except InvalidCredentials:
             raised_invalid_credentials = True
 

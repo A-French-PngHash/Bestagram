@@ -5,11 +5,12 @@ import re
 import werkzeug
 import config
 import database.mysql_connection
-from database.request_utils import value_in_database
+from database import request_utils
 from errors import *
-from tag import *
+import tag
 from PIL import Image
 import hashlib
+import profile
 
 
 def generate_token() -> str:
@@ -129,6 +130,7 @@ class User:
         self.hash = hash
         self._caption = result["caption"]
         self._profile_image_path = result["profile_image_path"]
+        self._profile = None
 
     def __del__(self):
         try:
@@ -217,6 +219,13 @@ class User:
         self.cursor.execute(get_posts_request)
         return len(self.cursor.fetchall())
 
+    @property
+    def profile(self) -> profile.Profile:
+        if self._profile:
+            return self._profile
+        self._profile = profile.Profile(self)
+        return self._profile
+
     def _set_value(self, values: dict):
         """
         Set value(s) for this user in the UserTable table.
@@ -238,6 +247,8 @@ class User:
         """
         self.cursor.execute(query)
 
+
+    #TODO: - Move post related method to a separate post class
     def resize_image(self, image: Image, length: int) -> Image:
         """
         Resize an image to a square. Can make an image bigger to make it fit or smaller if it doesn't fit. It also crops
@@ -285,7 +296,7 @@ class User:
             # We now have a 1080x1080 pixels image.
             return resized_image
 
-    def create_post(self, image: werkzeug.datastructures.FileStorage, caption: str, tags: [Tag]):
+    def create_post(self, image: werkzeug.datastructures.FileStorage, caption: str, tags: [tag.Tag]):
         """
         Create a post from this user.
         :param image: Post's image.
@@ -403,11 +414,11 @@ class User:
         if not name_is_valid(name):
             raise InvalidName(name=name)
 
-        if value_in_database("UserTable", "username", username):
+        if request_utils.value_in_database("UserTable", "username", username):
             # Username is taken.
             raise UsernameTaken(username=username)
 
-        if value_in_database("UserTable", "email", email):
+        if request_utils.value_in_database("UserTable", "email", email):
             # Email is taken.
             raise EmailTaken(email=email)
 
