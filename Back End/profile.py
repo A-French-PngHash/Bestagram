@@ -1,15 +1,31 @@
-import user
-import werkzeug
+import os
+import images
+import config
+import PIL.Image
+import files
+import errors
+from database import request_utils
 
 class Profile:
     """
     Profile of a user.
     """
     def __init__(self, user):
+        """
+        Init for the profile class.
+        :param user: User whose profile this class need to be.
+        """
         self.user = user
         self.cursor = user.cursor
+    @property
+    def directory(self) -> str:
+        """
+        Path leading to the directory where user's profile picture images are stored.
+        :return:
+        """
+        return f'Medias/profile_picture/{self.user.username}'
 
-    def update(self, caption : str = None, profile_picture : werkzeug.datastructures.FileStorage = None, public_visibility : bool = None):
+    def update(self, caption : str = None, profile_picture : PIL.Image = None, public_visibility : bool = None, username: str = None, name : str = None):
         """
         Update this profile values. All arguments are optional, if they are not provided the value stay as it is.
         :param caption:
@@ -17,18 +33,38 @@ class Profile:
         :param public_visibility:
         :return:
         """
-        if not (caption or profile_picture or public_visibility):
+        if not (caption or profile_picture or public_visibility or name or username):
             # No data is to be changed, every argument is set to None.
             return
+
+        if username and request_utils.value_in_database("UserTable", "username", username):
+            raise errors.UsernameTaken
+
+        profile_picture_path = None
+        if profile_picture:
+            picture = images.resize_image(image=profile_picture, length=config.PROFILE_PICTURE_DIMENSION)
+
+            picture.filename = f"picture.png"
+
+            profile_picture_path = os.path.join(self.directory, picture.filename)
+            files.prepare_directory(self.directory)
+            picture.save(profile_picture_path)
 
         update_query = """
         UPDATE UserTable SET """
         if caption:
-            update_query += f"caption = {caption},"
+            update_query += f"""caption = "{caption}","""
         if public_visibility:
-            update_query += f"public_profile = {public_visibility},"
+            update_query += f"""public_profile = {public_visibility},"""
+        if profile_picture_path:
+            update_query += f"""profile_picture_path = "{profile_picture_path}","""
+        if name:
+            update_query += f"""name = "{name}","""
+        if username:
+            update_query += f"""username = "{username}","""
 
         update_query = update_query[:-1] # Removes the coma ","
 
         update_query += f" WHERE id = {self.user.id};"
         self.cursor.execute(update_query)
+

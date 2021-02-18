@@ -13,7 +13,7 @@ CREATE TABLE UserTable(
     refresh_token VARCHAR(200) NOT NULL,
     token_registration_date DATETIME,
     caption VARCHAR(1000),
-    profile_image_path VARCHAR(30),
+    profile_picture_path VARCHAR(100),
     PRIMARY KEY (id)
 )
 ENGINE=INNODB;
@@ -26,7 +26,7 @@ ENGINE=INNODB;
 
 CREATE TABLE Post(
     id BIGINT NOT NULL AUTO_INCREMENT,
-    image_path VARCHAR(30) NOT NULL,
+    image_path VARCHAR(70) NOT NULL,
     user_id BIGINT NOT NULL,
     post_time DATETIME NOT NULL,
     caption VARCHAR(2200),

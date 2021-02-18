@@ -29,22 +29,22 @@ class Tests(unittest.TestCase):
     @property
     def image_square(self):
         with open('test_image.png') as file:
-            return ('test_image.png', file, 'image/png')
+            return 'test_image.png', file, 'image/png'
 
     @property
     def image_portrait(self):
         with open('1280-1920.png') as file:
-            return ('1280-1920.png', file, 'image/png')
+            return '1280-1920.png', file, 'image/png'
 
     @property
     def image_landscape_big(self):
         with open("3840-2160.png") as file:
-            return ("3840-2160.png", file, "image/png")
+            return "3840-2160.png", file, "image/png"
 
     @property
     def image_landscape_small(self):
         with open("474-266.png") as file:
-            return ("474-266.png", file, "image/png")
+            return "474-266.png", file, "image/png"
 
     default_hash = "hash"
     default_username = "test_username"
@@ -290,7 +290,12 @@ class Tests(unittest.TestCase):
         """
         Refresh the token by using the dedicated endpoint.
         """
-        return self.ex_request("POST", route=f"user/login/refresh/{refresh_token}")
+        return self.ex_request("POST", route=f"/user/login/refresh/{refresh_token}")
+
+    def profile(self, default: bool, caption : str = None, public : bool = None, image : tuple = None, username : str = None, name : str = None, token: str = None):
+        authorization = self.get_token(default, token)
+        code, content = self.ex_request("PATCH", route=f"/user/profile", headers={"Authorization" : authorization}, params={"caption" : caption, "public" : public, "username" : username, "name" : name}, file=image)
+        return code, content
 
     @classmethod
     def setUpClass(cls):
@@ -432,7 +437,6 @@ class Tests(unittest.TestCase):
         self.assertEqual(200, code)
         self.assertTrue(content["success"])
         self.assertEqual(token, content["token"])
-
 
     """
     --------------------------
@@ -591,8 +595,8 @@ class Tests(unittest.TestCase):
         # Then is successful and created in correct size.
         self.assertEqual(code, 200)
         self.assertEqual(True, content["success"])
-        new_im = Image.open(f"Posts/{self.default_username}/0.png")
-        self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
+        new_im = Image.open(f"Medias/image/{self.default_username}/0.png")
+        self.assertEqual(new_im.size, (config.IMAGE_DIMENSION, config.IMAGE_DIMENSION))
         new_im.close()
 
     def test_GivenImageIsInLandscapeModeWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
@@ -605,8 +609,8 @@ class Tests(unittest.TestCase):
         # Then is successful and created in correct size.
         self.assertEqual(code, 200)
         self.assertEqual(True, content["success"])
-        new_im = Image.open(f"Posts/{self.default_username}/0.png")
-        self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
+        new_im = Image.open(f"Medias/image/{self.default_username}/0.png")
+        self.assertEqual(new_im.size, (config.IMAGE_DIMENSION, config.IMAGE_DIMENSION))
         new_im.close()
 
     def test_GivenImageUnderFinalResolutionWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
@@ -619,8 +623,8 @@ class Tests(unittest.TestCase):
         # Then is successful and created in correct size.
         self.assertEqual(code, 200)
         self.assertEqual(True, content["success"])
-        new_im = Image.open(f"Posts/{self.default_username}/0.png")
-        self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
+        new_im = Image.open(f"Medias/image/{self.default_username}/0.png")
+        self.assertEqual(new_im.size, (config.IMAGE_DIMENSION, config.IMAGE_DIMENSION))
         new_im.close()
 
     def test_GivenPostingImageWhenRetrievingImageDataFromDatabaseThenIsCorrectData(self):
@@ -636,10 +640,12 @@ class Tests(unittest.TestCase):
         result = self.cursor.fetchall()[0]
 
         self.assertEqual(result["caption"], caption)
-        self.assertEqual(result["image_path"], f"Posts/{self.default_username}/0.png")
+        self.assertEqual(result["image_path"], f"Medias/image/{self.default_username}/0.png")
 
     """
+    --------------------------
     Tag test
+    --------------------------
     """
 
     def test_GivenHavingTagLinkingNonExistingUserWhenPostingThenDoesntAddTags(self):
@@ -896,6 +902,72 @@ class Tests(unittest.TestCase):
         result = self.cursor.fetchall()
         self.assertEqual(1, len(result))
 
+    """
+    --------------------------
+    Profile update tests
+    --------------------------
+    """
+
+    def test_GivenNewProfileDataWhenUpdatingThenIsUpdatedInDatabase(self):
+        caption = "test unique caption"
+        public = False # By default profile visibility is set to public.
+        new_username = "azertyuiojfkd"
+        new_name = "thisismynewname"
+        code, content = self.profile(default=True, public=public, caption=caption, username=new_username, name=new_name)
+
+        get_profile_data_query = f"""
+        SELECT public_profile, caption, username, name FROM UserTable
+        WHERE username = "{new_username}";
+        """
+        self.cursor.execute(get_profile_data_query)
+        result = self.cursor.fetchall()[0]
+        self.assertEqual(200, code)
+        self.assertEqual(content["success"], True)
+        self.assertEqual(caption, result["caption"])
+        self.assertEqual(public, result["public_profile"])
+        self.assertEqual(new_username, result["username"])
+        self.assertEqual(new_name, result["name"])
+
+    def test_GivenNoProfilePictureWhenUpdatingWithNewProfilePictureThenIsAddedInFilesAndPathInDatabase(self):
+        code, content = self.profile(default=True, image=self.image_landscape_small)
+
+        get_profile_data_query = f"""
+        SELECT profile_picture_path FROM UserTable
+        WHERE username = "{self.default_username}";
+        """
+        self.cursor.execute(get_profile_data_query)
+        result = self.cursor.fetchall()[0]
+        self.assertEqual(200, code)
+        self.assertEqual(content["success"], True)
+        path = f'Medias/profile_picture/{self.default_username}'
+        self.assertEqual(path + "/picture.png", result["profile_picture_path"])
+        self.assertTrue(os.path.exists(path))
+        self.assertEqual(1, len(os.listdir(path)))
+
+    def test_GivenProfilePictureWhenUpdatingWithNewProfilePictureThenIsReplacedInFiles(self):
+        # Given profile picture.
+        self.profile(default=True, image=self.image_landscape_small)
+        path = f"Medias/profile_picture/{self.default_username}"
+        first_image = Image.open(path + "/picture.png")
+
+        # When updating...
+        code, content = self.profile(default=True, image=self.image_portrait)
+        second_image = Image.open(path + "/picture.png")
+
+        self.assertEqual(200, code)
+        self.assertEqual(content["success"], True)
+        self.assertEqual(1, len(os.listdir(path)))
+        self.assertNotEqual(first_image, second_image)
+
+    def test_GivenUserWhenUpdatingAnotherUserProfileWithSameUsernameThenRaiseUsernameTaken(self):
+        self.add_default_user()
+        token = "token"
+        self.add_user(token=token)
+
+        code, content = self.profile(default=False, username=self.default_username, token=token)
+
+        self.assertEqual((content, code), UsernameTaken.get_response())
+
 
     def tearDown(self) -> None:
         delete_all_query = """
@@ -909,6 +981,6 @@ class Tests(unittest.TestCase):
         for i in result:
             pass
         try:
-            shutil.rmtree("Posts")
+            shutil.rmtree("Medias")
         except:
             pass

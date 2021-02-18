@@ -11,6 +11,8 @@ import tag
 from PIL import Image
 import hashlib
 import profile
+import images
+import files
 
 
 def generate_token() -> str:
@@ -129,7 +131,7 @@ class User:
 
         self.hash = hash
         self._caption = result["caption"]
-        self._profile_image_path = result["profile_image_path"]
+        self._profile_picture_path = result["profile_picture_path"]
         self._profile = None
 
     def __del__(self):
@@ -194,17 +196,7 @@ class User:
         Path leading to the directory where post's images from this user are stored.
         :return:
         """
-        return f'Posts/{self.username}'
-
-    @property
-    def temp_directory(self) -> str:
-        """
-        Path leading to the temp directory. Image are first stored there, resized, compressed and then stored in
-        the correct file.
-        :return:
-        """
-        # $ can't be in a username so we know that this is a unique directory and won't override any existing directory.
-        return f'Posts/$temp'
+        return f'Medias/image/{self.username}'
 
     @property
     def number_of_post(self) -> int:
@@ -249,54 +241,8 @@ class User:
 
 
     #TODO: - Move post related method to a separate post class
-    def resize_image(self, image: Image, length: int) -> Image:
-        """
-        Resize an image to a square. Can make an image bigger to make it fit or smaller if it doesn't fit. It also crops
-        part of the image.
 
-        :param self:
-        :param image: Image to resize.
-        :param length: Width and height of the output image.
-        :return: Return the resized image.
-        """
-
-        """
-        Resizing strategy : 
-         1) We resize the smallest side to the desired dimension (e.g. 1080)
-         2) We crop the other side so as to make it fit with the same length as the smallest side (e.g. 1080)
-        """
-        if image.size[0] < image.size[1]:
-            # The image is in portrait mode. Height is bigger than width.
-
-            # This makes the width fit the LENGTH in pixels while conserving the ration.
-            resized_image = image.resize((length, int(image.size[1] * (length / image.size[0]))))
-
-            # Amount of pixel to lose in total on the height of the image.
-            required_loss = (resized_image.size[1] - length)
-
-            # Crop the height of the image so as to keep the center part.
-            resized_image = resized_image.crop(
-                box=(0, required_loss / 2, length, resized_image.size[1] - required_loss / 2))
-
-            # We now have a 1080x1080 pixels image.
-            return resized_image
-        else:
-            # This image is in landscape mode or already squared. The width is bigger than the heihgt.
-
-            # This makes the height fit the LENGTH in pixels while conserving the ration.
-            resized_image = image.resize((int(image.size[0] * (length / image.size[1])), length))
-
-            # Amount of pixel to lose in total on the width of the image.
-            required_loss = resized_image.size[0] - length
-
-            # Crop the width of the image so as to keep 1080 pixels of the center part.
-            resized_image = resized_image.crop(
-                box=(required_loss / 2, 0, resized_image.size[0] - required_loss / 2, length))
-
-            # We now have a 1080x1080 pixels image.
-            return resized_image
-
-    def create_post(self, image: werkzeug.datastructures.FileStorage, caption: str, tags: [tag.Tag]):
+    def create_post(self, image: Image, caption: str, tags: [tag.Tag]):
         """
         Create a post from this user.
         :param image: Post's image.
@@ -304,29 +250,17 @@ class User:
         :param tags: List of this post's tags.
         :return:
         """
-        self.prepare_directory(self.directory)
-        self.prepare_directory(self.temp_directory)
+        files.prepare_directory(self.directory)
 
         image.filename = f"{self.number_of_post}.png"
-        temp_image_path = os.path.join(self.temp_directory, image.filename)
 
         # Dir where the image will be stored after its resizing
         final_image_path = os.path.join(self.directory, image.filename)
 
-        # Saving the image in the temp directory.
-        image.save(temp_image_path)
-        image.close()
+        resized_image = images.resize_image(image, config.IMAGE_DIMENSION)
 
-        # NOTE: The image is stored in a temporary directory to be able to open it in the PIL.Image format which can be
-        # used for resizing.
-
-        resized_image = Image.open(temp_image_path)
-        resized_image = self.resize_image(resized_image, config.DEFAULT_IMAGE_DIMENSION)
-
-        # Saving to final directory.
+        # Saving resized image.
         resized_image.save(final_image_path)
-        # Removing the temporary image created.
-        os.remove(temp_image_path)
 
         create_post_query = f"""
         START TRANSACTION;
@@ -351,14 +285,6 @@ class User:
         post_id = result[0]["LAST_INSERT_ID()"]
         for i in tags:
             i.save(post_id)
-
-    def prepare_directory(self, dir: str):
-        """
-        Prepare the directory to store a post's image in. Create it if it not already exists.
-        :return:
-        """
-        if not os.path.exists(dir):
-            os.makedirs(dir)
 
     def follow(self, id: int):
         """

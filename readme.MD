@@ -1,7 +1,7 @@
 # Bestagram
 
-This is a big project that I'm starting. It will consist of recreating a working copy of the well known Instagram app from Facebook. It will goes from the front end which will be in a first time, a swift application for Ios to the back end, written in python. The database will be a MySQL Database.
-It is an educationnal purpose project which mean it is not to be used in any other way than this.
+This is a big project that I'm starting. It will consist of recreating a working copy of the well known Instagram app from Facebook. It goes from the front end (a swift application for iOS) to the back end, written in python. The database used in the backend is a MySQL Database.
+It is an educationnal purpose project which mean it is not to be used in any other way than learning.
 
 You can find the **Roadmap** on [Trello](https://trello.com/b/oTma0uAS)
 

@@ -35,7 +35,7 @@ This table stores all the **user profile data**. It is named like this because *
 | token                   | varchar(200)  | YES  |     | NULL    |                |
 | token_registration_date | datetime      | YES  |     | NULL    |                |
 | caption                 | varchar(1000) | YES  |     | NULL    |                |
-| profile_image_path      | varchar(30)   | YES  |     | NULL    |                |
+| profile_picture_path      | varchar(30)   | YES  |     | NULL    |                |
 ### Id
 The id component uniquely identify each user. It is used throughout the other tables to identify elements from a user.
 This component cannot be changed by the user who has no access - nor read or write - to it.

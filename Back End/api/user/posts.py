@@ -1,10 +1,11 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
 import werkzeug
 import user
 from database import request_utils
 from errors import *
 import tag
 import json
+from PIL import Image
 
 
 class Post(Resource):
@@ -88,6 +89,6 @@ class Post(Resource):
             # tags in this case.
             print("Error while parsing json : ", e)
 
-        img = params["image"]
+        img = Image.open(params["image"].stream)
         userobj.create_post(img, caption=params["caption"], tags=tags_list)
         return {"success": True}, 200

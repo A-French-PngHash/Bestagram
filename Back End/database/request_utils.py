@@ -1,5 +1,5 @@
 import database.mysql_connection
-from errors import *
+import errors
 
 
 def value_in_database(table: str, field: str, value: str) -> bool:
@@ -45,6 +45,6 @@ def get_user_id_from_username(username: str) -> int:
     cursor.execute(id_query)
     result = cursor.fetchall()
     if len(result) == 0:
-        raise UserNotExisting(username=username)
+        raise errors.UserNotExisting(username=username)
     else:
         return result[0]["id"]
