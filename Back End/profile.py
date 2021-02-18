@@ -4,19 +4,35 @@ import config
 import PIL.Image
 import files
 import errors
-from database import request_utils
+from database import request_utils, mysql_connection
 
 class Profile:
     """
     Profile of a user.
     """
-    def __init__(self, user):
+    def __init__(self, user = None, id : int = None):
         """
         Init for the profile class.
         :param user: User whose profile this class need to be.
+        :param id: Id of this user's profile.
+
+        There is two different ways of initializing this profile.
+            - Through a user object. This gives access to all of this class functionality (modifying
+            profile data and getting profile data).
+            - Through a user's id. This only allows to retrieve profile information.
         """
+
+        # IMPORTANT : Only the user or the id must be defined. Both can't have a value at the same time as this is what
+        # makes the distinction between the two different type of initialization.
         self.user = user
-        self.cursor = user.cursor
+        if user:
+            self.cursor = user.cursor
+        else:
+            self.cursor = mysql_connection.cnx.cursor(dictionary=True)
+
+        self.id = id
+
+
     @property
     def directory(self) -> str:
         """
@@ -68,3 +84,36 @@ class Profile:
         update_query += f" WHERE id = {self.user.id};"
         self.cursor.execute(update_query)
 
+    @property
+    def profile_picture_path(self) -> str:
+        return "TODO : add profile picture path functionality"
+
+    def get(self, token: str = None) -> dict:
+        """
+        Get the profile data for a user.
+        :param token: Token of the user asking for the profile data. This is optional. It may be provided to allow the
+        retrieval of data only available if the user is followed. In case of a private account only followers can access
+        the number of posts.
+        :return: Profile data in a dictionary :
+            caption : str
+            name : str
+            username : str
+            public_profile : bool
+            follower_num : int
+            following_num : int
+            profile_picture_path : str
+        """
+        profile_id = self.id
+        if not profile_id:
+            profile_id = self.user.id
+
+        get_profile_data_query = f"""
+        SELECT name, username, caption, public_profile, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS follower_num, (SELECT COUNT(*) FROM Follow WHERE user_id_following = id) AS following_num FROM UserTable
+        WHERE id = {profile_id};
+        """
+        self.cursor.execute(get_profile_data_query)
+        results = self.cursor.fetchall()
+        if len(results) != 1:
+            raise errors.UserNotExisting(id=self.id)
+        results["profile_picture_path"] = self.profile_picture_path
+        return results

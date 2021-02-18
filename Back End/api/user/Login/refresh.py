@@ -5,13 +5,12 @@ import database.mysql_connection
 
 
 class Refresh(Resource):
-    def post(self, **kwargs):
+    def post(self, refresh_token):
         """
         Login a user. Use this endpoint when the user has already inputed his credentials once and you have your
         refresh token.
         :return:
         """
-        refresh_token = kwargs["refresh_token"]
 
         try:
             user = User(refresh_token=refresh_token)

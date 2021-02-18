@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 import api.email
-from api.user import posts, follow, search, profile
+from api.user import posts, follow, profile, search
 from api.user.Login import login, refresh
 import database.mysql_connection
 import config
@@ -41,7 +41,7 @@ api_app.add_resource(posts.Post, "/user/post")
 api_app.add_resource(search.Search, "/user/search")
 api_app.add_resource(follow.Follow, "/user/<id>/follow")
 api_app.add_resource(api.email.Email, "/email/<email>/taken")
-api_app.add_resource(profile.Profile, "/user/profile")
+api_app.add_resource(profile.ProfileUpdate, "/user/profile")
 
 if __name__ == "__main__":
     # Running the api.

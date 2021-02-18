@@ -370,8 +370,8 @@ class User:
         :param search: Search string.
         :param offset: Offset to begin at. Begins at 0.
         :param row_count: Number of results to have. Must be less
-        :return: Returns a dictionary containing the id of the user whose username match the search. Dictionary key
-        begins from the offset.
+        :return: Returns a dictionary of dictionary containing the id of the user (+ its name and username) whose username match the
+        search. First dctionary keys are the rank in the search (the lowest, the more matching), begins from the offset.
         """
 
         search_str = "%" + "%".join(search) + "%"
@@ -392,7 +392,7 @@ class User:
         # This query select user matching the search query which the current user follow.
         followed_search_query = f"""
         SELECT name, username, id, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS followers FROM UserTable 
-        JOIN Follow ON Follow.user_id_followed = UserTable.id 
+        JOIN Follow ON Follow.user_id_followed = UserTable.id
         WHERE UserTable.name LIKE "{search_str}" AND Follow.user_id = {self.id}
         ORDER BY followers DESC, name ASC
         LIMIT {offset}, {row_count};

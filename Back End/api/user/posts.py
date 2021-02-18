@@ -7,7 +7,7 @@ import tag
 import json
 from PIL import Image
 
-
+#TODO: - Replace tag user identification with id
 class Post(Resource):
     """
     Retrieve or put posts using this endpoint.

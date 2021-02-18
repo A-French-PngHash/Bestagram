@@ -5,7 +5,7 @@ from errors import *
 
 
 class Login(Resource):
-    def post(self, **kwargs) -> (dict, int):
+    def post(self, username) -> (dict, int):
         """
         Getting the token by sending login data.
         :return: Return a dict containing the requested data and an int which is the http status code.
@@ -14,7 +14,7 @@ class Login(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("hash")
         params = parser.parse_args()
-        params["username"] = kwargs["username"]
+        params["username"] = username
 
         if not (params["username"] and params["hash"]):
             return MissingInformation.get_response()

@@ -7,7 +7,7 @@ class Follow(Resource):
     Follow a user.
     """
 
-    def post(self, **kwargs):
+    def post(self, id):
         """
         Headers :
             - Authorization : Token of the current user.
@@ -16,7 +16,7 @@ class Follow(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("Authorization", location="headers")
         params = parser.parse_args()
-        params["id"] = kwargs["id"]
+        params["id"] = id
 
         if not (params["id"] and params["Authorization"]):
             return MissingInformation.get_response()

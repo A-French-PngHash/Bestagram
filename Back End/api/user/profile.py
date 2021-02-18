@@ -3,8 +3,14 @@ import werkzeug
 import user
 from errors import *
 from PIL import Image
+from profile import Profile
 
-class Profile(Resource):
+
+class ProfileUpdate(Resource):
+    """
+    This class only has one method which updates a user profile.
+    """
+
     def patch(self) -> (dict, int):
         """
         Update a user's profile data. All arguments are optional except for the authorization token.
@@ -33,7 +39,23 @@ class Profile(Resource):
         if params["image"]:
             picture = Image.open(params["image"].stream)
         try:
-            userobj.profile.update(caption=params["caption"], public_visibility=params["public"], profile_picture=picture, username=params["username"], name=params["name"])
+            userobj.profile.update(caption=params["caption"], public_visibility=params["public"],
+                                   profile_picture=picture, username=params["username"], name=params["name"])
         except BestagramException as e:
             return e.get_response()
         return {"success": True}, 200
+
+
+class ProfileRetrieving(Resource):
+    """
+    Retrieving profile data.
+    """
+    def get(self, id):
+        profile = Profile(id = id)
+        try:
+            profile_data = profile.get()
+        except BestagramException as e:
+            return e.get_response()
+
+        return {"success" : True, "data" : profile_data}, 200
+
