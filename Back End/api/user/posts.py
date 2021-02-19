@@ -22,13 +22,13 @@ class Post(Resource):
                 {
                     "x_pos" : 0.43,
                     "y_pos" : 0.87,
-                    "username" : "john.fries"
+                    "id" : 1
                 },
                 "1" :
                 {
                     "x_pos" : 0.29,
                     "y_pos" : 0.44,
-                    "username" : "titouan"
+                    "id" : 2
                 }
             }
         }
@@ -75,7 +75,9 @@ class Post(Resource):
             for i in tags:
                 thistag = tags[i]
                 try:
-                    id = request_utils.get_user_id_from_username(username=thistag["username"])
+                    id = thistag["id"]
+                    if not request_utils.user_existing(id):
+                        continue
                     thistag = tag.Tag(user_id=id, pos_x=thistag["pos_x"], pos_y=thistag["pos_y"])
                     if thistag not in tags_list:  # Prevent redundant tags_list with the same person tagged.
                         tags_list.append(thistag)

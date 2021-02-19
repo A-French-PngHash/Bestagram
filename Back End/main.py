@@ -42,6 +42,7 @@ api_app.add_resource(search.Search, "/user/search")
 api_app.add_resource(follow.Follow, "/user/<id>/follow")
 api_app.add_resource(api.email.Email, "/email/<email>/taken")
 api_app.add_resource(profile.ProfileUpdate, "/user/profile")
+api_app.add_resource(profile.ProfileRetrieving, "/user/<id>/profile")
 
 if __name__ == "__main__":
     # Running the api.

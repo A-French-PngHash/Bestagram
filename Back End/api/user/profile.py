@@ -51,11 +51,31 @@ class ProfileRetrieving(Resource):
     Retrieving profile data.
     """
     def get(self, id):
-        profile = Profile(id = id)
+        parser = reqparse.RequestParser()
+
+        # Token.
+        parser.add_argument("Authorization", location="headers")  # Optional.
+
+        params = parser.parse_args()
+
+        profile = Profile(id=id)
+
         try:
-            profile_data = profile.get()
+            profile_data = profile.get(token=params["Authorization"])
         except BestagramException as e:
             return e.get_response()
 
         return {"success" : True, "data" : profile_data}, 200
 
+class ProfilePicture(Resource):
+    """
+    Endpoint that holds the profile pictures.
+    """
+    def get(self, id):
+        """
+        Returns the profile picture.
+        :param id:
+        :return:
+        """
+        profile = Profile(id=id)
+        image = Image(profile.profile_picture_api_path)

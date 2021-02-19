@@ -34,12 +34,16 @@ class Profile:
 
 
     @property
-    def directory(self) -> str:
+    def profile_picture_directory(self) -> str:
         """
-        Path leading to the directory where user's profile picture images are stored.
+        Path leading to the profile_picture_directory where user's profile picture images are stored.
         :return:
         """
         return f'Medias/profile_picture/{self.user.username}'
+
+    @property
+    def profile_picture_api_route(self) -> str:
+        return "TODO : add profile picture path functionality"
 
     def update(self, caption : str = None, profile_picture : PIL.Image = None, public_visibility : bool = None, username: str = None, name : str = None):
         """
@@ -62,8 +66,8 @@ class Profile:
 
             picture.filename = f"picture.png"
 
-            profile_picture_path = os.path.join(self.directory, picture.filename)
-            files.prepare_directory(self.directory)
+            profile_picture_path = os.path.join(self.profile_picture_directory, picture.filename)
+            files.prepare_directory(self.profile_picture_directory)
             picture.save(profile_picture_path)
 
         update_query = """
@@ -71,7 +75,8 @@ class Profile:
         if caption:
             update_query += f"""caption = "{caption}","""
         if public_visibility:
-            update_query += f"""public_profile = {public_visibility},"""
+            if str(public_visibility).lower() == "false" or str(public_visibility).lower() == "true":
+                update_query += f"""public_profile = {public_visibility},"""
         if profile_picture_path:
             update_query += f"""profile_picture_path = "{profile_picture_path}","""
         if name:
@@ -84,9 +89,6 @@ class Profile:
         update_query += f" WHERE id = {self.user.id};"
         self.cursor.execute(update_query)
 
-    @property
-    def profile_picture_path(self) -> str:
-        return "TODO : add profile picture path functionality"
 
     def get(self, token: str = None) -> dict:
         """
@@ -101,19 +103,20 @@ class Profile:
             public_profile : bool
             follower_num : int
             following_num : int
-            profile_picture_path : str
+            profile_picture_api_path : str
         """
         profile_id = self.id
         if not profile_id:
             profile_id = self.user.id
 
         get_profile_data_query = f"""
-        SELECT name, username, caption, public_profile, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS follower_num, (SELECT COUNT(*) FROM Follow WHERE user_id_following = id) AS following_num FROM UserTable
+        SELECT name, username, caption, public_profile, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS follower_num, (SELECT COUNT(*) FROM Follow WHERE user_id = id) AS following_num FROM UserTable
         WHERE id = {profile_id};
         """
         self.cursor.execute(get_profile_data_query)
         results = self.cursor.fetchall()
         if len(results) != 1:
             raise errors.UserNotExisting(id=self.id)
-        results["profile_picture_path"] = self.profile_picture_path
+        results = results[0]
+        results["profile_picture_route"] = self.profile_picture_api_route
         return results

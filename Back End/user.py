@@ -193,7 +193,7 @@ class User:
     @property
     def directory(self) -> str:
         """
-        Path leading to the directory where post's images from this user are stored.
+        Path leading to the profile_picture_directory where post's images from this user are stored.
         :return:
         """
         return f'Medias/image/{self.username}'
@@ -284,7 +284,10 @@ class User:
 
         post_id = result[0]["LAST_INSERT_ID()"]
         for i in tags:
-            i.save(post_id)
+            try:
+                i.save(post_id)
+            except UserNotExisting:
+                print(f"User not existing. post_id : {post_id}, user_id : {i.user_id}")
 
     def follow(self, id: int):
         """

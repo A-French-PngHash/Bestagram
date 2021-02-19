@@ -28,6 +28,18 @@ def value_in_database(table: str, field: str, value: str) -> bool:
     return len(result) > 0
 
 
+def user_existing(id : int) -> bool:
+    query = f"""
+    SELECT * FROM UserTable
+    WHERE id = {id};"""
+    cursor = database.mysql_connection.cnx.cursor(dictionary=True)
+    cursor.execute(query)
+    result = cursor.fetchall()
+    cursor.close()
+    return len(result) == 1
+
+
+
 def get_user_id_from_username(username: str) -> int:
     """
     Fetch a user id from a username.
@@ -44,7 +56,9 @@ def get_user_id_from_username(username: str) -> int:
     cursor = database.mysql_connection.cnx.cursor(dictionary=True)
     cursor.execute(id_query)
     result = cursor.fetchall()
+    cursor.close()
     if len(result) == 0:
         raise errors.UserNotExisting(username=username)
     else:
         return result[0]["id"]
+

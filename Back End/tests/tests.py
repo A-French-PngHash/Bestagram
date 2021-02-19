@@ -50,8 +50,17 @@ class Tests(unittest.TestCase):
     default_username = "test_username"
     default_name = "test_name"
     default_email = "test.test@bestagram.com"
-    default_tags = {"0": {"pos_x": 0.43, "pos_y": 0.87, "username": "john.fries"},
-                    "1": {"pos_x": 0.29, "pos_y": 0.44, "username": "titouan"}}
+
+    def tags(self, *args):
+        """
+        Return a list of tag.
+        :param args: Ids of the tags.
+        :return:
+        """
+        tags = {}
+        for (i, e) in enumerate(args):
+            tags[str(i)] = {"pos_x": 0.5, "pos_y": 0.5, "id": e}
+        return tags
 
     def get_token(self, default: bool, token : str = None) -> str:
         """
@@ -314,8 +323,9 @@ class Tests(unittest.TestCase):
         database.mysql_connection.cnx.autocommit = True
         self.cursor = database.mysql_connection.cnx.cursor(dictionary=True)
 
+
         try:
-            # Erase directory named Posts if exists.
+            # Erase profile_picture_directory named Posts if exists.
             shutil.rmtree("Posts")
         except:
             pass
@@ -649,8 +659,8 @@ class Tests(unittest.TestCase):
     """
 
     def test_GivenHavingTagLinkingNonExistingUserWhenPostingThenDoesntAddTags(self):
-        # Given having tag linking existing user.
-        tags = self.default_tags
+        # Given having tag linking non existing user.
+        tags = self.tags(5) # No user should have a id to 5 as there should only be one user in db (default)
 
         # When posting.
         code, content = self.post(default=True, file=self.image_square, tag=tags)
@@ -667,9 +677,11 @@ class Tests(unittest.TestCase):
 
     def test_GivenHavingTagLinkingExistingUserWhenPostingThenAddTags(self):
         # Given having tag with linking existing user.
-        self.add_user(username="john.fries")
-        self.add_user(username="titouan")
-        tags = self.default_tags
+        user1 = "john.fries"
+        user2 = "titouan"
+        id1 = self.add_user(username=user1)
+        id2 = self.add_user(username=user2)
+        tags = self.tags(id1, id2)
 
         # When posting.
         code, content = self.post(default=True, file=self.image_square, tag=tags)
@@ -686,9 +698,8 @@ class Tests(unittest.TestCase):
 
     def test_GivenTagLinkingToTheSameUserWhenPostingThenAddOnlyOne(self):
         # Given tag linking to the same user.
-        self.add_user(username="john.fries")
-        tags = {"0": {"pos_x": 0.5, "pos_y": 0.3, "username": "john.fries"},
-                "1": {"pos_x": 0.3, "pos_y": 0.5, "username": "john.fries"}}
+        id_john = self.add_user(username="john.fries")
+        tags = self.tags(id_john, id_john)
 
         # When posting.
         code, content = self.post(default=True, file=self.image_square, tag=tags)
@@ -968,18 +979,20 @@ class Tests(unittest.TestCase):
 
         self.assertEqual((content, code), UsernameTaken.get_response())
 
-
-    def tearDown(self) -> None:
+    def remove_all_from_db(self):
         delete_all_query = """
-        DELETE FROM Follow;
-        DELETE FROM Tag;
-        DELETE FROM LikeTable;
-        DELETE FROM Post;
-        DELETE FROM UserTable;
-        """
+                DELETE FROM Follow;
+                DELETE FROM Tag;
+                DELETE FROM LikeTable;
+                DELETE FROM Post;
+                DELETE FROM UserTable;
+                """
         result = self.cursor.execute(delete_all_query, multi=True)
         for i in result:
             pass
+
+    def tearDown(self) -> None:
+        self.remove_all_from_db()
         try:
             shutil.rmtree("Medias")
         except:
