@@ -50,6 +50,7 @@ class ProfileRetrieving(Resource):
     """
     Retrieving profile data.
     """
+
     def get(self, id):
         parser = reqparse.RequestParser()
 
@@ -63,14 +64,17 @@ class ProfileRetrieving(Resource):
         try:
             profile_data = profile.get(token=params["Authorization"])
         except BestagramException as e:
+            response = e.get_response()
             return e.get_response()
 
-        return {"success" : True, "data" : profile_data}, 200
+        return {"success": True, "data": profile_data}, 200
+
 
 class ProfilePicture(Resource):
     """
     Endpoint that holds the profile pictures.
     """
+
     def get(self, id):
         """
         Returns the profile picture.
@@ -78,4 +82,5 @@ class ProfilePicture(Resource):
         :return:
         """
         profile = Profile(id=id)
-        image = Image(profile.profile_picture_api_path)
+
+        return {"success": True, "picture" : profile.profile_picture}, 200

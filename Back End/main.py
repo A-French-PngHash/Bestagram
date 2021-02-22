@@ -6,6 +6,9 @@ from api.user.Login import login, refresh
 import database.mysql_connection
 import config
 import mysql.connector
+import files
+from PIL import Image
+import os
 
 PORT = 5002
 HOST = "0.0.0.0"
@@ -13,11 +16,12 @@ HOST = "0.0.0.0"
 """
 WARNING: 
 Endpoint classes are not that much documented as all of the documentation is in "api/Api Documentation.md".
-Consult that file to get information on how to contact these endpoints to get access to the right data.
+Consult that file to get information on how to contact these endpoints in order for you to get access to the right data.
 """
 
-#TODO: Add hash verification
-
+# Creating media directory if doesn't exist :
+files.prepare_directory("Medias/profile_picture")
+files.prepare_directory("Medias/image")
 
 app = Flask(__name__)
 
@@ -42,7 +46,8 @@ api_app.add_resource(search.Search, "/user/search")
 api_app.add_resource(follow.Follow, "/user/<id>/follow")
 api_app.add_resource(api.email.Email, "/email/<email>/taken")
 api_app.add_resource(profile.ProfileUpdate, "/user/profile")
-api_app.add_resource(profile.ProfileRetrieving, "/user/<id>/profile")
+api_app.add_resource(profile.ProfileRetrieving, "/user/<id>/profile/data")
+api_app.add_resource(profile.ProfilePicture, "/user/<id>/profile/picture")
 
 if __name__ == "__main__":
     # Running the api.

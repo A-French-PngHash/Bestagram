@@ -92,5 +92,5 @@ class Post(Resource):
             print("Error while parsing json : ", e)
 
         img = Image.open(params["image"].stream)
-        userobj.create_post(img, caption=params["caption"], tags=tags_list)
-        return {"success": True}, 200
+        post_id = userobj.create_post(img, caption=params["caption"], tags=tags_list)
+        return {"success": True, "id" : post_id}, 200

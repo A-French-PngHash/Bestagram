@@ -6,11 +6,13 @@ import files
 import errors
 from database import request_utils, mysql_connection
 
+
 class Profile:
     """
     Profile of a user.
     """
-    def __init__(self, user = None, id : int = None):
+
+    def __init__(self, user=None, id: int = None):
         """
         Init for the profile class.
         :param user: User whose profile this class need to be.
@@ -21,17 +23,23 @@ class Profile:
             profile data and getting profile data).
             - Through a user's id. This only allows to retrieve profile information.
         """
-
-        # IMPORTANT : Only the user or the id must be defined. Both can't have a value at the same time as this is what
-        # makes the distinction between the two different type of initialization.
         self.user = user
         if user:
             self.cursor = user.cursor
         else:
             self.cursor = mysql_connection.cnx.cursor(dictionary=True)
 
-        self.id = id
+        if user:
+            self.id = user.id
+        else:
+            self.id = id
 
+    @property
+    def use_default_image(self) -> bool:
+        query = f"""SELECT use_default_picture FROM UserTable WHERE id = {self.id};"""
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()[0]["use_default_picture"]
+        return result
 
     @property
     def profile_picture_directory(self) -> str:
@@ -39,13 +47,25 @@ class Profile:
         Path leading to the profile_picture_directory where user's profile picture images are stored.
         :return:
         """
-        return f'Medias/profile_picture/{self.user.username}'
+        return f'Medias/profile_picture/{self.id}'
+
+    @property
+    def default_profile_picture(self):
+        return PIL.Image.open("default_avatar.png")
+
+    @property
+    def profile_picture(self) -> PIL.Image:
+        if self.use_default_image:
+            return self.default_profile_picture
+        else:
+            return PIL.Image.open(os.path.join(self.profile_picture_directory, "picture.png"))
 
     @property
     def profile_picture_api_route(self) -> str:
-        return "TODO : add profile picture path functionality"
+        return f"/user/{self.id}/profile/picture"
 
-    def update(self, caption : str = None, profile_picture : PIL.Image = None, public_visibility : bool = None, username: str = None, name : str = None):
+    def update(self, caption: str = None, profile_picture: PIL.Image = None, public_visibility: bool = None,
+               username: str = None, name: str = None):
         """
         Update this profile values. All arguments are optional, if they are not provided the value stay as it is.
         :param caption:
@@ -78,17 +98,16 @@ class Profile:
             if str(public_visibility).lower() == "false" or str(public_visibility).lower() == "true":
                 update_query += f"""public_profile = {public_visibility},"""
         if profile_picture_path:
-            update_query += f"""profile_picture_path = "{profile_picture_path}","""
+            update_query += f"""use_default_picture = FALSE,"""
         if name:
             update_query += f"""name = "{name}","""
         if username:
             update_query += f"""username = "{username}","""
 
-        update_query = update_query[:-1] # Removes the coma ","
+        update_query = update_query[:-1]  # Removes the coma ","
 
         update_query += f" WHERE id = {self.user.id};"
         self.cursor.execute(update_query)
-
 
     def get(self, token: str = None) -> dict:
         """
@@ -110,7 +129,7 @@ class Profile:
             profile_id = self.user.id
 
         get_profile_data_query = f"""
-        SELECT name, username, caption, public_profile, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS follower_num, (SELECT COUNT(*) FROM Follow WHERE user_id = id) AS following_num FROM UserTable
+        SELECT name, username, caption, public_profile, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS follower, (SELECT COUNT(*) FROM Follow WHERE user_id = id) AS following FROM UserTable
         WHERE id = {profile_id};
         """
         self.cursor.execute(get_profile_data_query)

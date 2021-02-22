@@ -1,4 +1,6 @@
 import unittest
+from profile import Profile
+
 import mysql.connector
 import user
 import os
@@ -177,8 +179,14 @@ class Tests(unittest.TestCase):
         })
         return code, content
 
-    def add_default_user(self, token: str = None, refresh_token: str = None):
-        self.add_user(username=self.default_username,
+    def add_default_user(self, token: str = None, refresh_token: str = None) -> int:
+        """
+        Add the default user.
+        :param token: Token to add to the user.
+        :param refresh_token: Refresh token to add to the user.
+        :return: Id of the default user.
+        """
+        return self.add_user(username=self.default_username,
                       name=self.default_name,
                       hash=self.default_hash,
                       email=self.default_email,
@@ -302,8 +310,25 @@ class Tests(unittest.TestCase):
         return self.ex_request("POST", route=f"/user/login/refresh/{refresh_token}")
 
     def profile(self, default: bool, caption : str = None, public : bool = None, image : tuple = None, username : str = None, name : str = None, token: str = None):
+        """
+        Update the profile using the API.
+        :return:
+        """
         authorization = self.get_token(default, token)
         code, content = self.ex_request("PATCH", route=f"/user/profile", headers={"Authorization" : authorization}, params={"caption" : caption, "public" : public, "username" : username, "name" : name}, file=image)
+        return code, content
+
+    def profile_picture(self, id: int):
+        """
+        Get the profile picture for this user's id.
+        :param id:
+        :return:
+        """
+        code, content = self.ex_request("GET", route=f"/user/{id}/profile/picture")
+        return code, content
+
+    def get_profile(self, id : int):
+        code, content = self.ex_request("GET", route=f"/user/{id}/profile/data")
         return code, content
 
     @classmethod
@@ -600,12 +625,13 @@ class Tests(unittest.TestCase):
         image = self.image_portrait
 
         # When posting.
+        id = self.add_default_user()
         code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
         self.assertEqual(code, 200)
         self.assertEqual(True, content["success"])
-        new_im = Image.open(f"Medias/image/{self.default_username}/0.png")
+        new_im = Image.open(f"""Medias/image/{id}/{content["id"]}.png""")
         self.assertEqual(new_im.size, (config.IMAGE_DIMENSION, config.IMAGE_DIMENSION))
         new_im.close()
 
@@ -614,12 +640,13 @@ class Tests(unittest.TestCase):
         image = self.image_landscape_big
 
         # When posting.
+        id = self.add_default_user()
         code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
         self.assertEqual(code, 200)
         self.assertEqual(True, content["success"])
-        new_im = Image.open(f"Medias/image/{self.default_username}/0.png")
+        new_im = Image.open(f"""Medias/image/{id}/{content["id"]}.png""")
         self.assertEqual(new_im.size, (config.IMAGE_DIMENSION, config.IMAGE_DIMENSION))
         new_im.close()
 
@@ -628,19 +655,20 @@ class Tests(unittest.TestCase):
         image = self.image_landscape_small
 
         # When posting.
+        id = self.add_default_user()
         code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
         self.assertEqual(code, 200)
         self.assertEqual(True, content["success"])
-        new_im = Image.open(f"Medias/image/{self.default_username}/0.png")
+        new_im = Image.open(f"""Medias/image/{id}/{content["id"]}.png""")
         self.assertEqual(new_im.size, (config.IMAGE_DIMENSION, config.IMAGE_DIMENSION))
         new_im.close()
 
     def test_GivenPostingImageWhenRetrievingImageDataFromDatabaseThenIsCorrectData(self):
         # Given posting image.
-        self.add_default_user()
         caption = "this is a caption"
+        id = self.add_default_user()
         code, content = self.post(default=True, file=self.image_square, caption=caption)
 
         # When retrieving image data from database.
@@ -649,8 +677,8 @@ class Tests(unittest.TestCase):
         self.cursor.execute(query)
         result = self.cursor.fetchall()[0]
 
-        self.assertEqual(result["caption"], caption)
-        self.assertEqual(result["image_path"], f"Medias/image/{self.default_username}/0.png")
+        self.assertEqual(caption, result["caption"])
+        self.assertEqual(id, result["user_id"])
 
     """
     --------------------------
@@ -939,26 +967,28 @@ class Tests(unittest.TestCase):
         self.assertEqual(new_username, result["username"])
         self.assertEqual(new_name, result["name"])
 
-    def test_GivenNoProfilePictureWhenUpdatingWithNewProfilePictureThenIsAddedInFilesAndPathInDatabase(self):
+    def test_GivenNoProfilePictureWhenUpdatingWithNewProfilePictureThenIsAddedInFilesAndUpdatedInDatabase(self):
+        id = self.add_default_user()
         code, content = self.profile(default=True, image=self.image_landscape_small)
 
         get_profile_data_query = f"""
-        SELECT profile_picture_path FROM UserTable
-        WHERE username = "{self.default_username}";
+        SELECT use_default_picture FROM UserTable
+        WHERE id = {id};
         """
         self.cursor.execute(get_profile_data_query)
         result = self.cursor.fetchall()[0]
         self.assertEqual(200, code)
         self.assertEqual(content["success"], True)
-        path = f'Medias/profile_picture/{self.default_username}'
-        self.assertEqual(path + "/picture.png", result["profile_picture_path"])
-        self.assertTrue(os.path.exists(path))
+        path = f'Medias/profile_picture/{id}'
+        self.assertFalse(result["use_default_picture"])
+        self.assertTrue(os.path.isfile(path + "/picture.png"))
         self.assertEqual(1, len(os.listdir(path)))
 
     def test_GivenProfilePictureWhenUpdatingWithNewProfilePictureThenIsReplacedInFiles(self):
         # Given profile picture.
+        id = self.add_default_user()
         self.profile(default=True, image=self.image_landscape_small)
-        path = f"Medias/profile_picture/{self.default_username}"
+        path = f"Medias/profile_picture/{id}"
         first_image = Image.open(path + "/picture.png")
 
         # When updating...
@@ -970,7 +1000,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(1, len(os.listdir(path)))
         self.assertNotEqual(first_image, second_image)
 
-    def test_GivenUserWhenUpdatingAnotherUserProfileWithSameUsernameThenRaiseUsernameTaken(self):
+    def test_GivenUserWhenUpdatingAnotherUserProfileByReplacingUsernameWithSameUsernameAsOtherUserThenRaiseUsernameTaken(self):
         self.add_default_user()
         token = "token"
         self.add_user(token=token)
@@ -978,6 +1008,99 @@ class Tests(unittest.TestCase):
         code, content = self.profile(default=False, username=self.default_username, token=token)
 
         self.assertEqual((content, code), UsernameTaken.get_response())
+
+    """
+    --------------------------
+    Profile data tests
+    --------------------------
+    """
+
+    def test_GivenProfileDataWhenRetrievingItThenIsCorrect(self):
+        id = self.add_default_user()
+        username = "newusername"
+        name = "newname"
+        caption = "newcaption"
+        public = False
+        self.profile(default=True, username=username, caption=caption, name=name, public=public)
+
+        code, content = self.get_profile(id)
+
+        self.assertEqual(200, code)
+        self.assertTrue(content["success"])
+        profile_data = content["data"]
+        self.assertEqual(username, profile_data["username"])
+        self.assertEqual(name, profile_data["name"])
+        self.assertEqual(caption, profile_data["caption"])
+        self.assertEqual(public, profile_data["public_profile"])
+        self.assertEqual(0, profile_data["follower"])
+        self.assertEqual(0, profile_data["following"])
+
+
+    def test_GivenSixFollowersAndThreeFollowingWhenRetrievingProfileDataThenCorrectNumbers(self):
+        follower_id = []
+        following_id = []
+        number_of_follower = 5
+        number_of_following = 3
+        for i in range(number_of_follower):
+            follower_id.append(self.add_user())
+        for i in range(number_of_following):
+            following_id.append(self.add_user())
+
+        # Adding a user both followed and following to try seeking errors in the server code.
+        number_of_follower += 1
+        follower_id.append(following_id[0])
+        default_id = self.add_default_user()
+        for i in following_id:
+            self.follow_db(default=False, user_id_followed=i, user_id=default_id)
+        for i in follower_id:
+            self.follow_db(default=False, user_id_followed=default_id, user_id=i)
+
+        code, content = self.get_profile(default_id)
+        profile_data = content["data"]
+
+        self.assertEqual(200, code)
+        self.assertTrue(content["success"])
+        self.assertEqual(number_of_follower, profile_data["follower"])
+        self.assertEqual(number_of_following, profile_data["following"])
+
+    def test_GivenNoUserWhenRetrievingProfileDataThenRaiseUserNotExistingError(self):
+
+        code, content = self.get_profile(8) # No user with that id (empty db)
+
+        self.assertEqual(UserNotExisting.get_response(), (content, code))
+
+    def test_GivenNoProfilePictureWhenUpdatingProfileWithProfilePictureThenIsAddedInCorrectDirectory(self):
+        new_picture = self.image_square
+
+        id = self.add_default_user()
+        self.profile(default=True, image=new_picture)
+
+        self.assertTrue(os.path.exists(f"Medias/profile_picture/{id}/picture.png"))
+
+    def test_GivenProfilePictureWhenGettingProfileDataThenSendCorrectRoute(self):
+        picture = self.image_square
+        id = self.add_default_user()
+        self.profile(default=True, image=picture)
+
+        code, content = self.get_profile(id)
+
+        self.assertEqual(f"/user/{id}/profile/picture", content["data"]["profile_picture_route"])
+
+    """
+    --------------------------
+    Profile picture tests
+    --------------------------
+    """
+
+    def test_GivenProfilePictureWhenGettingItThenIsCorrectImage(self):
+        id = self.add_default_user()
+        self.profile(default=True, image=self.image_square)
+
+        code, content = self.profile_picture(id)
+
+        self.assertEqual(200, code)
+        self.assertTrue(content["success"])
+
 
     def remove_all_from_db(self):
         delete_all_query = """

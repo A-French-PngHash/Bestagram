@@ -239,8 +239,8 @@ The token is optional. It may be provided to show that the user doing the reques
 			"username": "titouanusername",
 			"caption": "another interesting caption",
 			"public_profile": 1,
-			"follower_num": 2,
-			"following_num": 2,
+			"follower": 2,
+			"following": 2,
 			"profile_picture_route": "TODO : add profile picture path functionality"
 		}
 	}

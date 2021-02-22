@@ -131,7 +131,6 @@ class User:
 
         self.hash = hash
         self._caption = result["caption"]
-        self._profile_picture_path = result["profile_picture_path"]
         self._profile = None
 
     def __del__(self):
@@ -193,10 +192,10 @@ class User:
     @property
     def directory(self) -> str:
         """
-        Path leading to the profile_picture_directory where post's images from this user are stored.
+        Path leading to the image directory where post's images from this user are stored.
         :return:
         """
-        return f'Medias/image/{self.username}'
+        return f'Medias/image/{self.id}'
 
     @property
     def number_of_post(self) -> int:
@@ -242,36 +241,29 @@ class User:
 
     #TODO: - Move post related method to a separate post class
 
-    def create_post(self, image: Image, caption: str, tags: [tag.Tag]):
+    def create_post(self, image: Image, caption: str, tags: [tag.Tag]) -> int:
         """
         Create a post from this user.
         :param image: Post's image.
         :param caption: Caption provided with the post.
         :param tags: List of this post's tags.
-        :return:
+        :return: The id of the newly created post.
         """
         files.prepare_directory(self.directory)
 
-        image.filename = f"{self.number_of_post}.png"
-
-        # Dir where the image will be stored after its resizing
-        final_image_path = os.path.join(self.directory, image.filename)
-
         resized_image = images.resize_image(image, config.IMAGE_DIMENSION)
-
-        # Saving resized image.
-        resized_image.save(final_image_path)
 
         create_post_query = f"""
         START TRANSACTION;
             INSERT INTO Post
             VALUES(
-            NULL, "{final_image_path}", {self.id}, "{datetime.datetime.now().replace(microsecond=0)}", "{caption}"
+            NULL, {self.id}, "{datetime.datetime.now().replace(microsecond=0)}", "{caption}"
             );
             
             SELECT LAST_INSERT_ID();
         COMMIT;
         """
+
         iterable = self.cursor.execute(create_post_query, multi=True)
         # 4 request are made a the same time. The third is the select one.
         index = 0
@@ -283,11 +275,19 @@ class User:
             index += 1
 
         post_id = result[0]["LAST_INSERT_ID()"]
+
+        image.filename = f"{post_id}.png"
+        # Dir where the image is stored.
+        final_image_path = os.path.join(self.directory, image.filename)
+        # Saving image.
+        resized_image.save(final_image_path)
+
         for i in tags:
             try:
                 i.save(post_id)
             except UserNotExisting:
                 print(f"User not existing. post_id : {post_id}, user_id : {i.user_id}")
+        return post_id
 
     def follow(self, id: int):
         """

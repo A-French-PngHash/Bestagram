@@ -38,8 +38,6 @@ def user_existing(id : int) -> bool:
     cursor.close()
     return len(result) == 1
 
-
-
 def get_user_id_from_username(username: str) -> int:
     """
     Fetch a user id from a username.
