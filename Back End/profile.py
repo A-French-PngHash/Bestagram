@@ -50,15 +50,20 @@ class Profile:
         return f'Medias/profile_picture/{self.id}'
 
     @property
-    def default_profile_picture(self):
-        return PIL.Image.open("default_avatar.png")
+    def default_profile_picture(self) -> bytes:
+        with open("default_avatar.png", 'rb') as f:
+            return f.read()
 
     @property
-    def profile_picture(self) -> PIL.Image:
-        if self.use_default_image:
-            return self.default_profile_picture
-        else:
-            return PIL.Image.open(os.path.join(self.profile_picture_directory, "picture.png"))
+    def profile_picture(self) -> bytes:
+        try:
+            if self.use_default_image:
+                return self.default_profile_picture
+            else:
+                with open(os.path.join(self.profile_picture_directory, "picture.png"), 'rb') as f:
+                    return f.read()
+        except Exception as e:
+            raise errors.UserNotExisting
 
     @property
     def profile_picture_api_route(self) -> str:

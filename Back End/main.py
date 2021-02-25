@@ -7,6 +7,7 @@ import database.mysql_connection
 import config
 import mysql.connector
 import files
+import database.connection_credentials
 from PIL import Image
 import os
 
@@ -31,10 +32,10 @@ api_app = Api(app)
 
 # Establishing connection.
 database.mysql_connection.cnx = mysql.connector.connect(
-    user=config.databaseUserName,
-    password=config.password,
-    host=config.host,
-    database=config.databaseName,
+    user=database.connection_credentials.databaseUserName,
+    password=database.connection_credentials.password,
+    host=database.connection_credentials.host,
+    database=database.connection_credentials.databaseName,
     use_pure=True)
 database.mysql_connection.cnx.autocommit = True
 

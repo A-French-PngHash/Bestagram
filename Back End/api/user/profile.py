@@ -1,9 +1,13 @@
+import base64
+
+import flask
 from flask_restful import Resource, reqparse
 import werkzeug
 import user
 from errors import *
 from PIL import Image
 from profile import Profile
+import io
 
 
 class ProfileUpdate(Resource):
@@ -82,5 +86,13 @@ class ProfilePicture(Resource):
         :return:
         """
         profile = Profile(id=id)
+        try:
+            profile_picture = profile.profile_picture
+        except BestagramException as e:
+            return e.get_response()
 
-        return {"success": True, "picture" : profile.profile_picture}, 200
+        response = flask.make_response(profile_picture)
+        response.headers.set('Content-Type', 'image/png')
+        response.headers.set(
+            'Content-Disposition', 'attachment', filename='picture.png')
+        return response

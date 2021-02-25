@@ -1,3 +1,4 @@
+import io
 import unittest
 from profile import Profile
 
@@ -229,6 +230,8 @@ class Tests(unittest.TestCase):
         )
         code = response.status_code
         content = response.get_json()
+        if not content:
+            return code, response.data
 
         return code, content
 
@@ -1091,16 +1094,33 @@ class Tests(unittest.TestCase):
     Profile picture tests
     --------------------------
     """
+    def profile_picture_path(self, id):
+        return f"Medias/profile_picture/{id}/picture.png"
 
     def test_GivenProfilePictureWhenGettingItThenIsCorrectImage(self):
         id = self.add_default_user()
         self.profile(default=True, image=self.image_square)
 
         code, content = self.profile_picture(id)
+        image = Image.open(io.BytesIO(content))
 
         self.assertEqual(200, code)
-        self.assertTrue(content["success"])
+        self.assertEqual(image, Image.open(self.profile_picture_path(id)))
 
+    def test_GivenNoUserWhenGettingProfilePictureOfUserThenRaiseUserNotExisting(self):
+        code, content = self.profile_picture(8)  # Should be an invalid id because no user have been created.
+
+        self.assertEqual((content, code), UserNotExisting.get_response())
+
+    def test_GivenProfilePictureWhenUpdatingAndRetrievingItThenIsNotTheSame(self):
+        id = self.add_default_user()
+        self.profile(default=True, image=self.image_landscape_small)
+
+        self.profile(default=True, image=self.image_square)
+        code, content = self.profile_picture(id)
+        image = Image.open(io.BytesIO(content))
+
+        self.assertEqual(Image.open(self.profile_picture_path(id)), image)
 
     def remove_all_from_db(self):
         delete_all_query = """

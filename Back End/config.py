@@ -1,8 +1,4 @@
 """ Contain configuration variables. """
-databaseUserName = "root"
-password = "password"
-host = "localhost"
-databaseName = "Bestagram"
 
 TOKEN_EXPIRATION = 3600
 """
