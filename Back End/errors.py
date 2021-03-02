@@ -140,8 +140,8 @@ class MissingInformation(BestagramException):
 
 class UserNotExisting(BestagramException):
     """
-    This username is not registered in the database (happens when a tag is trying to reference a non existing user or
-    when someone try to follow someone else).
+    This username is not registered in the database. Happens when data is being written to or get from a user which is
+    not existing.
     """
     success = False
     errorCode = 8

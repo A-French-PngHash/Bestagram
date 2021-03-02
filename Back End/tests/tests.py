@@ -1,6 +1,9 @@
+import io
 import unittest
+from profile import Profile
+
 import mysql.connector
-from user import *
+import user
 import os
 import config
 import database.request_utils
@@ -11,6 +14,8 @@ import main
 from PIL import Image
 import json
 import random
+import datetime
+from errors import *
 
 
 def create_db():
@@ -27,29 +32,38 @@ class Tests(unittest.TestCase):
     @property
     def image_square(self):
         with open('test_image.png') as file:
-            return ('test_image.png', file, 'image/png')
+            return 'test_image.png', file, 'image/png'
 
     @property
     def image_portrait(self):
         with open('1280-1920.png') as file:
-            return ('1280-1920.png', file, 'image/png')
+            return '1280-1920.png', file, 'image/png'
 
     @property
     def image_landscape_big(self):
         with open("3840-2160.png") as file:
-            return ("3840-2160.png", file, "image/png")
+            return "3840-2160.png", file, "image/png"
 
     @property
     def image_landscape_small(self):
         with open("474-266.png") as file:
-            return ("474-266.png", file, "image/png")
+            return "474-266.png", file, "image/png"
 
     default_hash = "hash"
     default_username = "test_username"
     default_name = "test_name"
     default_email = "test.test@bestagram.com"
-    default_tags = {"0": {"pos_x": 0.43, "pos_y": 0.87, "username": "john.fries"},
-                    "1": {"pos_x": 0.29, "pos_y": 0.44, "username": "titouan"}}
+
+    def tags(self, *args):
+        """
+        Return a list of tag.
+        :param args: Ids of the tags.
+        :return:
+        """
+        tags = {}
+        for (i, e) in enumerate(args):
+            tags[str(i)] = {"pos_x": 0.5, "pos_y": 0.5, "id": e}
+        return tags
 
     def get_token(self, default: bool, token : str = None) -> str:
         """
@@ -116,15 +130,16 @@ class Tests(unittest.TestCase):
             name = self.random_string(config.MAX_NAME_LENGTH)
         if not hash:
             hash = self.random_string(50)
+        else:
+            # When the hash get to the server there is suppose to be some hashing on it. Because we don't go through
+            # the endpoint in this method we need to simulate this hashing.
+            hash = user.make_server_side_hash(old_hash=hash, username=username)
+
         if not refresh_token:
-            refresh_token = generate_token()
+            refresh_token = user.generate_token()
         registration_date = None
         if token:
             registration_date = datetime.datetime.today().replace(microsecond=0)
-
-        # When the hash get to the server there is suppose to be some hashing on it. Because we don't go through
-        # the endpoint in this method we need to simulate this hashing.
-        hash = make_server_side_hash(old_hash=hash, username=username)
 
         add_user_query = f"""
         INSERT INTO UserTable (username, name, email, hash, refresh_token {", token" if token else ""} {",token_registration_date" if registration_date else ""})
@@ -165,8 +180,14 @@ class Tests(unittest.TestCase):
         })
         return code, content
 
-    def add_default_user(self, token: str = None, refresh_token: str = None):
-        self.add_user(username=self.default_username,
+    def add_default_user(self, token: str = None, refresh_token: str = None) -> int:
+        """
+        Add the default user.
+        :param token: Token to add to the user.
+        :param refresh_token: Refresh token to add to the user.
+        :return: Id of the default user.
+        """
+        return self.add_user(username=self.default_username,
                       name=self.default_name,
                       hash=self.default_hash,
                       email=self.default_email,
@@ -209,6 +230,8 @@ class Tests(unittest.TestCase):
         )
         code = response.status_code
         content = response.get_json()
+        if not content:
+            return code, response.data
 
         return code, content
 
@@ -287,7 +310,29 @@ class Tests(unittest.TestCase):
         """
         Refresh the token by using the dedicated endpoint.
         """
-        return self.ex_request("POST", route=f"user/login/refresh/{refresh_token}")
+        return self.ex_request("POST", route=f"/user/login/refresh/{refresh_token}")
+
+    def profile(self, default: bool, caption : str = None, public : bool = None, image : tuple = None, username : str = None, name : str = None, token: str = None):
+        """
+        Update the profile using the API.
+        :return:
+        """
+        authorization = self.get_token(default, token)
+        code, content = self.ex_request("PATCH", route=f"/user/profile", headers={"Authorization" : authorization}, params={"caption" : caption, "public" : public, "username" : username, "name" : name}, file=image)
+        return code, content
+
+    def profile_picture(self, id: int):
+        """
+        Get the profile picture for this user's id.
+        :param id:
+        :return:
+        """
+        code, content = self.ex_request("GET", route=f"/user/{id}/profile/picture")
+        return code, content
+
+    def get_profile(self, id : int):
+        code, content = self.ex_request("GET", route=f"/user/{id}/profile/data")
+        return code, content
 
     @classmethod
     def setUpClass(cls):
@@ -306,8 +351,9 @@ class Tests(unittest.TestCase):
         database.mysql_connection.cnx.autocommit = True
         self.cursor = database.mysql_connection.cnx.cursor(dictionary=True)
 
+
         try:
-            # Erase directory named Posts if exists.
+            # Erase profile_picture_directory named Posts if exists.
             shutil.rmtree("Posts")
         except:
             pass
@@ -379,7 +425,7 @@ class Tests(unittest.TestCase):
 
         raised_invalid_credentials = False
         try:
-            User(token=token)
+            user.User(token=token)
         except InvalidCredentials:
             raised_invalid_credentials = True
 
@@ -429,7 +475,6 @@ class Tests(unittest.TestCase):
         self.assertEqual(200, code)
         self.assertTrue(content["success"])
         self.assertEqual(token, content["token"])
-
 
     """
     --------------------------
@@ -583,13 +628,14 @@ class Tests(unittest.TestCase):
         image = self.image_portrait
 
         # When posting.
+        id = self.add_default_user()
         code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
         self.assertEqual(code, 200)
         self.assertEqual(True, content["success"])
-        new_im = Image.open(f"Posts/{self.default_username}/0.png")
-        self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
+        new_im = Image.open(f"""Medias/image/{id}/{content["id"]}.png""")
+        self.assertEqual(new_im.size, (config.IMAGE_DIMENSION, config.IMAGE_DIMENSION))
         new_im.close()
 
     def test_GivenImageIsInLandscapeModeWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
@@ -597,13 +643,14 @@ class Tests(unittest.TestCase):
         image = self.image_landscape_big
 
         # When posting.
+        id = self.add_default_user()
         code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
         self.assertEqual(code, 200)
         self.assertEqual(True, content["success"])
-        new_im = Image.open(f"Posts/{self.default_username}/0.png")
-        self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
+        new_im = Image.open(f"""Medias/image/{id}/{content["id"]}.png""")
+        self.assertEqual(new_im.size, (config.IMAGE_DIMENSION, config.IMAGE_DIMENSION))
         new_im.close()
 
     def test_GivenImageUnderFinalResolutionWhenPostingThenIsSuccessfulAndCreatedInCorrectSize(self):
@@ -611,19 +658,20 @@ class Tests(unittest.TestCase):
         image = self.image_landscape_small
 
         # When posting.
+        id = self.add_default_user()
         code, content = self.post(default=True, file=image)
 
         # Then is successful and created in correct size.
         self.assertEqual(code, 200)
         self.assertEqual(True, content["success"])
-        new_im = Image.open(f"Posts/{self.default_username}/0.png")
-        self.assertEqual(new_im.size, (config.DEFAULT_IMAGE_DIMENSION, config.DEFAULT_IMAGE_DIMENSION))
+        new_im = Image.open(f"""Medias/image/{id}/{content["id"]}.png""")
+        self.assertEqual(new_im.size, (config.IMAGE_DIMENSION, config.IMAGE_DIMENSION))
         new_im.close()
 
     def test_GivenPostingImageWhenRetrievingImageDataFromDatabaseThenIsCorrectData(self):
         # Given posting image.
-        self.add_default_user()
         caption = "this is a caption"
+        id = self.add_default_user()
         code, content = self.post(default=True, file=self.image_square, caption=caption)
 
         # When retrieving image data from database.
@@ -632,16 +680,18 @@ class Tests(unittest.TestCase):
         self.cursor.execute(query)
         result = self.cursor.fetchall()[0]
 
-        self.assertEqual(result["caption"], caption)
-        self.assertEqual(result["image_path"], f"Posts/{self.default_username}/0.png")
+        self.assertEqual(caption, result["caption"])
+        self.assertEqual(id, result["user_id"])
 
     """
+    --------------------------
     Tag test
+    --------------------------
     """
 
     def test_GivenHavingTagLinkingNonExistingUserWhenPostingThenDoesntAddTags(self):
-        # Given having tag linking existing user.
-        tags = self.default_tags
+        # Given having tag linking non existing user.
+        tags = self.tags(5) # No user should have a id to 5 as there should only be one user in db (default)
 
         # When posting.
         code, content = self.post(default=True, file=self.image_square, tag=tags)
@@ -658,9 +708,11 @@ class Tests(unittest.TestCase):
 
     def test_GivenHavingTagLinkingExistingUserWhenPostingThenAddTags(self):
         # Given having tag with linking existing user.
-        self.add_user(username="john.fries")
-        self.add_user(username="titouan")
-        tags = self.default_tags
+        user1 = "john.fries"
+        user2 = "titouan"
+        id1 = self.add_user(username=user1)
+        id2 = self.add_user(username=user2)
+        tags = self.tags(id1, id2)
 
         # When posting.
         code, content = self.post(default=True, file=self.image_square, tag=tags)
@@ -677,9 +729,8 @@ class Tests(unittest.TestCase):
 
     def test_GivenTagLinkingToTheSameUserWhenPostingThenAddOnlyOne(self):
         # Given tag linking to the same user.
-        self.add_user(username="john.fries")
-        tags = {"0": {"pos_x": 0.5, "pos_y": 0.3, "username": "john.fries"},
-                "1": {"pos_x": 0.3, "pos_y": 0.5, "username": "john.fries"}}
+        id_john = self.add_user(username="john.fries")
+        tags = self.tags(id_john, id_john)
 
         # When posting.
         code, content = self.post(default=True, file=self.image_square, tag=tags)
@@ -893,19 +944,199 @@ class Tests(unittest.TestCase):
         result = self.cursor.fetchall()
         self.assertEqual(1, len(result))
 
+    """
+    --------------------------
+    Profile update tests
+    --------------------------
+    """
 
-    def tearDown(self) -> None:
-        delete_all_query = """
-        DELETE FROM Follow;
-        DELETE FROM Tag;
-        DELETE FROM LikeTable;
-        DELETE FROM Post;
-        DELETE FROM UserTable;
+    def test_GivenNewProfileDataWhenUpdatingThenIsUpdatedInDatabase(self):
+        caption = "test unique caption"
+        public = False # By default profile visibility is set to public.
+        new_username = "azertyuiojfkd"
+        new_name = "thisismynewname"
+        code, content = self.profile(default=True, public=public, caption=caption, username=new_username, name=new_name)
+
+        get_profile_data_query = f"""
+        SELECT public_profile, caption, username, name FROM UserTable
+        WHERE username = "{new_username}";
         """
+        self.cursor.execute(get_profile_data_query)
+        result = self.cursor.fetchall()[0]
+        self.assertEqual(200, code)
+        self.assertEqual(content["success"], True)
+        self.assertEqual(caption, result["caption"])
+        self.assertEqual(public, result["public_profile"])
+        self.assertEqual(new_username, result["username"])
+        self.assertEqual(new_name, result["name"])
+
+    def test_GivenNoProfilePictureWhenUpdatingWithNewProfilePictureThenIsAddedInFilesAndUpdatedInDatabase(self):
+        id = self.add_default_user()
+        code, content = self.profile(default=True, image=self.image_landscape_small)
+
+        get_profile_data_query = f"""
+        SELECT use_default_picture FROM UserTable
+        WHERE id = {id};
+        """
+        self.cursor.execute(get_profile_data_query)
+        result = self.cursor.fetchall()[0]
+        self.assertEqual(200, code)
+        self.assertEqual(content["success"], True)
+        path = f'Medias/profile_picture/{id}'
+        self.assertFalse(result["use_default_picture"])
+        self.assertTrue(os.path.isfile(path + "/picture.png"))
+        self.assertEqual(1, len(os.listdir(path)))
+
+    def test_GivenProfilePictureWhenUpdatingWithNewProfilePictureThenIsReplacedInFiles(self):
+        # Given profile picture.
+        id = self.add_default_user()
+        self.profile(default=True, image=self.image_landscape_small)
+        path = f"Medias/profile_picture/{id}"
+        first_image = Image.open(path + "/picture.png")
+
+        # When updating...
+        code, content = self.profile(default=True, image=self.image_portrait)
+        second_image = Image.open(path + "/picture.png")
+
+        self.assertEqual(200, code)
+        self.assertEqual(content["success"], True)
+        self.assertEqual(1, len(os.listdir(path)))
+        self.assertNotEqual(first_image, second_image)
+
+    def test_GivenUserWhenUpdatingAnotherUserProfileByReplacingUsernameWithSameUsernameAsOtherUserThenRaiseUsernameTaken(self):
+        self.add_default_user()
+        token = "token"
+        self.add_user(token=token)
+
+        code, content = self.profile(default=False, username=self.default_username, token=token)
+
+        self.assertEqual((content, code), UsernameTaken.get_response())
+
+    """
+    --------------------------
+    Profile data tests
+    --------------------------
+    """
+
+    def test_GivenProfileDataWhenRetrievingItThenIsCorrect(self):
+        id = self.add_default_user()
+        username = "newusername"
+        name = "newname"
+        caption = "newcaption"
+        public = False
+        self.profile(default=True, username=username, caption=caption, name=name, public=public)
+
+        code, content = self.get_profile(id)
+
+        self.assertEqual(200, code)
+        self.assertTrue(content["success"])
+        profile_data = content["data"]
+        self.assertEqual(username, profile_data["username"])
+        self.assertEqual(name, profile_data["name"])
+        self.assertEqual(caption, profile_data["caption"])
+        self.assertEqual(public, profile_data["public_profile"])
+        self.assertEqual(0, profile_data["follower"])
+        self.assertEqual(0, profile_data["following"])
+
+
+    def test_GivenSixFollowersAndThreeFollowingWhenRetrievingProfileDataThenCorrectNumbers(self):
+        follower_id = []
+        following_id = []
+        number_of_follower = 5
+        number_of_following = 3
+        for i in range(number_of_follower):
+            follower_id.append(self.add_user())
+        for i in range(number_of_following):
+            following_id.append(self.add_user())
+
+        # Adding a user both followed and following to try seeking errors in the server code.
+        number_of_follower += 1
+        follower_id.append(following_id[0])
+        default_id = self.add_default_user()
+        for i in following_id:
+            self.follow_db(default=False, user_id_followed=i, user_id=default_id)
+        for i in follower_id:
+            self.follow_db(default=False, user_id_followed=default_id, user_id=i)
+
+        code, content = self.get_profile(default_id)
+        profile_data = content["data"]
+
+        self.assertEqual(200, code)
+        self.assertTrue(content["success"])
+        self.assertEqual(number_of_follower, profile_data["follower"])
+        self.assertEqual(number_of_following, profile_data["following"])
+
+    def test_GivenNoUserWhenRetrievingProfileDataThenRaiseUserNotExistingError(self):
+
+        code, content = self.get_profile(8) # No user with that id (empty db)
+
+        self.assertEqual(UserNotExisting.get_response(), (content, code))
+
+    def test_GivenNoProfilePictureWhenUpdatingProfileWithProfilePictureThenIsAddedInCorrectDirectory(self):
+        new_picture = self.image_square
+
+        id = self.add_default_user()
+        self.profile(default=True, image=new_picture)
+
+        self.assertTrue(os.path.exists(f"Medias/profile_picture/{id}/picture.png"))
+
+    def test_GivenProfilePictureWhenGettingProfileDataThenSendCorrectRoute(self):
+        picture = self.image_square
+        id = self.add_default_user()
+        self.profile(default=True, image=picture)
+
+        code, content = self.get_profile(id)
+
+        self.assertEqual(f"/user/{id}/profile/picture", content["data"]["profile_picture_route"])
+
+    """
+    --------------------------
+    Profile picture tests
+    --------------------------
+    """
+    def profile_picture_path(self, id):
+        return f"Medias/profile_picture/{id}/picture.png"
+
+    def test_GivenProfilePictureWhenGettingItThenIsCorrectImage(self):
+        id = self.add_default_user()
+        self.profile(default=True, image=self.image_square)
+
+        code, content = self.profile_picture(id)
+        image = Image.open(io.BytesIO(content))
+
+        self.assertEqual(200, code)
+        self.assertEqual(image, Image.open(self.profile_picture_path(id)))
+
+    def test_GivenNoUserWhenGettingProfilePictureOfUserThenRaiseUserNotExisting(self):
+        code, content = self.profile_picture(8)  # Should be an invalid id because no user have been created.
+
+        self.assertEqual((content, code), UserNotExisting.get_response())
+
+    def test_GivenProfilePictureWhenUpdatingAndRetrievingItThenIsNotTheSame(self):
+        id = self.add_default_user()
+        self.profile(default=True, image=self.image_landscape_small)
+
+        self.profile(default=True, image=self.image_square)
+        code, content = self.profile_picture(id)
+        image = Image.open(io.BytesIO(content))
+
+        self.assertEqual(Image.open(self.profile_picture_path(id)), image)
+
+    def remove_all_from_db(self):
+        delete_all_query = """
+                DELETE FROM Follow;
+                DELETE FROM Tag;
+                DELETE FROM LikeTable;
+                DELETE FROM Post;
+                DELETE FROM UserTable;
+                """
         result = self.cursor.execute(delete_all_query, multi=True)
         for i in result:
             pass
+
+    def tearDown(self) -> None:
+        self.remove_all_from_db()
         try:
-            shutil.rmtree("Posts")
+            shutil.rmtree("Medias")
         except:
             pass

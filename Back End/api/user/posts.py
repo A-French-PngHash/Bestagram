@@ -1,13 +1,13 @@
-from flask import Flask, request
-from flask_restful import Resource, Api, reqparse
+from flask_restful import Resource, reqparse, request
 import werkzeug
-from user import User
-from database.request_utils import *
+import user
+from database import request_utils
 from errors import *
-from tag import *
-from json import loads
+import tag
+import json
+from PIL import Image
 
-
+#TODO: - Replace tag user identification with id
 class Post(Resource):
     """
     Retrieve or put posts using this endpoint.
@@ -22,13 +22,13 @@ class Post(Resource):
                 {
                     "x_pos" : 0.43,
                     "y_pos" : 0.87,
-                    "username" : "john.fries"
+                    "id" : 1
                 },
                 "1" :
                 {
                     "x_pos" : 0.29,
                     "y_pos" : 0.44,
-                    "username" : "titouan"
+                    "id" : 2
                 }
             }
         }
@@ -58,13 +58,13 @@ class Post(Resource):
         params = parser.parse_args()
         tags = params["tag"]
         if tags:
-            tags = loads(tags)
+            tags = json.loads(tags)
 
         if params["image"] == "":  # Caption is not mandatory.
             return MissingInformation.get_response()
 
         try:
-            user = User(token=params["Authorization"])
+            userobj = user.User(token=params["Authorization"])
         except BestagramException as e:
             return e.get_response()
 
@@ -73,12 +73,14 @@ class Post(Resource):
 
         try:
             for i in tags:
-                tag = tags[i]
+                thistag = tags[i]
                 try:
-                    id = get_user_id_from_username(username=tag["username"])
-                    tag = Tag(user_id=id, pos_x=tag["pos_x"], pos_y=tag["pos_y"])
-                    if tag not in tags_list:  # Prevent redundant tags_list with the same person tagged.
-                        tags_list.append(tag)
+                    id = thistag["id"]
+                    if not request_utils.user_existing(id):
+                        continue
+                    thistag = tag.Tag(user_id=id, pos_x=thistag["pos_x"], pos_y=thistag["pos_y"])
+                    if thistag not in tags_list:  # Prevent redundant tags_list with the same person tagged.
+                        tags_list.append(thistag)
                 except UserNotExisting:
                     pass
                 except Exception as e:
@@ -89,6 +91,6 @@ class Post(Resource):
             # tags in this case.
             print("Error while parsing json : ", e)
 
-        img = params["image"]
-        user.create_post(img, caption=params["caption"], tags=tags_list)
-        return {"success": True}, 200
+        img = Image.open(params["image"].stream)
+        post_id = userobj.create_post(img, caption=params["caption"], tags=tags_list)
+        return {"success": True, "id" : post_id}, 200

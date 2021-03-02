@@ -5,11 +5,14 @@ import re
 import werkzeug
 import config
 import database.mysql_connection
-from database.request_utils import value_in_database
+from database import request_utils
 from errors import *
-from tag import *
+import tag
 from PIL import Image
 import hashlib
+import profile
+import images
+import files
 
 
 def generate_token() -> str:
@@ -128,7 +131,7 @@ class User:
 
         self.hash = hash
         self._caption = result["caption"]
-        self._profile_image_path = result["profile_image_path"]
+        self._profile = None
 
     def __del__(self):
         try:
@@ -189,20 +192,10 @@ class User:
     @property
     def directory(self) -> str:
         """
-        Path leading to the directory where post's images from this user are stored.
+        Path leading to the image directory where post's images from this user are stored.
         :return:
         """
-        return f'Posts/{self.username}'
-
-    @property
-    def temp_directory(self) -> str:
-        """
-        Path leading to the temp directory. Image are first stored there, resized, compressed and then stored in
-        the correct file.
-        :return:
-        """
-        # $ can't be in a username so we know that this is a unique directory and won't override any existing directory.
-        return f'Posts/$temp'
+        return f'Medias/image/{self.id}'
 
     @property
     def number_of_post(self) -> int:
@@ -216,6 +209,13 @@ class User:
         """
         self.cursor.execute(get_posts_request)
         return len(self.cursor.fetchall())
+
+    @property
+    def profile(self) -> profile.Profile:
+        if self._profile:
+            return self._profile
+        self._profile = profile.Profile(self)
+        return self._profile
 
     def _set_value(self, values: dict):
         """
@@ -238,95 +238,32 @@ class User:
         """
         self.cursor.execute(query)
 
-    def resize_image(self, image: Image, length: int) -> Image:
-        """
-        Resize an image to a square. Can make an image bigger to make it fit or smaller if it doesn't fit. It also crops
-        part of the image.
 
-        :param self:
-        :param image: Image to resize.
-        :param length: Width and height of the output image.
-        :return: Return the resized image.
-        """
+    #TODO: - Move post related method to a separate post class
 
-        """
-        Resizing strategy : 
-         1) We resize the smallest side to the desired dimension (e.g. 1080)
-         2) We crop the other side so as to make it fit with the same length as the smallest side (e.g. 1080)
-        """
-        if image.size[0] < image.size[1]:
-            # The image is in portrait mode. Height is bigger than width.
-
-            # This makes the width fit the LENGTH in pixels while conserving the ration.
-            resized_image = image.resize((length, int(image.size[1] * (length / image.size[0]))))
-
-            # Amount of pixel to lose in total on the height of the image.
-            required_loss = (resized_image.size[1] - length)
-
-            # Crop the height of the image so as to keep the center part.
-            resized_image = resized_image.crop(
-                box=(0, required_loss / 2, length, resized_image.size[1] - required_loss / 2))
-
-            # We now have a 1080x1080 pixels image.
-            return resized_image
-        else:
-            # This image is in landscape mode or already squared. The width is bigger than the heihgt.
-
-            # This makes the height fit the LENGTH in pixels while conserving the ration.
-            resized_image = image.resize((int(image.size[0] * (length / image.size[1])), length))
-
-            # Amount of pixel to lose in total on the width of the image.
-            required_loss = resized_image.size[0] - length
-
-            # Crop the width of the image so as to keep 1080 pixels of the center part.
-            resized_image = resized_image.crop(
-                box=(required_loss / 2, 0, resized_image.size[0] - required_loss / 2, length))
-
-            # We now have a 1080x1080 pixels image.
-            return resized_image
-
-    def create_post(self, image: werkzeug.datastructures.FileStorage, caption: str, tags: [Tag]):
+    def create_post(self, image: Image, caption: str, tags: [tag.Tag]) -> int:
         """
         Create a post from this user.
         :param image: Post's image.
         :param caption: Caption provided with the post.
         :param tags: List of this post's tags.
-        :return:
+        :return: The id of the newly created post.
         """
-        self.prepare_directory(self.directory)
-        self.prepare_directory(self.temp_directory)
+        files.prepare_directory(self.directory)
 
-        image.filename = f"{self.number_of_post}.png"
-        temp_image_path = os.path.join(self.temp_directory, image.filename)
-
-        # Dir where the image will be stored after its resizing
-        final_image_path = os.path.join(self.directory, image.filename)
-
-        # Saving the image in the temp directory.
-        image.save(temp_image_path)
-        image.close()
-
-        # NOTE: The image is stored in a temporary directory to be able to open it in the PIL.Image format which can be
-        # used for resizing.
-
-        resized_image = Image.open(temp_image_path)
-        resized_image = self.resize_image(resized_image, config.DEFAULT_IMAGE_DIMENSION)
-
-        # Saving to final directory.
-        resized_image.save(final_image_path)
-        # Removing the temporary image created.
-        os.remove(temp_image_path)
+        resized_image = images.resize_image(image, config.IMAGE_DIMENSION)
 
         create_post_query = f"""
         START TRANSACTION;
             INSERT INTO Post
             VALUES(
-            NULL, "{final_image_path}", {self.id}, "{datetime.datetime.now().replace(microsecond=0)}", "{caption}"
+            NULL, {self.id}, "{datetime.datetime.now().replace(microsecond=0)}", "{caption}"
             );
             
             SELECT LAST_INSERT_ID();
         COMMIT;
         """
+
         iterable = self.cursor.execute(create_post_query, multi=True)
         # 4 request are made a the same time. The third is the select one.
         index = 0
@@ -338,16 +275,19 @@ class User:
             index += 1
 
         post_id = result[0]["LAST_INSERT_ID()"]
-        for i in tags:
-            i.save(post_id)
 
-    def prepare_directory(self, dir: str):
-        """
-        Prepare the directory to store a post's image in. Create it if it not already exists.
-        :return:
-        """
-        if not os.path.exists(dir):
-            os.makedirs(dir)
+        image.filename = f"{post_id}.png"
+        # Dir where the image is stored.
+        final_image_path = os.path.join(self.directory, image.filename)
+        # Saving image.
+        resized_image.save(final_image_path)
+
+        for i in tags:
+            try:
+                i.save(post_id)
+            except UserNotExisting:
+                print(f"User not existing. post_id : {post_id}, user_id : {i.user_id}")
+        return post_id
 
     def follow(self, id: int):
         """
@@ -403,11 +343,11 @@ class User:
         if not name_is_valid(name):
             raise InvalidName(name=name)
 
-        if value_in_database("UserTable", "username", username):
+        if request_utils.value_in_database("UserTable", "username", username):
             # Username is taken.
             raise UsernameTaken(username=username)
 
-        if value_in_database("UserTable", "email", email):
+        if request_utils.value_in_database("UserTable", "email", email):
             # Email is taken.
             raise EmailTaken(email=email)
 
@@ -433,8 +373,8 @@ class User:
         :param search: Search string.
         :param offset: Offset to begin at. Begins at 0.
         :param row_count: Number of results to have. Must be less
-        :return: Returns a dictionary containing the id of the user whose username match the search. Dictionary key
-        begins from the offset.
+        :return: Returns a dictionary of dictionary containing the id of the user (+ its name and username) whose username match the
+        search. First dctionary keys are the rank in the search (the lowest, the more matching), begins from the offset.
         """
 
         search_str = "%" + "%".join(search) + "%"
@@ -455,7 +395,7 @@ class User:
         # This query select user matching the search query which the current user follow.
         followed_search_query = f"""
         SELECT name, username, id, (SELECT COUNT(*) FROM Follow WHERE user_id_followed = id) AS followers FROM UserTable 
-        JOIN Follow ON Follow.user_id_followed = UserTable.id 
+        JOIN Follow ON Follow.user_id_followed = UserTable.id
         WHERE UserTable.name LIKE "{search_str}" AND Follow.user_id = {self.id}
         ORDER BY followers DESC, name ASC
         LIMIT {offset}, {row_count};

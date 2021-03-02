@@ -65,7 +65,7 @@ Dependencies are :
 
 You can install them through **pip** : 
 
-    pip -r requirements.txt
+	pip -r requirements.txt
 
 
 ## Differences from the original Instagram app

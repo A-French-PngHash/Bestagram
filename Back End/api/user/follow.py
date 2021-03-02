@@ -1,13 +1,13 @@
 from flask_restful import Resource, reqparse
-from user import *
-
+import user
+from errors import *
 
 class Follow(Resource):
     """
     Follow a user.
     """
 
-    def post(self, **kwargs):
+    def post(self, id):
         """
         Headers :
             - Authorization : Token of the current user.
@@ -16,18 +16,18 @@ class Follow(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("Authorization", location="headers")
         params = parser.parse_args()
-        params["id"] = kwargs["id"]
+        params["id"] = id
 
         if not (params["id"] and params["Authorization"]):
             return MissingInformation.get_response()
 
         try:
-            user = User(token=params["Authorization"])
+            userobj = user.User(token=params["Authorization"])
         except BestagramException as e:
             return e.get_response()
 
         try:
-            user.follow(int(params["id"]))
+            userobj.follow(int(params["id"]))
         except BestagramException as e:
             return e.get_response()
         return {"success": True}, 200

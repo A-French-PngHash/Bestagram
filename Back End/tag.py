@@ -1,4 +1,6 @@
 import database.mysql_connection
+import database.request_utils
+import errors
 
 
 class Tag:
@@ -23,6 +25,8 @@ class Tag:
         Save this object in the Tag table.
         :param post_id:
         """
+        if not database.request_utils.user_existing(self.user_id):
+            raise errors.UserNotExisting
         query = f"""
         INSERT INTO Tag
         VALUES({post_id}, {self.user_id}, {self.pos_x}, {self.pos_y}); 

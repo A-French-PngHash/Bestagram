@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from errors import *
-from user import *
+import user
 
 
 class Search(Resource):
@@ -21,10 +21,10 @@ class Search(Resource):
         if not (params["offset"] and params["rowCount"] and params["Authorization"]):
             return MissingInformation.get_response()
         try:
-            user = User(token=params["Authorization"])
+            userobj = user.User(token=params["Authorization"])
         except BestagramException as e:
             return e.get_response()
 
-        results = user.search_for(params["search"], offset=int(params["offset"]), row_count=int(params["rowCount"]))
+        results = userobj.search_for(params["search"], offset=int(params["offset"]), row_count=int(params["rowCount"]))
         response = {"result": results, "success": True}
         return response, 200

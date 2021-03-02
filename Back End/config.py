@@ -1,8 +1,4 @@
 """ Contain configuration variables. """
-databaseUserName = "root"
-password = "password"
-host = "localhost"
-databaseName = "Bestagram"
 
 TOKEN_EXPIRATION = 3600
 """
@@ -24,7 +20,8 @@ MAX_NAME_LENGTH = 50
 MIN_NAME_LENGTH = 1
 
 
-DEFAULT_IMAGE_DIMENSION = 1080
+IMAGE_DIMENSION = 1080
 """
 Dimension to resize the images to when an upload is made.
 """
+PROFILE_PICTURE_DIMENSION = 150
