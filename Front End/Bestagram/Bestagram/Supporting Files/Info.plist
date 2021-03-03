@@ -2,22 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need to access the camera in order for you to be able to share posts and stories.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>We need to access the camera in order for you to be able to share posts and stories.</string>
-	<key>NSAppTransportSecurity</key>
-	<dict/>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Proxima Nova Thin.otf</string>
-		<string>Langar.ttf</string>
-		<string>Proxima Nova Regular.otf</string>
-		<string>Proxima Nova Bold.otf</string>
-		<string>Billabong.ttf</string>
-	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Bestagram</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -34,6 +22,20 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict/>
+	<key>NSCameraUsageDescription</key>
+	<string>We need to access the camera in order for you to be able to share posts and stories.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need to access the camera in order for you to be able to share posts and stories.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Proxima Nova Thin.otf</string>
+		<string>Langar.ttf</string>
+		<string>Proxima Nova Regular.otf</string>
+		<string>Proxima Nova Bold.otf</string>
+		<string>Billabong.ttf</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -50,8 +52,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
