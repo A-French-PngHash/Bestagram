@@ -91,7 +91,7 @@ struct PostSettingView: View {
 
     var body: some View {
         VStack {
-            TopBarView(trailingButtonText: "Share", titleText: "Create post") {
+            TopBarView(presentationMode : presentationMode, trailingButtonText: "Share", titleText: "Create post") {
                 //TODO: - When creating home view then link the press of this button to the view.
                 user.getToken { (success, token, error) in
                     if let token = token, success {

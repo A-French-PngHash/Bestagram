@@ -15,56 +15,96 @@ struct PictureSelectionView: View {
     @State var presentImagePicker: Bool = false
 
     /// Selected image.
-    @State var selectedImage: UIImage = UIImage(systemName: "photo.fill")!
+    @State var selectedImage: UIImage = UIImage()
+
     /// Execute transition to next view
     @State var goNextView: Bool = false
+    @State var showPictureSelectionViewFully = false
 
     /// User currently connected.
     var user : User
 
-    var body: some View {
-        VStack {
-            ZStack {
-                HStack {
-                    Spacer()
-                        .frame(width: 10)
-                    Image(systemName: "xmark")
-                        .font(.title)
-                    Spacer()
-                    // Show next button if the image isn't the default one and if the loaded image is the full size one.
-                    if selectedImage != UIImage(systemName: "photo.fill")! {
-                        Button(action: {
-                            goNextView = true
-                        }, label: {
-                            Text("Next")
-                                .font(ProximaNova.bodyBold)
-                        })
-                    } else if selectedImage != UIImage(){
-                        ProgressView()
+    var dragGesture : some Gesture {
+        DragGesture(minimumDistance: 0, coordinateSpace: .local)
+            .onChanged { value in
+                let horizontalAmount = value.translation.width as CGFloat
+                let verticalAmount = value.translation.height as CGFloat
+
+                if abs(verticalAmount) / abs(horizontalAmount) > 2{
+                    if verticalAmount < 0 {
+                        // up.
+                        withAnimation() {
+                            showPictureSelectionViewFully = true
+                        }
+
+
+                    } else {
+                        // down.
+                        withAnimation {
+                            showPictureSelectionViewFully = false
+                        }
                     }
-                    Spacer()
-                        .frame(width: 10)
-                }
-                HStack {
-                    Spacer()
-                    Text("New Post")
-                        .font(ProximaNova(size: 15, bold: true).font)
-                    Spacer()
+                    print(verticalAmount < 0 ? "up swipe" : "down swipe")
                 }
             }
+    }
 
-            Image(uiImage: selectedImage)
-                .frame(width: UIScreen.screenWidth, height: UIScreen.screenWidth, alignment: .center)
+    var topView : some View {
+        ZStack {
+            HStack {
+                Spacer()
+                    .frame(width: 10)
+                Image(systemName: "xmark")
+                    .font(.title)
+                Spacer()
+                // Show next button if the image isn't the default one and if the loaded image is the full size one.
+                if selectedImage != UIImage() {
+                    Button(action: {
+                        goNextView = true
+                    }, label: {
+                        Text("Next")
+                            .font(ProximaNova.bodyBold)
+                    })
+                }
 
-            PhotoPicker(filter: .images, limit: 1) { (results) in
-                PhotoPicker.convertToUIImageArray(fromResults: results) { (images, error) in
-                    guard (error == nil) else {
-                        print(error)
-                        return
+                Spacer()
+                    .frame(width: 10)
+            }
+            HStack {
+                Spacer()
+                Text("New Post")
+                    .font(ProximaNova(size: 15, bold: true).font)
+                Spacer()
+            }
+        }
+    }
+
+    var body: some View {
+        VStack {
+            Spacer()
+            topView
+            ZStack {
+                VStack {
+                    Image(uiImage: selectedImage)
+                        .resizable()
+                        .frame(width: UIScreen.screenWidth, height: UIScreen.screenWidth, alignment: .center)
+                    Spacer()
+                }
+                VStack {
+                    Spacer()
+                    PhotoPicker(filter: .images, limit: 1) { (results) in
+                        PhotoPicker.convertToUIImageArray(fromResults: results) { (images, error) in
+                            guard (error == nil) else {
+                                print(error)
+                                return
+                            }
+                            if let images = images, images.count > 0 {
+                                self.selectedImage = images[0].makeResizedImage(sideLength: BestagramApp.defaultImageSideLength)!
+                            }
+                        }
                     }
-                    if let images = images, images.count > 0 {
-                        self.selectedImage = images[0]
-                    }
+                    .transition(.move(edge: .bottom))
+                    .frame(width: UIScreen.screenWidth, height: self.showPictureSelectionViewFully ? UIScreen.screenHeight/1.5 : UIScreen.screenHeight/3, alignment: .center)
                 }
             }
 
@@ -77,6 +117,7 @@ struct PictureSelectionView: View {
 
             Spacer()
         }
+        .gesture(dragGesture)
         .navigationBarHidden(true)
     }
 }
@@ -93,6 +134,7 @@ struct PhotoPicker: UIViewControllerRepresentable {
         configuration.filter = filter
         configuration.selectionLimit = limit
         let controller = PHPickerViewController(configuration: configuration)
+
 
         controller.preferredContentSize = CGSize(width:400, height:200)
         controller.delegate = context.coordinator
@@ -125,12 +167,12 @@ struct PhotoPicker: UIViewControllerRepresentable {
 
     static func convertToUIImageArray(fromResults results: [PHPickerResult], onComplete: @escaping ([UIImage]?, Error?) -> Void) {
         var images = [UIImage]()
-
         let dispatchGroup = DispatchGroup()
 
         for result in results {
             dispatchGroup.enter()
             let itemProvider = result.itemProvider
+
             if itemProvider.canLoadObject(ofClass: UIImage.self) {
                 itemProvider.loadObject(ofClass: UIImage.self) { (imageOrNil, errorOrNil) in
                     if let error = errorOrNil {

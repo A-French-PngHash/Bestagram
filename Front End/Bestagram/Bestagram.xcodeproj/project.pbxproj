@@ -47,6 +47,7 @@
 		5BCDF4D0259FE466001B851F /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCDF4CF259FE466001B851F /* SearchBar.swift */; };
 		5BDCB8F42586B34C00056B2B /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDCB8F32586B34C00056B2B /* LoginService.swift */; };
 		5BDCB8FC2586B77F00056B2B /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDCB8FB2586B77F00056B2B /* Api.swift */; };
+		5BE5400225EFE0FD00FAB7A0 /* resizeImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE5400125EFE0FC00FAB7A0 /* resizeImageExtension.swift */; };
 		5BE70E042571C43300187FF1 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE70E032571C43300187FF1 /* User.swift */; };
 		5BF0BAE725865DAB00C3B9FB /* EnterLoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */; };
 		5BF0BAEC25865E6D00C3B9FB /* Billabong.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BF0BAEB25865E6D00C3B9FB /* Billabong.ttf */; };
@@ -131,6 +132,7 @@
 		5BCDF4CF259FE466001B851F /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		5BDCB8F32586B34C00056B2B /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		5BDCB8FB2586B77F00056B2B /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		5BE5400125EFE0FC00FAB7A0 /* resizeImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = resizeImageExtension.swift; sourceTree = "<group>"; };
 		5BE70E032571C43300187FF1 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterLoginInfoView.swift; sourceTree = "<group>"; };
 		5BF0BAEB25865E6D00C3B9FB /* Billabong.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Billabong.ttf; sourceTree = "<group>"; };
@@ -315,6 +317,7 @@
 				5BCDF4BA259FE1A4001B851F /* Tag.swift */,
 				5BF4759825BC7DBB00DC5FCA /* CredentialService.swift */,
 				5BAA5A2F25BEDFA600327674 /* CacheStorage.swift */,
+				5BE5400125EFE0FC00FAB7A0 /* resizeImageExtension.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -707,6 +710,7 @@
 				5BF3006F25964CBB000E4DA1 /* InterfacePositioningView.swift in Sources */,
 				5B02907C25995C3D004E03EF /* TopBarView.swift in Sources */,
 				5BCDF4BB259FE1A4001B851F /* Tag.swift in Sources */,
+				5BE5400225EFE0FD00FAB7A0 /* resizeImageExtension.swift in Sources */,
 				5B5DF1F225818AD700A756D9 /* CustomTextField.swift in Sources */,
 				5BF64C2825C5CAB7008249C3 /* ShareService.swift in Sources */,
 				5BAA5A3025BEDFA600327674 /* CacheStorage.swift in Sources */,
