@@ -21,8 +21,8 @@ Here is what is discussed in this readme :
 <a name="screenshots"></a>
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/75045140/109942516-2de3ab80-7ccc-11eb-9693-9008e9594ca6.png" width="200">
 <img src="https://user-images.githubusercontent.com/75045140/109942555-363be680-7ccc-11eb-99c0-3bea83f6a72e.png" width="200">
+<img src="https://user-images.githubusercontent.com/75045140/109942516-2de3ab80-7ccc-11eb-9693-9008e9594ca6.png" width="200">
 <img src="https://user-images.githubusercontent.com/75045140/109942562-376d1380-7ccc-11eb-9042-a61088ee0080.png" width="200">
 <img src="https://user-images.githubusercontent.com/75045140/109942564-3936d700-7ccc-11eb-820a-afeb7409890d.png" width="200">
 </p>
