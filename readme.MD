@@ -7,23 +7,29 @@ It is an educational purpose project which mean it is not to be used in any othe
 You can find the **Roadmap** on [Trello](https://trello.com/b/oTma0uAS)
 
 Here is what is discussed in this readme : 
-- [Installation](#installation)
+ - [Screenshots](#screenshots)
+ - [Installation](#installation)
  - [Dependencies](#dependencies)
      - [Front end](#frontend)
      - [Back end](#backend)
+- [Documentation References (api, db)](#doc_ref)
  - [Differences with Instagram](#differences)
  - [Cryptography](#cryptography)
  - [Notes](#notes)
 
+## Screenshots
+<a name="screenshots"></a>
 
-## API
-You can find the API documentation in [Back End/api/Api Documentation](<Back End/api/Api Documentation.MD>)
-
-## Database
-You can find the database documentation in [Back End/database/Database Documentation](<Back End/database/Database Documentation.MD>)
+<p align="center">
+<img src="https://user-images.githubusercontent.com/75045140/109942516-2de3ab80-7ccc-11eb-9693-9008e9594ca6.png" width="200">
+<img src="https://user-images.githubusercontent.com/75045140/109942555-363be680-7ccc-11eb-99c0-3bea83f6a72e.png" width="200">
+<img src="https://user-images.githubusercontent.com/75045140/109942562-376d1380-7ccc-11eb-9042-a61088ee0080.png" width="200">
+<img src="https://user-images.githubusercontent.com/75045140/109942564-3936d700-7ccc-11eb-820a-afeb7409890d.png" width="200">
+</p>
 
 ## Installation
-This is a guide on how to install Bestagram on your machine.
+
+This is a guide on how to install Bestagram on your computer. 
 ### Dependencies
 First you will need to install the dependencies requirements of for the project. You can refer to the dependencies section right under this guide.
 ### Database
@@ -49,7 +55,7 @@ Again, **REVERT ALL THOSE CHANGES BEFORE PUSHING**.
 The front end has two dependencies : [AlamofireImage](https://github.com/Alamofire/AlamofireImage) and [Cache](https://github.com/hyperoslo/Cache). Both of these dependencies can be installed via CocoaPods. After installing CocoaPods, just run  :
 
     pod install
-   
+
 in the directory where you have your .xcodeproj and you will be all set. Don't forget to open the .xcworkspace from now on to include the dependencies.
 
 ### Back end
@@ -68,7 +74,23 @@ You can install them through **pip** :
 	pip -r requirements.txt
 
 
+
+## Documentation References
+
+<a name="doc_ref"></a>
+
+### API
+
+You can find the API documentation in [Back End/api/Api Documentation](<Back End/api/Api Documentation.MD>)
+
+### Database
+
+You can find the database documentation in [Back End/database/Database Documentation](<Back End/database/Database Documentation.MD>)
+
+
+
 ## Differences from the original Instagram app
+
 <a name="differences"></a>
 
 There is a few differences from the original Instagram app that I will explain here.
