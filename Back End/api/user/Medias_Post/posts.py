@@ -1,16 +1,16 @@
-from flask_restful import Resource, reqparse, request
+from flask_restful import Resource, reqparse
 import werkzeug
-import user
+import user, post
 from database import request_utils
 from errors import *
 import tag
 import json
 from PIL import Image
 
-#TODO: - Replace tag user identification with id
-class Post(Resource):
+
+class CreatePost(Resource):
     """
-    Retrieve or put posts using this endpoint.
+    Create medias (posts) using this endpoint.
 
     Query parameters :
         - caption
@@ -44,7 +44,7 @@ class Post(Resource):
 
     def put(self) -> (dict, int):
         """
-        Uploading a post.
+        Creating a post.
         """
         parser = reqparse.RequestParser()
         parser.add_argument("image", type=werkzeug.datastructures.FileStorage, location="files")
@@ -92,5 +92,5 @@ class Post(Resource):
             print("Error while parsing json : ", e)
 
         img = Image.open(params["image"].stream)
-        post_id = userobj.create_post(img, caption=params["caption"], tags=tags_list)
-        return {"success": True, "id" : post_id}, 200
+        postobj = post.Post.create(userobj, img, caption=params["caption"], tags=tags_list)
+        return {"success": True, "id" : postobj.id}, 200

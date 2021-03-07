@@ -16,6 +16,7 @@ class Profile:
         """
         Init for the profile class.
         :param user: User whose profile this class need to be.
+        :type user: user.User
         :param id: Id of this user's profile.
 
         There is two different ways of initializing this profile.

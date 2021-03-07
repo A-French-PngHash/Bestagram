@@ -73,9 +73,9 @@ Store a post and hit attributes.
 | Field       | Type          | Null | Key | Default | Extra |
 |-------------|---------------|------|-----|---------|-------|
 | id        | bigint          | NO   | PRI | NULL    | auto_increment |
-| user_id   | bigint        | NO   | MUL | NULL    |                |
-| post_time | datetime      | NO   |     | NULL    |                |
-| caption   | varchar(2200) | YES  |     | NULL    |                |
+| user_id   | bigint          | NO   | MUL | NULL    |                |
+| post_time | datetime        | NO   |     | NULL    |                |
+| caption   | varchar(2200)   | YES  |     | NULL    |                |
 ### Id
 Is the primary key of this table. Used to uniquely identified a given post in the database.
 ### User_id
@@ -90,8 +90,8 @@ This table stores all the like given by one user to another. It is named like th
 
 | Field   | Type   | Null | Key | Default | Extra |
 |---------|--------|------|-----|---------|-------|
-| user_id | bigint | NO   | MUL | NULL    |       |
-| post_id | bigint | NO   | MUL | NULL    |       |
+| user_id | bigint | NO   | PRI | NULL    |       |
+| post_id | bigint | NO   | PRI | NULL    |       |
 
 ### User_id
 Is associated with a foreign key with the id field of the User table. Represent the id of the person who liked the given post. It is not unique as a person can like different posts.

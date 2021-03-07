@@ -34,29 +34,29 @@ The message is a little bit of text which describe the error. It can be displaye
 
 ## Error codes
 The following table maps each error code the API can possibly raise.
+
 |Code| Error |
-|--|--|
+|---|---|
 | 1 | Invalid credentials |
-| 2 | Username taken |
-| 3 | Email taken |
-| 4 | Invalid email |
-| 5 | Invalid username |
-| 6 | Invalid name |
-| 7 | Missing information |
-| 8 | Username not existing |
-| 9 | User already followed |
+| 2  | Username taken |
+| 3  | Email taken |
+| 4  | Invalid email |
+| 5  | Invalid username |
+| 6  | Invalid name |
+| 7  | Missing information |
+| 8  | Username not existing |
+| 9  | User already followed |
+| 10 | Post Access Restricted |
+| 11 | Post Already Liked |
+| 12 | Post Not Liked |
 
 # Endpoints
-
-
-
-
 
 |Title| Path | Use |  Auth  |
 |-----|------|-----|--------|
 |[Login](#login)|`POST /user/login/<username>`|Login a user.|NO|
 |[Register](#register)|`PUT /user/login/<username>`|Register a user.|NO|
-| [Refresh Login](#refresh_login) |`POST /user/login/refresh/<refresh_token>` | Login a user. |NO
+|[Refresh Login](#refresh_login) |`POST /user/login/refresh/<refresh_token>` | Login a user. |NO
 |[Search](#search_user)|`GET /user/search`|Search for users|YES|
 |[Follow](#follow)|`POST /user/<id>/follow`|Follow a user|YES|
 |[Post](#post)|`PUT /user/post`|Post an image (with caption and tags)|YES|
@@ -64,14 +64,40 @@ The following table maps each error code the API can possibly raise.
 |[Update Profile](#update_profile)|`PATCH /user/profile`|Update a user's profile|YES|
 |[Get Profile](#get_profile)|`GET /user/<id>/profile/data|Get a user's profile data|NO
 |[Get Profile Picture](#get_profile_picture)|`GET /user/<id>/profile/picture|Get a user's profile picture|NO
+|[Like Post](#like_post)|`POST /media/<id>/like`|Like a post.|YES
+|[Unlike Post](#unlike_post)|`DELETE /media/<id>/like`|Unlike a post.|YES
 
 The Auth column refer to the user of the user's token as authentication. 
 Note that the [Refresh Login](#refresh_login) endpoint doesn't need the user's token, but rather the user's refresh token.
 
+<details>
+  <summary>Structure of this document (click to show) :</summary>
 
+- Login
+  - POST
+  - PUT
+- Login - Refresh
+  - POST
+- Email
+  - GET
+- Post
+  - Creation
+    - POST
+  - Like
+    - Post
+    - Delete
+- Search
+  - GET
+- Follow
+  - POST
+- Profile
+  - POST
+  - GET
+  - GET
+</details>
 
 # Login
-## POST  <a name="login"></a>
+### POST  <a name="login"></a>
 Return the token of a user, and the refresh token. Must only be used when the client doesn't already have the refresh token. If it does have the refresh token, use the [refresh method](#login_refresh).
 
 **Path** : `POST /user/login/<username>` 
@@ -87,7 +113,7 @@ Return the token of a user, and the refresh token. Must only be used when the cl
 
 	{"success" : true, "token" : "x", "refresh_token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
 
-## PUT <a name="register"></a>
+### PUT <a name="register"></a>
 Register a user into the database and return the token.   
 
 **Path** : `PUT /user/login/<username>`
@@ -104,7 +130,7 @@ Register a user into the database and return the token.
 	{"success" : true, "token" : "x", "refresh_token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"} - 200
 
 # Login - Refresh
-## Post <a name="refresh_login"></a>
+### Post <a name="refresh_login"></a>
 Return the token of a user. This method is to be used when the client already possess the refresh token, otherwise use [login](#login)
 
 **Path** : `POST /user/login/refresh/<refresh_token>` 
@@ -114,18 +140,20 @@ Return the token of a user. This method is to be used when the client already po
     {"success" : true, "token" : "x", "token_expiration_date" : "y-M-d HH:mm:ss"}
 
 # Email  
-## Get  <a name="email_taken"></a>
+### Get  <a name="email_taken"></a>
 Check if an email is already taken by someone.   
 
-  **Path** : `GET /email/<email>/taken`
+**Path** : `GET /email/<email>/taken`
 
 **Success response** :  
 
 	{"success" : true, "taken" : true} - 200  
 # Post  
-## Post  <a name="post"></a>
-  Create a post with an image, caption, tags...
-  **Path** : `POST /user/post`
+## Creation
+### Post  <a name="post"></a>
+
+Create a post with an image, caption, tags...
+**Path** : `POST /user/post`
 
 **Query data** : 
 
@@ -159,8 +187,41 @@ An example of a **valid tag json** is :
 **Success response** :  
 
 	{"success": True} - 200 
+
+## Like
+### Post <a name = "like_post"></a>
+Like a post. 
+
+**Path** : `POST /medias/<id>/like`
+
+**Query data** : 
+
+|Name|Description|Location|Required|
+|---|---|---|---|
+|Authorization| Token of the user. | Headers | YES
+
+**Success response** : 
+
+	{"success": True} - 200 
+
+### Delete <a name = "unlike_post"></a>
+Delete a like.
+
+**Path** : `DELETE /medias/<id>/like`
+
+**Query data** : 
+
+|Name|Description|Location|Required|
+|---|---|---|---|
+|Authorization| Token of the user. | Headers | YES
+
+**Success response** : 
+
+	{"success": True} - 200 
+
+
 # Search  
-## Get  <a name="search_user"></a>
+### Get  <a name="search_user"></a>
 Search for a user using a string. Note that the string will be matched against user's **names** and not user's username. Authentication is required as the results may vary depending on the user's searching. Returns **usernames** of the user matching the search.  
 
 **Path** : `GET /user/search`
@@ -201,7 +262,7 @@ Search for a user using a string. Note that the string will be matched against u
 This is an example response when offset is set to 3 and row_count to 3.
 
 # Follow
-## Post <a name="follow"></a>
+### Post <a name="follow"></a>
 Follow an other user.
 
 **Path** : `POST /user/<id>/follow`
@@ -217,7 +278,7 @@ Follow an other user.
     {"success": True} - 200
 
 # Profile
-## Post <a name="update_profile"></a>
+### Post <a name="update_profile"></a>
 Update profile data.
 
 **Path**: `PATCH /user/profile`
@@ -237,10 +298,7 @@ Update profile data.
 
     {"success": True} - 200
 
-  
-
-
-## Get  <a name="get_profile"></a>
+### Get  <a name="get_profile"></a>
 Get profile data.
 
 **Path**: `GET /user/<id>/profile`
@@ -269,7 +327,7 @@ The token is optional. It may be provided to show that the user doing the reques
     	}
     }
 
-## Get <a name="get_profile_picture"></a>
+### Get <a name="get_profile_picture"></a>
 Get a profile picture.
 
 **Path** : `GET /user/<id>/profile/picture`

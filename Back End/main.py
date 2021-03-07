@@ -1,15 +1,14 @@
 from flask import Flask
 from flask_restful import Api
 import api.email
-from api.user import posts, follow, profile, search
+from api.user import follow, profile, search
+from api.user.Medias_Post import posts, like_unlike
 from api.user.Login import login, refresh
+from api.user.Medias_ProfilePicture import Profile_Picture
 import database.mysql_connection
-import config
 import mysql.connector
 import files
 import database.connection_credentials
-from PIL import Image
-import os
 
 PORT = 5002
 HOST = "0.0.0.0"
@@ -42,13 +41,14 @@ database.mysql_connection.cnx.autocommit = True
 # Defining api resources.
 api_app.add_resource(login.Login, "/user/login/<username>")
 api_app.add_resource(refresh.Refresh, "/user/login/refresh/<refresh_token>")
-api_app.add_resource(posts.Post, "/user/post")
+api_app.add_resource(posts.CreatePost, "/user/post")
 api_app.add_resource(search.Search, "/user/search")
 api_app.add_resource(follow.Follow, "/user/<id>/follow")
 api_app.add_resource(api.email.Email, "/email/<email>/taken")
 api_app.add_resource(profile.ProfileUpdate, "/user/profile")
 api_app.add_resource(profile.ProfileRetrieving, "/user/<id>/profile/data")
-api_app.add_resource(profile.ProfilePicture, "/user/<id>/profile/picture")
+api_app.add_resource(Profile_Picture.ProfilePicture, "/user/<id>/profile/picture")
+api_app.add_resource(like_unlike.Like_Unlike, "/media/<id>/like")
 
 if __name__ == "__main__":
     # Running the api.
