@@ -34,29 +34,29 @@ The message is a little bit of text which describe the error. It can be displaye
 
 ## Error codes
 The following table maps each error code the API can possibly raise.
+
 |Code| Error |
-|--|--|
+|---|---|
 | 1 | Invalid credentials |
-| 2 | Username taken |
-| 3 | Email taken |
-| 4 | Invalid email |
-| 5 | Invalid username |
-| 6 | Invalid name |
-| 7 | Missing information |
-| 8 | Username not existing |
-| 9 | User already followed |
+| 2  | Username taken |
+| 3  | Email taken |
+| 4  | Invalid email |
+| 5  | Invalid username |
+| 6  | Invalid name |
+| 7  | Missing information |
+| 8  | Username not existing |
+| 9  | User already followed |
+| 10 | Post Access Restricted |
+| 11 | Post Already Liked |
+| 12 | Post Not Liked |
 
 # Endpoints
-
-
-
-
 
 |Title| Path | Use |  Auth  |
 |-----|------|-----|--------|
 |[Login](#login)|`POST /user/login/<username>`|Login a user.|NO|
 |[Register](#register)|`PUT /user/login/<username>`|Register a user.|NO|
-| [Refresh Login](#refresh_login) |`POST /user/login/refresh/<refresh_token>` | Login a user. |NO
+|[Refresh Login](#refresh_login) |`POST /user/login/refresh/<refresh_token>` | Login a user. |NO
 |[Search](#search_user)|`GET /user/search`|Search for users|YES|
 |[Follow](#follow)|`POST /user/<id>/follow`|Follow a user|YES|
 |[Post](#post)|`PUT /user/post`|Post an image (with caption and tags)|YES|
@@ -64,6 +64,8 @@ The following table maps each error code the API can possibly raise.
 |[Update Profile](#update_profile)|`PATCH /user/profile`|Update a user's profile|YES|
 |[Get Profile](#get_profile)|`GET /user/<id>/profile/data|Get a user's profile data|NO
 |[Get Profile Picture](#get_profile_picture)|`GET /user/<id>/profile/picture|Get a user's profile picture|NO
+|[Like Post](#like_post)|`POST /media/<id>/like`|Like a post.|YES
+|[Unlike Post](#unlike_post)|`DELETE /media/<id>/like`|Unlike a post.|YES
 
 The Auth column refer to the user of the user's token as authentication. 
 Note that the [Refresh Login](#refresh_login) endpoint doesn't need the user's token, but rather the user's refresh token.

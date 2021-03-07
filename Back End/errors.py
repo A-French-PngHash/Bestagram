@@ -168,3 +168,30 @@ class UserAlreadyFollowed(BestagramException):
     success = False
     errorCode = 9
     description = "User already followed"
+
+
+class PostAccessRestricted(BestagramException):
+    """
+    The user cannot access the post.
+    """
+    success = False
+    errorCode = 10
+    description = "Post access restricted"
+
+
+class PostAlreadyLiked(BestagramException):
+    """
+    This post is already liked by this user.
+    """
+    success = False
+    errorCode = 11
+    description = "Post already liked"
+
+
+class PostNotLiked(BestagramException):
+    """
+    This post is not liked but the user tried to remove the like.
+    """
+    success = False
+    errorCode = 12
+    description = "Post not liked"

@@ -238,57 +238,6 @@ class User:
         """
         self.cursor.execute(query)
 
-
-    #TODO: - Move post related method to a separate post class
-
-    def create_post(self, image: Image, caption: str, tags: [tag.Tag]) -> int:
-        """
-        Create a post from this user.
-        :param image: Post's image.
-        :param caption: Caption provided with the post.
-        :param tags: List of this post's tags.
-        :return: The id of the newly created post.
-        """
-        files.prepare_directory(self.directory)
-
-        resized_image = images.resize_image(image, config.IMAGE_DIMENSION)
-
-        create_post_query = f"""
-        START TRANSACTION;
-            INSERT INTO Post
-            VALUES(
-            NULL, {self.id}, NOW(), "{caption}"
-            );
-            
-            SELECT LAST_INSERT_ID();
-        COMMIT;
-        """
-
-        iterable = self.cursor.execute(create_post_query, multi=True)
-        # 4 request are made a the same time. The third is the select one.
-        index = 0
-        result: list = []
-
-        for i in iterable:
-            if index == 2:
-                result = i.fetchall()
-            index += 1
-
-        post_id = result[0]["LAST_INSERT_ID()"]
-
-        image.filename = f"{post_id}.png"
-        # Dir where the image is stored.
-        final_image_path = os.path.join(self.directory, image.filename)
-        # Saving image.
-        resized_image.save(final_image_path)
-
-        for i in tags:
-            try:
-                i.save(post_id)
-            except UserNotExisting:
-                print(f"User not existing. post_id : {post_id}, user_id : {i.user_id}")
-        return post_id
-
     def follow(self, id: int):
         """
         Follow another user.

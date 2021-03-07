@@ -90,8 +90,8 @@ This table stores all the like given by one user to another. It is named like th
 
 | Field   | Type   | Null | Key | Default | Extra |
 |---------|--------|------|-----|---------|-------|
-| user_id | bigint | NO   | MUL | NULL    |       |
-| post_id | bigint | NO   | MUL | NULL    |       |
+| user_id | bigint | NO   | PRI | NULL    |       |
+| post_id | bigint | NO   | PRI | NULL    |       |
 
 ### User_id
 Is associated with a foreign key with the id field of the User table. Represent the id of the person who liked the given post. It is not unique as a person can like different posts.

@@ -64,6 +64,9 @@ ALTER TABLE UserTable
 ADD UNIQUE ind_refresh_token (refresh_token);
 
 ALTER TABLE LikeTable
+ADD UNIQUE ind_user_id_post_id (user_id, post_id);
+
+ALTER TABLE LikeTable
 ADD INDEX ind_user_id (user_id);
 
 ALTER TABLE LikeTable

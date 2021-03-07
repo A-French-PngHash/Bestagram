@@ -1,8 +1,6 @@
 import io
 import unittest
 
-import flask
-
 import database.connection_credentials
 import mysql.connector
 import user
@@ -385,7 +383,7 @@ class API:
         method = "POST"
         if not add:
             method = "DELETE"
-        code, content = self.ex_request(method, route=f"/media/{post_id}/like")
+        code, content = self.ex_request(method, route=f"/media/{post_id}/like", headers={"Authorization":authorization})
         return code, content
 
 
@@ -1239,7 +1237,7 @@ class Tests(unittest.TestCase):
         self.cursor.execute(check_if_like_added_query)
         result = self.cursor.fetchall()
         self.assertEqual(1, len(result))
-        self.assertEqual(default_id, result["user_id"])
+        self.assertEqual(default_id, result[0]["user_id"])
 
     def test_GivenNoLikeFromDefaultWhenUnlikingThenRaiseErrorAndRelationNotInDatabase(self):
         default_id = self.database.add_default_user()
@@ -1248,7 +1246,7 @@ class Tests(unittest.TestCase):
         code, content = self.api.unlike(default=True, post_id=post_id)
 
         self.assertEqual(400, code)
-        #TODO: Add corresponding error
+        self.assertEqual(content, errors.PostNotLiked.get_response()[0])
 
         check_if_like_added_query = f"""SELECT * FROM LikeTable WHERE post_id = {post_id};"""
         self.cursor.execute(check_if_like_added_query)
@@ -1278,7 +1276,7 @@ class Tests(unittest.TestCase):
         code, content = self.api.like(default=True, post_id=post_id)
 
         self.assertEqual(400, code)
-        #TODO: Add corresponding error
+        self.assertEqual(content, errors.PostAlreadyLiked.get_response()[0])
 
         check_if_like_added_query = f"""SELECT * FROM LikeTable WHERE post_id = {post_id};"""
         self.cursor.execute(check_if_like_added_query)
