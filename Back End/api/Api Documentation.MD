@@ -70,7 +70,8 @@ The following table maps each error code the API can possibly raise.
 The Auth column refer to the user of the user's token as authentication. 
 Note that the [Refresh Login](#refresh_login) endpoint doesn't need the user's token, but rather the user's refresh token.
 
-Structure of this document : 
+<details>
+  <summary>Structure of this document (click to show) :</summary>
 
 - Login
   - POST
@@ -93,7 +94,7 @@ Structure of this document :
   - POST
   - GET
   - GET
-
+</details>
 
 # Login
 ### POST  <a name="login"></a>
