@@ -33,7 +33,7 @@ def create_db():
     os.system(command)
 
 
-def user_in_db(cursor: mysql.connector.MySQLConnection, username: str) -> (bool, dict):
+def user_in_db(cursor: mysql.connector.connection.MySQLCursor, username: str) -> (bool, dict):
     """
     Fetch a user's data from the db if exists.
     :param username: Username of the user.
@@ -68,8 +68,9 @@ class Database:
     Used for functions that make direct db queries.
     """
 
-    def __init__(self, cursor: mysql.connector.MySQLConnection):
+    def __init__(self, cursor: mysql.connector.connection.MySQLCursor):
         self.cursor = cursor
+
 
     def add_user(self, username: str = None, email: str = None, name: str = None, hash: str = None, token: str = None,
                  refresh_token: str = None) -> int:
@@ -117,7 +118,7 @@ class Database:
         id_u = user_in_db(self.cursor, username=username)[1]["id"]
         return id_u
 
-    def follow_db(self, default: bool, user_id_followed: int = None, username_followed: str = None, user_id: int = None,
+    def follow(self, default: bool, user_id_followed: int = None, username_followed: str = None, user_id: int = None,
                   username: str = None):
         """
         Add follow relation from one user to another DIRECTLY into the database.
@@ -129,13 +130,7 @@ class Database:
         :return:
         """
         user_id_followed = user_id_followed
-        user_id = user_id
-        if default:
-            if not user_in_db(self.cursor, default_username)[0]:
-                self.add_default_user()
-            query = f"""SELECT id FROM UserTable WHERE username = "{default_username}";"""
-            self.cursor.execute(query)
-            user_id = self.cursor.fetchall()[0]["id"]
+        user_id = self.get_id(default, user_id)
         if username_followed:
             query = f"""SELECT id FROM UserTable WHERE username = "{username_followed}";"""
             self.cursor.execute(query)
@@ -162,13 +157,43 @@ class Database:
                              token=token,
                              refresh_token=refresh_token)
 
+    def post(self, default: bool, post_id: int = None, user_id: int = None):
+        user_id = self.get_id(default, user_id)
+        add_post_query = """START TRANSACTION;"""
+        if post_id:
+            add_post_query = f"""INSERT INTO Post (user_id, post_time, post_id) VALUES ({user_id}, NOW(), {post_id});"""
+        else:
+            add_post_query = f"""INSERT INTO Post (user_id, post_time) VALUES ({user_id}, NOW());"""
+        add_post_query += """SELECT LAST_INSERT_ID() AS post_id;
+        COMMIT;"""
+
+        result = self.cursor.execute(add_post_query, multi=True)
+        index = 0
+        for i in result: # Getting the new id.
+            if index == 1:
+                post_id = i.fetchall()[0]["post_id"]
+            index += 1
+        return post_id
+
+    def get_id(self, default : bool, id : int = None):
+        if default:
+            exists, data = user_in_db(self.cursor, default_username)
+            if not exists:
+                return self.add_default_user()
+            return data["id"]
+        return id
+
+    def like(self, default : bool, post_id: int, user_id : int = None):
+        user_id = self.get_id(default, user_id)
+        add_like_query = f"""INSERT INTO LikeTable (user_id, post_id) VALUES ({user_id}, {post_id});"""
+        self.cursor.execute(add_like_query)
 
 class API:
     """
     Used for functions that make use of the api to get/post the data.
     """
 
-    def __init__(self, cursor: mysql.connector.MySQLConnection, client, database: Database):
+    def __init__(self, cursor: mysql.connector.connection.MySQLCursor, client, database: Database):
         """
         Init for the API class.
         :param cursor: Cursor connecting to the test db.
@@ -181,7 +206,7 @@ class API:
 
     def get_token(self, default: bool, token: str = None) -> str:
         """
-        Many tests function have a signature (parameters) with "default" present which allows for the use of the default user.
+        Many tests methods have a signature (parameters) with "default" present which allows for the use of the default user.
         This option simplify testing but it also means additional db query in each function. This function regroups them
         here.
         :param default:
@@ -340,6 +365,27 @@ class API:
 
     def get_profile(self, id: int):
         code, content = self.ex_request("GET", route=f"/user/{id}/profile/data")
+        return code, content
+
+    def like(self, default: bool, post_id: int, token: str = None):
+        return self._like(default, post_id, True, token)
+
+    def unlike(self, default: bool, post_id: int, token: str = None):
+        return self._like(default, post_id, False, token)
+
+    def _like(self, default: bool, post_id: int, add: bool, token: str = None):
+        """
+        Like/Unlike a post.
+        :param default:
+        :param add: If true then adding like, else, removing.
+        :param token:
+        :return:
+        """
+        authorization = self.get_token(default, token)
+        method = "POST"
+        if not add:
+            method = "DELETE"
+        code, content = self.ex_request(method, route=f"/media/{post_id}/like")
         return code, content
 
 
@@ -879,7 +925,7 @@ class Tests(unittest.TestCase):
         followed = ["atrick", "btruck", "ctrack", "dtrock"]
         for i in followed:
             self.database.add_user(username=i, name=i)
-            self.database.follow_db(default=True, username_followed=i)
+            self.database.follow(default=True, username_followed=i)
         for i in range(4):
             self.database.add_user()
 
@@ -898,7 +944,7 @@ class Tests(unittest.TestCase):
 
         for (index, element) in enumerate(people):
             for i in range(len(people) - index):
-                self.database.follow_db(default=False, username_followed=people[index + i], username=element)
+                self.database.follow(default=False, username_followed=people[index + i], username=element)
 
         code, content = self.api.search(default=True, search="", offset=0, row_count=100)
 
@@ -918,9 +964,9 @@ class Tests(unittest.TestCase):
 
         for (index, element) in enumerate(people_followed):
             for i in range(len(people_followed) - index):
-                self.database.follow_db(default=False, username_followed=element, username=people_followed[index + i])
-            self.database.follow_db(default=True, username_followed=element)
-        self.database.follow_db(default=False, username_followed=people_not_followed[0], username=people_not_followed[1])
+                self.database.follow(default=False, username_followed=element, username=people_followed[index + i])
+            self.database.follow(default=True, username_followed=element)
+        self.database.follow(default=False, username_followed=people_not_followed[0], username=people_not_followed[1])
 
         code, content = self.api.search(default=True, search="", offset=0, row_count=100)
 
@@ -1105,9 +1151,9 @@ class Tests(unittest.TestCase):
         follower_id.append(following_id[0])
         default_id = self.database.add_default_user()
         for i in following_id:
-            self.database.follow_db(default=False, user_id_followed=i, user_id=default_id)
+            self.database.follow(default=False, user_id_followed=i, user_id=default_id)
         for i in follower_id:
-            self.database.follow_db(default=False, user_id_followed=default_id, user_id=i)
+            self.database.follow(default=False, user_id_followed=default_id, user_id=i)
 
         code, content = self.api.get_profile(default_id)
         profile_data = content["data"]
@@ -1173,6 +1219,72 @@ class Tests(unittest.TestCase):
         image = Image.open(io.BytesIO(content))
 
         self.assertEqual(Image.open(self.profile_picture_path(id)), image)
+
+    """
+    --------------------------
+    Like/Unlike tests.
+    --------------------------
+    """
+
+    def test_GivenNoLikeFromDefaultWhenLikingThenRelationAddedInDatabase(self):
+        default_id = self.database.add_default_user()
+        post_id = self.database.post(default=True)
+
+        code, content = self.api.like(default=True, post_id=post_id)
+
+        self.assertEqual(200, code)
+        self.assertEqual(True, content["success"])
+
+        check_if_like_added_query = f"""SELECT * FROM LikeTable WHERE post_id = {post_id};"""
+        self.cursor.execute(check_if_like_added_query)
+        result = self.cursor.fetchall()
+        self.assertEqual(1, len(result))
+        self.assertEqual(default_id, result["user_id"])
+
+    def test_GivenNoLikeFromDefaultWhenUnlikingThenRaiseErrorAndRelationNotInDatabase(self):
+        default_id = self.database.add_default_user()
+        post_id = self.database.post(default=True)
+
+        code, content = self.api.unlike(default=True, post_id=post_id)
+
+        self.assertEqual(400, code)
+        #TODO: Add corresponding error
+
+        check_if_like_added_query = f"""SELECT * FROM LikeTable WHERE post_id = {post_id};"""
+        self.cursor.execute(check_if_like_added_query)
+        result = self.cursor.fetchall()
+        self.assertEqual(0, len(result))
+
+    def test_GivenLikeFromDefaultWhenUnlikingThenRelationRemovedFromDatabase(self):
+        default_id = self.database.add_default_user()
+        post_id = self.database.post(default=True)
+        self.database.like(default=True, post_id=post_id)
+
+        code, content = self.api.unlike(default=True, post_id=post_id)
+
+        self.assertEqual(200, code)
+        self.assertEqual(True, content["success"])
+
+        check_if_like_added_query = f"""SELECT * FROM LikeTable WHERE post_id = {post_id};"""
+        self.cursor.execute(check_if_like_added_query)
+        result = self.cursor.fetchall()
+        self.assertEqual(0, len(result))
+
+    def test_GivenLikeFromDefaultWhenLikingAgainThenRaiseErrorAndRelationStillInDatabase(self):
+        default_id = self.database.add_default_user()
+        post_id = self.database.post(default=True)
+        self.database.like(default=True, post_id=post_id)
+
+        code, content = self.api.like(default=True, post_id=post_id)
+
+        self.assertEqual(400, code)
+        #TODO: Add corresponding error
+
+        check_if_like_added_query = f"""SELECT * FROM LikeTable WHERE post_id = {post_id};"""
+        self.cursor.execute(check_if_like_added_query)
+        result = self.cursor.fetchall()
+        self.assertEqual(1, len(result))
+
 
     def remove_all_from_db(self):
         delete_all_query = """

@@ -257,7 +257,7 @@ class User:
         START TRANSACTION;
             INSERT INTO Post
             VALUES(
-            NULL, {self.id}, "{datetime.datetime.now().replace(microsecond=0)}", "{caption}"
+            NULL, {self.id}, NOW(), "{caption}"
             );
             
             SELECT LAST_INSERT_ID();
