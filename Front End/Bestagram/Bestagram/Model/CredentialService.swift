@@ -7,32 +7,27 @@
 
 import Foundation
 
-/// Store and retrieve credentials from the local storage. /!\ The "password" is actually the hash of the password.
+/// Store and retrieve refresh token(s) from the local storage.
 ///
-/// Note that currently this class only store credentials for one user. This may change in the future with the possibility of having multiple different account connected.
+/// Note that currently this class only store a refresh token for one user. This may change in the future with the possibility of having multiple different account connected.
 class CredentialService {
     static let shared = CredentialService()
     private init() { }
 
     let defaults = UserDefaults.standard
 
-    /// Store the given credentials in user defaults.
+    /// Store the refresh token in user defaults.
     ///
-    /// - parameter password: Hashed password.
-    /// - parameter username: Username.
+    /// - parameter refreshToken: Refresh token.
     ///
-    func store(password: String, username: String) {
-        defaults.set(password, forKey: "password")
-        defaults.set(username, forKey: "username")
+    func store(refreshToken: String) {
+        defaults.set(refreshToken, forKey: "refreshToken")
     }
 
     /// Retrieve stored credentials from user default.
     ///
-    /// - returns : Returns password and username under the key password and username.
-    func get() -> Dictionary<String, String>{
-        return [
-            "password": defaults.string(forKey: "password")!,
-            "username": defaults.string(forKey: "username")!
-        ]
+    /// - returns : The refresh token.
+    func get() -> String{
+        return defaults.string(forKey: "refreshToken")!
     }
 }

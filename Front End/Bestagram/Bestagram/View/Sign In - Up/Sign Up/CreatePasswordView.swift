@@ -61,7 +61,7 @@ struct CreatePasswordView: View {
                     buttonStyle = .loading
                     queue.async {
                         // We create the user here. If the operation is successful, the credentials are saved.
-                        User.create(username: username.lowercased(), password: password, email: email, name: name, save: true, callback: { (success, error) in
+                        User.create(username: username.lowercased(), password: password, email: email, name: name, callback: { (success, error) in
                                 if success {
                                     goNextView = true
                                 } else {

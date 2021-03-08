@@ -24,7 +24,7 @@ struct BestagramApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                PictureSelectionView(user: testUser)
+                SignInOrUpChoiceView()
                 .preferredColorScheme(.dark)
             }
         }

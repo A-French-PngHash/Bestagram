@@ -67,26 +67,24 @@ struct EnterLoginInfoView: View {
                 }
                 BigBlueButton(text: "Log In", style: $buttonStyle) {
                     loadingUser = true
+                    loadingSucceeded = false
                     textFieldErrorStyle = false
                     buttonStyle = .loading
                     let queue = DispatchQueue(label: "connect-user")
                     queue.async {
-                        // Creating the user object will automatically start the hashing process and the fetch of the token.
-                        self.user = User(credentialsSaved: false, username: self.usernameEntered, password: self.passwordEntered, saveCredentials: true)
-                        self.user?.getToken(callback: { (success, token, error) in
-                            userFinishedLoading(success: true, error: error)
+                        // Loging will automatically start the hashing process and the fetch of the token.
+                        self.user = User(authenticationFinished: { (success, token, error) in
+                            userFinishedLoading(success: success, error: error)
                         })
                     }
                 }
 
-                if user != nil && loadingSucceeded {
-                    NavigationLink(
-                        destination: Text("main page"),
-                        isActive: .constant(true),
-                        label: {
-                            EmptyView()
-                        })
-                }
+                NavigationLink(
+                    destination: Text("main page"),
+                    isActive: $loadingSucceeded,
+                    label: {
+                        EmptyView()
+                    })
                 Spacer()
             }
         }

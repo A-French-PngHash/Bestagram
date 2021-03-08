@@ -23,7 +23,7 @@ struct EnterUsernameView: View {
                 Text("Choose a username for your new account. You can always change it later.")
                     .multilineTextAlignment(.center)
                 CustomTextField(placeholder: "Username", input: $username, error: $textFieldShouldDisplayError) { (new) in
-                    if new.count > 5 {
+                    if new.count < 5 || new.count > 30 {
                         buttonStyle = .disabled
                     } else {
                         buttonStyle = .normal

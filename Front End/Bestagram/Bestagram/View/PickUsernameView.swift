@@ -124,7 +124,7 @@ struct PickUsernameView: View {
 }
 
 // Note that if you want to run search on your computer with xcode preview you will need to change this line to reference the credentials of an account already existing in your local database.
-let testUser = User(credentialsSaved: false, username: "titouana", password: "password", saveCredentials: true)
+let testUser = User(username: "titouana", password: "password") { (_, _, _) in }
 
 struct PickUsernameView_Previews: PreviewProvider {
     static var previews: some View {
