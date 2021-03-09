@@ -16,7 +16,7 @@ struct TagView: View {
     static let height = Triangle.height + 7 * 2 + 21
 
     var text: some View {
-        Text(tag.userTagged)
+        Text(tag.userTagged.username!)
             .foregroundColor(.white)
             .font(ProximaNova.bodyBold)
     }
@@ -54,6 +54,6 @@ struct Triangle: Shape {
 
 struct TagView_Previews: PreviewProvider {
     static var previews: some View {
-        TagView(tag: Tag(userTagged: "test_username", position: [0, 0]))
+        TagView(tag: Tag(userTagged: User(id: 3, username: "username", name: "myname"), position: [0, 0]))
     }
 }

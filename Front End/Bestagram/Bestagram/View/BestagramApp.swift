@@ -24,7 +24,11 @@ struct BestagramApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                SignInOrUpChoiceView()
+                PickUserView(onUserPicked: { (user) in
+                    print(user)
+                }, onCancelButtonPressed: {
+                    print("cancel")
+                }, user: testUser)
                 .preferredColorScheme(.dark)
             }
         }

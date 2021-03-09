@@ -241,7 +241,7 @@ Search for a user using a string. Note that the string will be matched against u
 		"result": {
 			"3": {
 				"id": 18,
-				"username": "onusername",
+				"username": "oneusername",
 				"name": "john fries"
 			},
 			"4": {

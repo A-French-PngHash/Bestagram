@@ -195,3 +195,11 @@ class PostNotLiked(BestagramException):
     success = False
     errorCode = 12
     description = "Post not liked"
+
+class ExpiredToken(BestagramException):
+    """
+    The token is expired.
+    """
+    success = False
+    errorCode = 13
+    description = "Token expired"

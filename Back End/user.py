@@ -124,7 +124,7 @@ class User:
             successful in retrieving the data. However by calling the calculated property token, it is regenerated 
             leading the if statement to enter as they are now different.
             """
-            raise InvalidCredentials(token=token)
+            raise ExpiredToken()
 
         self.username = result["username"]
         self.name = result["name"]
@@ -144,7 +144,7 @@ class User:
     def token(self) -> str:
         if self._token_registration_date:
             # Checking if token is expired.
-            if (datetime.datetime.today() - self._token_registration_date).total_seconds() < config.TOKEN_EXPIRATION:
+            if self.token_expiration_date > datetime.datetime.today():
                 # Token is not expired, fetching it from the database.
                 token_query = f"""
                 SELECT token
@@ -158,9 +158,7 @@ class User:
         # Token is expired or has never been created.
         # generating new token.
         new_token = generate_token()
-        self._token_registration_date = (
-                    datetime.datetime.today() + datetime.timedelta(seconds=config.TOKEN_EXPIRATION)).replace(
-            microsecond=0)
+        self._token_registration_date = datetime.datetime.today().replace(microsecond=0)
         update_token_registration_query = f"""
         UPDATE UserTable
         SET token_registration_date = "{self._token_registration_date}"

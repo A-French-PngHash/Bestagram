@@ -66,19 +66,19 @@ struct TagPeopleView: View {
 
             NavigationLink(
                 destination:
-                    PickUsernameView(onUsernamePicked: { (username) in
+                    PickUserView(onUserPicked: { (user) in
                         /// Removing duplicates.
                         var index = tags.firstIndex { (tag) -> Bool in
-                            return tag.userTagged == username
+                            return tag.userTagged == user
                         }
                         while index != nil {
                             tags.remove(at: index!)
                             index = tags.firstIndex { (tag) -> Bool in
-                                return tag.userTagged == username
+                                return tag.userTagged == user
                             }
                         }
 
-                        tags.append(Tag(userTagged: username, position: self.lastTapLocation))
+                        tags.append(Tag(userTagged: user, position: self.lastTapLocation))
                         showPickUsernameView = false
                     }, onCancelButtonPressed: {
                         showPickUsernameView = false

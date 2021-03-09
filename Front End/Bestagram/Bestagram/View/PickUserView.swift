@@ -8,16 +8,16 @@
 import SwiftUI
 
 /// Display a search bar, a keyboard and a list of username. Make call to the API.
-struct PickUsernameView: View {
+struct PickUserView: View {
 
     /// Closure called when the user picked a username. Send the username as the first argument.
-    var onUsernamePicked : (String) -> Void
+    var onUserPicked : (User) -> Void
     /// Closure called when the user click the cancel button.
     var onCancelButtonPressed : () -> Void
     var user : User
 
-    /// List of username the user is picking from.
-    @State var usernames : Array<String> = []
+    /// List of users sent back by the API.
+    @State var users : Array<User> = []
     @State var searchInput : String = ""
     /// Wether or not a list of username is currently been fecthed from the api.
     @State var searchInProgress : Bool = true
@@ -55,15 +55,15 @@ struct PickUsernameView: View {
                     Text("Searching for \"\(self.searchInput)\"")
                 }
             } else {
-                if usernames.count == 0 {
+                if users.count == 0 {
                     Text("No users found")
                     Divider()
                 }
-                List(usernames, id: \.self) { username in
+                List(users, id: \.id) { user in
                     Button(action: {
-                        self.onUsernamePicked(username)
+                        self.onUserPicked(user)
                     }, label: {
-                        Text(username)
+                        Text(user.username!)
                     })
                 }
             }
@@ -89,10 +89,10 @@ struct PickUsernameView: View {
     func search() {
         user.getToken { (success, token, error) in
             if let token = token, success {
-
-                SearchService.shared.searchUser(searchString: searchInput, offset: 0, rowCount: 5, token: token) { (success, usernames, error) in
+                print(token)
+                SearchService.shared.searchUser(searchString: searchInput, offset: 0, rowCount: 5, token: token) { (success, users, error) in
                     if success {
-                        self.usernames = usernames!
+                        self.users = users!
                     } else {
                         manageError(error: error)
                     }
@@ -106,7 +106,7 @@ struct PickUsernameView: View {
 
     /// Set variables to the right state for the error message to be displayed to the user.
     func manageError(error: BestagramError?) {
-        self.usernames = []
+        self.users = []
         if error == BestagramError.ConnectionError {
             self.errorMessage = "Couldn't load search results"
         } else {
@@ -124,13 +124,13 @@ struct PickUsernameView: View {
 }
 
 // Note that if you want to run search on your computer with xcode preview you will need to change this line to reference the credentials of an account already existing in your local database.
-let testUser = User(username: "titouana", password: "password") { (_, _, _) in }
+let testUser = User(username: "titouan_hello", password: "password") { (_, _, _) in }
 
-struct PickUsernameView_Previews: PreviewProvider {
+struct PickUserView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            PickUsernameView(
-                onUsernamePicked: {(_) in },
+            PickUserView(
+                onUserPicked: {(_) in },
                 onCancelButtonPressed: { },
                 user: testUser
             )

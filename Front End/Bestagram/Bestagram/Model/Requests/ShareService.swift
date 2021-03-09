@@ -19,7 +19,7 @@ class ShareService {
     //MARK: - Urls
     let path = Api.path
 
-    let postUrl = "post"
+    let postUrl = "user/post"
 
     /// Register a new post by contacting the api.
     ///

@@ -8,7 +8,7 @@
 import Foundation
 
 public enum BestagramError {
-    case UnknownError, InvalidCredentials, MissingInformations, UsernameAlreadyTaken, EmailAlreadyTaken, InvalidEmailAdress, InvalidUsername, InvalidEmail, InvalidName, InvalidJson, ConnectionError
+    case UnknownError, InvalidCredentials, MissingInformations, UsernameAlreadyTaken, EmailAlreadyTaken, InvalidEmailAdress, InvalidUsername, InvalidEmail, InvalidName, InvalidJson, ConnectionError, NonAuthenticatedUser
 
     var description : String {
         switch self{
@@ -36,6 +36,8 @@ public enum BestagramError {
             return "The response sent back from the server is invalid."
         case .ConnectionError:
             return "Connection error, please check your connection and try again later."
+        case .NonAuthenticatedUser: // Should not happen, this is only in case of the developper messing up with the innits of the user class.
+            return "This user is not authenticated thus it's token cannot be retrieved."
         }
     }
 }

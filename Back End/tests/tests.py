@@ -511,7 +511,7 @@ class Tests(unittest.TestCase):
 
         add_expire_token_query = f"""
         UPDATE UserTable
-        SET token_registration_date = "{expired_registration_date}"
+        SET token_registration_date = "{expired_registration_date}", token = "{token}"
         WHERE UserTable.username = "{default_username}";
         """
         self.cursor.execute(add_expire_token_query)
@@ -519,7 +519,7 @@ class Tests(unittest.TestCase):
         raised_invalid_credentials = False
         try:
             user.User(token=token)
-        except InvalidCredentials:
+        except ExpiredToken:
             raised_invalid_credentials = True
 
         self.assertTrue(raised_invalid_credentials)
@@ -543,7 +543,7 @@ class Tests(unittest.TestCase):
         self.cursor.execute(add_expire_token_query)
 
         code, content = self.api.search(default=False, search="", offset=0, row_count=5, token=token)
-        expected_response = InvalidCredentials.get_response()
+        expected_response = ExpiredToken.get_response()
         self.assertEqual(code, expected_response[1])
         self.assertEqual(content, expected_response[0])
 

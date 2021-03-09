@@ -17,7 +17,7 @@ class SearchService {
     //MARK: - Urls
     let path = Api.path
 
-    let searchUrl = "search"
+    let searchUrl = "user/search"
 
     /// Search for usernames matching the given string.
     ///
@@ -28,15 +28,14 @@ class SearchService {
     /// - Parameters:
     ///     - callback : Closure called when the response was sent.
     ///     - success: Wether or not the request reached the server. **Does not mean that the server accepted the request** (invalid credentials can still happen for example).
-    ///     - usernames: If the operation was successful then this is the list of usernames the api sent. Note that this list is order from most probable result to most unprobable.
+    ///     - users: If the operation was successful then this is the list of users the api sent. Note that this list is ordered from most probable result to most unprobable.
     ///     - error: If the operation was **not** successful this is the error message included in the response.
-    ///
     func searchUser(
         searchString: String,
         offset: Int,
         rowCount: Int,
         token: String,
-        callback : @escaping (_ success: Bool, _ usernames: Array<String>?,_ error: BestagramError?) -> Void) {
+        callback : @escaping (_ success: Bool, _ users: Array<User>?,_ error: BestagramError?) -> Void) {
         let parameters = ["search" : searchString, "offset": offset, "rowCount": rowCount] as [String : Any]
         let headers: HTTPHeaders = ["Authorization" : token]
         let method : HTTPMethod = .get
@@ -53,17 +52,23 @@ class SearchService {
                     callback(false, nil, BestagramError.InvalidJson)
                     return
                 }
-                guard success, let result = json["result"] as? Dictionary<String, String> else {
+                guard success, let result = json["result"] as? Dictionary<String, Dictionary<String, Any>> else {
                     callback(false, nil, parseError(data: data))
                     return
                 }
-                var usernames : Array<String> = []
-                for i in offset...rowCount {
-                    if let username = result[String(i)] {
-                        usernames.append(username)
+
+                var users : Array<User> = []
+                let maxValue : Int = result.count-1 > rowCount ? rowCount : result.count-1
+                if result.count > 0 {
+                    for i in offset...maxValue {
+                        guard let userData = result[String(i)], let id = userData["id"] as? Int, let username = userData["username"] as? String, let name = userData["name"] as? String else {
+                            callback(false, nil, .InvalidJson)
+                            return
+                        }
+                        users.append(User(id: id, username: username, name: name))
                     }
                 }
-                callback(true, usernames, nil)
+                callback(true, users, nil)
             }
         }
 
