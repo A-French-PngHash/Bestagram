@@ -97,7 +97,7 @@ struct TagPeopleView: View {
 struct TagPeopleView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            TagPeopleView(image: BestagramApp.defaultPostPicture, tags: [], user: testUser) { (tags) in
+            TagPeopleView(image: BestagramApp.previewPostPicture, tags: [], user: testUser) { (tags) in
                 print(tags)
             }
         }

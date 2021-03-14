@@ -15,7 +15,7 @@ struct BestagramApp: App {
     /// Text color to use when on dark mode.
     static public var textGray = Color(red: 127/255, green: 126/255, blue: 128/255, opacity: 1)
     /// Post picture to show in previews.
-    static public var defaultPostPicture = UIImage(named: "DefaultPostPicture")!
+    static public var previewPostPicture = UIImage(named: "PreviewPostPicture")!
     /// Length of the side of an image being posted.
     static public var defaultImageSideLength : CGFloat = 1080
 

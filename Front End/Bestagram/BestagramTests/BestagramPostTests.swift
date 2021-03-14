@@ -34,27 +34,27 @@ class BestagramPostTests: XCTestCase {
         followers: 329,
         numberOfPosts: 156,
         // swiftlint:disable:next force_unwrapping
-        profilePicture: UIImage(named: "DefaultProfilePicture")!)
+        profilePicture: UIImage(named: "PreviewProfilePicture")!)
 
     func testGivenDescriptionIsLessThanMinimumCharacterLongWhenIntializingThenReducedDescriptionSameAsFull() {
         // Given description is less than minimum character long.
         let description = generateDescription(
-            minLength: Post.minimumCharacterReducedDescription - 10,
-            maxLength: Post.minimumCharacterReducedDescription - 1
+            minLength: Post.minimumCharacterReducedCaption - 10,
+            maxLength: Post.minimumCharacterReducedCaption - 1
         )
 
         // When initializing.
         let descriptionObj = Caption(text: description)
 
         // Then reduced description same as full.
-        XCTAssertEqual(descriptionObj.fullDescription, descriptionObj.reducedDescription)
+        XCTAssertEqual(descriptionObj.fullCaption, descriptionObj.reducedCaption)
     }
 
     func testGivenDescriptionIsMoreThanMinimumCharacterLongWhenIntializingThenReducedDescriptionLessThanFull() {
         // Given description is more than minimum character long.
         let description = generateDescription(
-            minLength: Post.minimumCharacterReducedDescription + 10,
-            maxLength: Post.minimumCharacterReducedDescription + 20
+            minLength: Post.minimumCharacterReducedCaption + 10,
+            maxLength: Post.minimumCharacterReducedCaption + 20
         )
 
         // When initializing.
@@ -62,20 +62,20 @@ class BestagramPostTests: XCTestCase {
         let descriptionObj = Caption(text: description)
 
         // Then reduced description not same and less than full.
-        XCTAssertLessThan(descriptionObj.reducedDescription.count, descriptionObj.fullDescription.count)
+        XCTAssertLessThan(descriptionObj.reducedCaption.count, descriptionObj.fullCaption.count)
     }
 
     func testGivenDescriptionIsMoreThanMinimumCharacterLongWhenIntializingThenReducedDescriptionNotCutInWord() {
         // Given description is more than minimum character long.
         let description = generateDescription(
-            minLength: Post.minimumCharacterReducedDescription + 10,
-            maxLength: Post.minimumCharacterReducedDescription + 20)
+            minLength: Post.minimumCharacterReducedCaption + 10,
+            maxLength: Post.minimumCharacterReducedCaption + 20)
 
         // When initializing.
         let descriptionObj = Caption(text: description)
 
         // Then reduced description not cut in word.
-        XCTAssertEqual(description[descriptionObj.reducedDescription.count], " ")
+        XCTAssertEqual(description[descriptionObj.reducedCaption.count], " ")
     }
     /// Methods used to generate descriptions.
     ///
@@ -151,7 +151,7 @@ class BestagramPostTests: XCTestCase {
                 user: givenUser,
                 image: image,
                 numberOfLikes: numberOfLikes,
-                description: description,
+                caption: description,
                 postTime: postTime
             )
         } else {
@@ -159,7 +159,7 @@ class BestagramPostTests: XCTestCase {
                 user: defaultUser,
                 image: image,
                 numberOfLikes: numberOfLikes,
-                description: description,
+                caption: description,
                 postTime: postTime
             )
         }

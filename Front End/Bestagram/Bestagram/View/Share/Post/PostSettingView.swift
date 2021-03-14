@@ -123,7 +123,7 @@ struct PostSettingView: View {
 struct PostSettingView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            PostSettingView(postImage: BestagramApp.defaultPostPicture, user : testUser)
+            PostSettingView(postImage: BestagramApp.previewPostPicture, user : testUser)
                 .font(ProximaNova.body)
         }
     }

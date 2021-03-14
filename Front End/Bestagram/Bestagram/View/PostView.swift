@@ -20,10 +20,16 @@ struct PostView: View {
                 Spacer()
                     .frame(width: minSpaceFromEdge)
 
-                Image(uiImage: post.user.profilePicture)
-                    .resizable()
-                    .clipShape(Circle())
-                    .frame(width: 30.0, height: 30.0)
+                if let profilePicture = post.user.profilePicture {
+                    Image(uiImage: profilePicture)
+                        .resizable()
+                        .clipShape(Circle())
+                        .frame(width: 30.0, height: 30.0)
+                } else {
+                    Circle()
+                        .foregroundColor(.gray)
+                        .frame(width: 30.0, height: 30.0)
+                }
 
                 Text(post.user.username!)
                     .foregroundColor(.black)
@@ -94,11 +100,11 @@ let defaultUser = User(
     username: "thisisbillgates",
     followers: 329,
     numberOfPosts: 156,
-    profilePicture: UIImage(named: "DefaultProfilePicture")!
+    profilePicture: UIImage(named: "PreviewProfilePicture")!
 )
 let defaultPost = Post(
     user: defaultUser,
-    image: UIImage(named: "DefaultPostPicture")!,
+    image: BestagramApp.previewPostPicture,
     numberOfLikes: 326,
     caption: defaultCaption,
     postTime: Date(timeIntervalSinceNow: TimeInterval(-27653))

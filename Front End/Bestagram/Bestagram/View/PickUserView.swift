@@ -17,7 +17,7 @@ struct PickUserView: View {
     var user : User
 
     /// List of users sent back by the API.
-    @State var users : Array<User> = []
+    @Published var users : Array<User> = []
     @State var searchInput : String = ""
     /// Wether or not a list of username is currently been fecthed from the api.
     @State var searchInProgress : Bool = true
@@ -28,6 +28,7 @@ struct PickUserView: View {
     @State var errorMessage : String = ""
     /// Delay before the error view is hidden again.
     let errorViewDisapearanceDelay : Int = 3
+
 
     var body: some View {
         VStack {
@@ -59,12 +60,13 @@ struct PickUserView: View {
                     Text("No users found")
                     Divider()
                 }
-                List(users, id: \.id) { user in
-                    Button(action: {
-                        self.onUserPicked(user)
-                    }, label: {
-                        Text(user.username!)
-                    })
+
+                ForEach(users, id: \.id) { user in
+                    HStack {
+                        UserCellView(user: user)
+                        Spacer()
+                    }
+
                 }
             }
             Spacer()

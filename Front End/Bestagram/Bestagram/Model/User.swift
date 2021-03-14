@@ -11,7 +11,7 @@ import CommonCrypto
 /// Represent a user of the app.
 ///
 /// When properties are by default initialized at -1 or "", it means that their value have not yet been fetched from the server.
-class User : Equatable {
+class User : Equatable, ObservableObject {
     /// Name of the user. e.g. "Jon Appleseed"
     var name: String?
     /// Username of the user. e.g. "jon.apple"
@@ -19,7 +19,8 @@ class User : Equatable {
     /// Number of followers of this users.
     var followers: Int = -1
     var numberOfPosts: Int = -1
-    var profilePicture: UIImage! = nil
+    @Published var profilePicture: UIImage? = nil
+
     var email : String?
     var hash: String?
     var refreshToken : String?
@@ -53,6 +54,20 @@ class User : Equatable {
         self.id = id
         self.username = username
         self.name = name
+        self.loadProfilePicture()
+    }
+
+    /// Load the profile picture for this image.
+    ///
+    /// When the picture is loaded, it is stored in the variable named profilePicture.
+    func loadProfilePicture() {
+        ProfilePictureService.shared.getProfilePicture(id: self.id!) { (success, profilePicture, error) in
+            if success, error == nil, let profilePicture = profilePicture {
+                self.profilePicture = profilePicture
+            } else {
+                print("Error while fetching image : " + error.debugDescription)
+            }
+        }
     }
 
     /// This init login a user. It fill this class credentials variable to allow this class to be used in different actions after that can only be done by this user.
