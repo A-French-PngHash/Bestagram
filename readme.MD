@@ -73,7 +73,9 @@ You can install them through **pip** :
 
 	pip -r requirements.txt
 
+## Current work
 
+Right now the app is being updated to meet the MVVM architecture. This work is done under the branch named "FrontEndMVVM". It is necessary to ensure the sustainability and maintenance of the app.
 
 ## Documentation References
 
