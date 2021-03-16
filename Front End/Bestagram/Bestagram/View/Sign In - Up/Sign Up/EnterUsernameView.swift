@@ -16,38 +16,38 @@ struct EnterUsernameView: View {
     @State var goNextView = false
 
     var body: some View {
-        InterfacePositioningView(showBackButton: true, alreadyHaveAnAccount: true, dontHaveAnAccount: false) {
-            VStack(spacing: 20) {
-                Text("Create username")
-                    .font(ProximaNova(size: 30, bold: false).font)
-                Text("Choose a username for your new account. You can always change it later.")
-                    .multilineTextAlignment(.center)
-                CustomTextField(placeholder: "Username", input: $username, error: $textFieldShouldDisplayError) { (new) in
-                    if new.count < 5 || new.count > 30 {
-                        buttonStyle = .disabled
-                    } else {
-                        buttonStyle = .normal
-                    }
-                    var newUsername = ""
-                    for i in new {
-                        if BestagramApp.allowedUsernameCharacters.contains(i.lowercased()) && newUsername.count < 31{
-                            // Valid character.
-                            newUsername = "\(newUsername)\(i)"
-                        }
-                    }
-                    username = newUsername
+        VStack(spacing: 20) {
+            Text("Create username")
+                .font(ProximaNova(size: 30, bold: false).font)
+            Text("Choose a username for your new account. You can always change it later.")
+                .multilineTextAlignment(.center)
+            CustomTextField(placeholder: "Username", input: $username, error: textFieldShouldDisplayError) { (new) in
+                if new.count < 5 || new.count > 30 {
+                    buttonStyle = .disabled
+                } else {
+                    buttonStyle = .normal
                 }
-                BigBlueButton(text: "Next", style: $buttonStyle) {
-                    goNextView = true
+                var newUsername = ""
+                for i in new {
+                    if BestagramApp.allowedUsernameCharacters.contains(i.lowercased()) && newUsername.count < 31{
+                        // Valid character.
+                        newUsername = "\(newUsername)\(i)"
+                    }
                 }
-                NavigationLink(
-                    destination: EnterNameView(email: email, username: username),
-                    isActive: $goNextView,
-                    label: {
-                        Text("")
-                    })
+                username = newUsername
             }
-        }.navigationBarHidden(true)
+            BigBlueButton(text: "Next", style: buttonStyle) {
+                goNextView = true
+            }
+            NavigationLink(
+                destination: EnterNameView(email: email, username: username),
+                isActive: $goNextView,
+                label: {
+                    Text("")
+                })
+        }
+        .modifier(InterfacePositioning(showBackButton: true, alreadyHaveAnAccount: true))
+        .navigationBarHidden(true)
     }
 }
 

@@ -17,7 +17,7 @@ struct PickUserView: View {
     var user : User
 
     /// List of users sent back by the API.
-    @Published var users : Array<User> = []
+    @State var users : Array<User> = []
     @State var searchInput : String = ""
     /// Wether or not a list of username is currently been fecthed from the api.
     @State var searchInProgress : Bool = true

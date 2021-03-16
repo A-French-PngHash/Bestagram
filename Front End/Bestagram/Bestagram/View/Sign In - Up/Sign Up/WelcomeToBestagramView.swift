@@ -22,7 +22,7 @@ struct WelcomeToBestagramView: View {
                 Text("Find people to follow and start sharing photos. You can change your username at any time.")
                     .multilineTextAlignment(.center)
                     .foregroundColor(.gray)
-                BigBlueButton(text: "Next", style: .constant(.normal)) {
+                BigBlueButton(text: "Next", style: .normal) {
                     print("next")
                 }
                 Spacer()

@@ -43,12 +43,12 @@ struct EnterConfirmationCodeView: View {
                 CustomTextField(
                     displayCross: true,
                     placeholder: "Confirmation Code",
-                    distanceEdge: 0, contentType: .name, input: $code, error : $textFieldErrorStyle) { (value) in
+                    distanceEdge: 0, contentType: .name, input: $code, error : textFieldErrorStyle) { (value) in
                     if value.count != codeLength {
                         buttonStyle = .disabled
                     }
                 }
-                BigBlueButton(text: "Next", style: $buttonStyle) {
+                BigBlueButton(text: "Next", style: buttonStyle) {
                     // Go to next view
                 }
                 Spacer()

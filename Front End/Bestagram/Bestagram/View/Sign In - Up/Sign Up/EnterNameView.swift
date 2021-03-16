@@ -22,34 +22,33 @@ struct EnterNameView: View {
     @State var goToNextView : Bool = false
 
     var body: some View {
-        InterfacePositioningView(alreadyHaveAnAccount : true) {
-            VStack(spacing: 20) {
-                Text("Add your name")
-                    .font(ProximaNova(size: 30, bold: false).font)
-                Text("Add your name so that friends can find you.")
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.gray)
+        VStack(spacing: 20) {
+            Text("Add your name")
+                .font(ProximaNova(size: 30, bold: false).font)
+            Text("Add your name so that friends can find you.")
+                .multilineTextAlignment(.center)
+                .foregroundColor(.gray)
 
-                CustomTextField(placeholder: "Full name", contentType: .name ,input: $name, error: $textFieldErrorStyle) { (value) in
-                    if value.count > 0 && value.count < 40{
-                        nextButtonStyle = .normal
-                    } else {
-                        nextButtonStyle = .disabled
-                    }
+            CustomTextField(placeholder: "Full name", contentType: .name ,input: $name, error: textFieldErrorStyle) { (value) in
+                if value.count > 0 && value.count < 40{
+                    nextButtonStyle = .normal
+                } else {
+                    nextButtonStyle = .disabled
                 }
-
-                BigBlueButton(text: "Next", style: $nextButtonStyle) {
-                    goToNextView = true
-                }
-                NavigationLink(
-                    destination: CreatePasswordView(email: email, name: name, username: username),
-                    isActive: $goToNextView,
-                    label: {
-                        EmptyView()
-                    })
-                Spacer()
             }
+
+            BigBlueButton(text: "Next", style: nextButtonStyle) {
+                goToNextView = true
+            }
+            NavigationLink(
+                destination: CreatePasswordView(email: email, name: name, username: username),
+                isActive: $goToNextView,
+                label: {
+                    EmptyView()
+                })
+            Spacer()
         }
+        .modifier(InterfacePositioning(alreadyHaveAnAccount : true))
         .navigationBarHidden(true)
     }
 }

@@ -50,6 +50,7 @@
 		5BCDF4D0259FE466001B851F /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCDF4CF259FE466001B851F /* SearchBar.swift */; };
 		5BDCB8F42586B34C00056B2B /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDCB8F32586B34C00056B2B /* LoginService.swift */; };
 		5BDCB8FC2586B77F00056B2B /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDCB8FB2586B77F00056B2B /* Api.swift */; };
+		5BE194B925FE751600785E67 /* EnterLoginInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE194B825FE751600785E67 /* EnterLoginInfoViewModel.swift */; };
 		5BE5400225EFE0FD00FAB7A0 /* resizeImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE5400125EFE0FC00FAB7A0 /* resizeImageExtension.swift */; };
 		5BE70E042571C43300187FF1 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE70E032571C43300187FF1 /* User.swift */; };
 		5BF0BAE725865DAB00C3B9FB /* EnterLoginInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */; };
@@ -138,6 +139,7 @@
 		5BCDF4CF259FE466001B851F /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		5BDCB8F32586B34C00056B2B /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		5BDCB8FB2586B77F00056B2B /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		5BE194B825FE751600785E67 /* EnterLoginInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterLoginInfoViewModel.swift; sourceTree = "<group>"; };
 		5BE5400125EFE0FC00FAB7A0 /* resizeImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = resizeImageExtension.swift; sourceTree = "<group>"; };
 		5BE70E032571C43300187FF1 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		5BF0BAE625865DAB00C3B9FB /* EnterLoginInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterLoginInfoView.swift; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 		5BA7A0EC2571BE5300993718 /* Bestagram */ = {
 			isa = PBXGroup;
 			children = (
+				5BE194B425FE72C200785E67 /* ViewModels */,
 				5B1D1FB92572584D006B5073 /* Supporting Files */,
 				5BA7A11C2571BF6400993718 /* View */,
 				5BA7A11B2571BF5E00993718 /* Model */,
@@ -390,6 +393,14 @@
 				5B8A13C825FD0989008A6E94 /* ProfilePictureService.swift */,
 			);
 			path = Requests;
+			sourceTree = "<group>";
+		};
+		5BE194B425FE72C200785E67 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				5BE194B825FE751600785E67 /* EnterLoginInfoViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		5BF0BAA22585411700C3B9FB /* Sign In */ = {
@@ -703,6 +714,7 @@
 				5B8A13C925FD098A008A6E94 /* ProfilePictureService.swift in Sources */,
 				5BF0BAE725865DAB00C3B9FB /* EnterLoginInfoView.swift in Sources */,
 				5BA8950425BACFBD00D72CEC /* EnterUsernameView.swift in Sources */,
+				5BE194B925FE751600785E67 /* EnterLoginInfoViewModel.swift in Sources */,
 				5B02905F2598E835004E03EF /* PictureSelectionView.swift in Sources */,
 				5BF4759925BC7DBB00DC5FCA /* CredentialService.swift in Sources */,
 				5B70B66625840FE3004221D5 /* BackButton.swift in Sources */,

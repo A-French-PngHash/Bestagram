@@ -12,8 +12,8 @@ struct BigBlueButton: View {
 
     /// Text to display on the button.
     var text: String
-    /// Sstyle the button should take.
-    @Binding var style: Style
+    /// Style the button should take.
+    var style: Style
     /// Action to do when button is pressed.
     var onPress : () -> Void
 
@@ -46,9 +46,8 @@ enum Style {
 }
 
 struct BigBlueButton_Previews: PreviewProvider {
-    @State static var style: Style = .normal
     static var previews: some View {
-        BigBlueButton(text: "Test", style: $style) {
+        BigBlueButton(text: "Test", style: .normal) {
             print("button clicked successfully")
         }
     }
